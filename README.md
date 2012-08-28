@@ -1,4 +1,4 @@
 selforganizationtest
 ====================
 
-Self Organization Test
+Self Organization Test is an application to analyze social networks.
