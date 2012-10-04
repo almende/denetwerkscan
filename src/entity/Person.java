@@ -7,6 +7,7 @@ import com.google.code.twig.annotation.Id;
 
 @SuppressWarnings("serial")
 public class Person implements Serializable {
+<<<<<<< HEAD
 
 	protected Person() {}
 	
@@ -16,6 +17,14 @@ public class Person implements Serializable {
 		this.age = age;
 		this.gender = gender;
 		
+=======
+	protected Person() {}
+	
+	public Person(String name, Integer age, GENDER gender) {
+		this.name = name;
+		this.age = age;
+		this.gender = gender;
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
 	}
 
 	public Long getId() {
@@ -57,6 +66,7 @@ public class Person implements Serializable {
 	public void setGender(GENDER gender) {
 		this.gender = gender;
 	}
+<<<<<<< HEAD
 	public String getProfession(){
 		return profession;
 	}
@@ -64,6 +74,9 @@ public class Person implements Serializable {
 		this.profession = profession;
 	}
 	
+=======
+
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
 	public List<Relation> getRelations() {
 		return relations;
 	}
@@ -77,8 +90,11 @@ public class Person implements Serializable {
 	private String name;
 	private Integer age;
 	private GENDER gender;
+<<<<<<< HEAD
 	private String profession;
 
+=======
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
 	private List<Relation> relations;
 	
 	public enum GENDER {MALE, FEMALE};

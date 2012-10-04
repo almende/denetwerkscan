@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
+<<<<<<< HEAD
   <application>network-scan</application>
+=======
+  <application>selforganizationtest</application>
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
   <version>1</version>
 
   <!--

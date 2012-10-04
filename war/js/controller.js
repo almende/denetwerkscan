@@ -22,7 +22,10 @@ myApp.directive('autocomplete', function($parse) {
 
 /**
  * Angular JS controller to control the page
+<<<<<<< HEAD
  * 
+=======
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
  * @constructor Ctrl
  */
 function Controller($scope, $resource) {
@@ -33,6 +36,7 @@ function Controller($scope, $resource) {
         'find': {method: 'GET', isArray: true}
     });
 
+<<<<<<< HEAD
     $scope.tests = [   
         'Network scan 2012'
     ];
@@ -47,13 +51,29 @@ function Controller($scope, $resource) {
         'Free time (hobbies, sports, etc.)',
         'Neighbors'      
 
+=======
+    $scope.tests = [
+        'Buurtlab 2011',
+        'Buurtlab 2012'
+    ];
+    $scope.test = $scope.tests[0];
+
+    $scope.domains = [
+        'School',
+        'Sports',
+        'Family',
+        'Colleague'
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     ];
 
     $scope.frequencies = [
         'Almost never',
         '1x per three months',
+<<<<<<< HEAD
         '1x per six months',
         '1x per year',
+=======
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
         '1x per week',
         '2x per week',
         'Daily'
@@ -62,11 +82,19 @@ function Controller($scope, $resource) {
     $scope.persons = [];
     $scope.names = [];          // list with names used for auto-completion
     $scope.current = undefined; // current person
+<<<<<<< HEAD
     $scope.rel=[];
 
     /**
 	 * Query all persons. Persons are filtered by the currently selected test
 	 */
+=======
+
+    /**
+     * Query all persons.
+     * Persons are filtered by the currently selected test
+     */
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     $scope.query = function () {
         var params = {
             'test': $scope.test
@@ -76,16 +104,26 @@ function Controller($scope, $resource) {
             $scope.names = [];
             for (var i = 0; i < $scope.persons.length; i++) {
                 var name = $scope.persons[i].name;
+<<<<<<< HEAD
                 $scope.names.push(name);             
               }
                
             };     
+=======
+                $scope.names.push(name);
+            }
+        };
+
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
         $scope.querying = true;
         $scope.persons = Person.find(params, undefined, function () {
             $scope.querying = false;
             updateNames();
         });
+<<<<<<< HEAD
         
+=======
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     };
 
     // create a watch which reloads persons when the test changes
@@ -93,6 +131,7 @@ function Controller($scope, $resource) {
         $scope.current = undefined;
         $scope.query();
     });
+<<<<<<< HEAD
     /**
 	 * Create hide/show to allow users to get information step by step
 	 */
@@ -106,10 +145,19 @@ function Controller($scope, $resource) {
 	 */
     $scope.start = function () { 
     	$scope.setPage('whoyou');
+=======
+
+    /**
+     * Create a new person
+     */
+    $scope.add = function () {
+        $scope.setView("edit");
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
         $scope.current = {};
     };
 
     /**
+<<<<<<< HEAD
 	 * Add a relation
 	 * 
 	 * @param {Object}
@@ -118,11 +166,19 @@ function Controller($scope, $resource) {
     $scope.addRelation = function (person) {
         var relations = person.relations;
         
+=======
+     * Add a relation
+     * @param {Object} person
+     */
+    $scope.addRelation = function (person) {
+        var relations = person.relations;
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
         if (!relations) {
             relations = [];
             person.relations = relations;
         }
         relations.push({});
+<<<<<<< HEAD
        
     };
 
@@ -134,6 +190,15 @@ function Controller($scope, $resource) {
 	 * @param {Object}
 	 *            relation
 	 */
+=======
+    };
+
+    /**
+     * Remove a relation
+     * @param {Object} person
+     * @param {Object} relation
+     */
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     $scope.deleteRelation = function (person, relation) {
         var relations = person.relations;
         if (!relations) {
@@ -145,6 +210,7 @@ function Controller($scope, $resource) {
             relations.splice(index, 1);
         }
     };
+<<<<<<< HEAD
   
 
     /**
@@ -166,11 +232,29 @@ function Controller($scope, $resource) {
 	 */
     $scope.load = function (id) {
         $scope.setPage("whoyou");
+=======
+
+    /**
+     * Set view for the contents of the page
+     * @param {String} view  Available views: "edit" or "network"
+     */
+    $scope.setView = function (view) {
+        $scope.view = view;
+    };
+
+    /**
+     * Load a person by id
+     * @param {Number} id
+     */
+    $scope.load = function (id) {
+        $scope.setView("edit");
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
         $scope.loading = true;
         $scope.current = Person.get({'id': id}, undefined, function () {
             $scope.loading = false;
         });
     };
+<<<<<<< HEAD
     /**
 	 * Assign weight per domain for score
 	 */
@@ -224,16 +308,28 @@ function Controller($scope, $resource) {
 	 * Save the current person
 	 */
     $scope.save = function () {    	
+=======
+
+    /**
+     * Save the current person
+     */
+    $scope.save = function () {
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
         if ($scope.current) {
             $scope.current.test = $scope.test;
             $scope.saving = true;
             var id = $scope.current.id;
             var onSave = function () {
                 $scope.saving = false;
+<<<<<<< HEAD
                // $scope.cancel();
                 $scope.query();
                 $scope.score($scope.current.id);
                 $scope.sort($scope.current.id)
+=======
+                $scope.cancel();
+                $scope.query();
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
             };
             if (id == undefined) {
                 // create new
@@ -241,6 +337,7 @@ function Controller($scope, $resource) {
             }
             else {
                 // update existing
+<<<<<<< HEAD
                 $scope.current = Person.update({'id': id}, $scope.current, onSave);                
             }
         }
@@ -258,6 +355,23 @@ function Controller($scope, $resource) {
     /**
 	 * Delete the current person
 	 */
+=======
+                $scope.current = Person.update({'id': id}, $scope.current, onSave);
+            }
+        }
+    };
+
+    /**
+     * cancel editing the current person
+     */
+    $scope.cancel = function () {
+        $scope.current = undefined;
+    };
+
+    /**
+     * Delete the current person
+     */
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     $scope.delete = function () {
         if ($scope.current && confirm("Do you really want to delete " + $scope.current.name + '?')) {
             var id = $scope.current.id;
@@ -275,6 +389,7 @@ function Controller($scope, $resource) {
     };
 
     /**
+<<<<<<< HEAD
 	 * load network page
 	 */
         
@@ -284,6 +399,16 @@ function Controller($scope, $resource) {
             // close any opened person
             $scope.cancel();
             $scope.setPage("network");
+=======
+     * load network view
+     */
+    $scope.showNetwork = function () {
+        $scope.setView("network");
+        if (!$scope.network) {
+            // close any opened person
+            $scope.cancel();
+
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
             // retrieve all data with documents
             var params = {
                 'test': $scope.test,
@@ -291,15 +416,25 @@ function Controller($scope, $resource) {
             };
             $scope.networkLoading = true;
             var data = Person.query(params, undefined, function () {
+<<<<<<< HEAD
                 // load container page
+=======
+                // load container view
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
                 var container = document.getElementById('network');
                 loadNetwork(container, data, $scope.domains, $scope.frequencies);
                 $scope.networkLoading = false;
             });
         }
     };
+<<<<<<< HEAD
     // retrieve persons now
     $scope.query();
     $scope.setPage("intro");
 
+=======
+
+    // retrieve persons now
+    $scope.query();
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
 }

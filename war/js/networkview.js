@@ -8,8 +8,13 @@
  *                               the connections a width
  */
 function loadNetwork (container, persons, domains, frequencies) {
+<<<<<<< HEAD
 	
     var network = new links.Network(container);
+=======
+    var network = new links.Network(container);
+
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     var nodes = [];
     var connections = [];
     var ids = {};
@@ -31,7 +36,12 @@ function loadNetwork (container, persons, domains, frequencies) {
      * @private
      */
     function addPerson(person) {
+<<<<<<< HEAD
         // TODO: check if name and id are defined in person        
+=======
+        // TODO: check if name and id are defined in person
+
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
         var name = person.name;
         var id = ids[name];
         if (id == undefined) {
@@ -70,9 +80,15 @@ function loadNetwork (container, persons, domains, frequencies) {
     // process the data
     for (var i = 0, iMax = persons.length; i < iMax; i++) {
         var person = persons[i];
+<<<<<<< HEAD
         var id = addPerson(person);        
         var relations = person.relations;
         console.log(relations);
+=======
+        var id = addPerson(person);
+
+        var relations = person.relations;
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
         if (relations) {
             for (var j = 0, jMax = relations.length; j < jMax; j++) {
                 var relation = relations[j];

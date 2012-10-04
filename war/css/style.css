@@ -3,7 +3,11 @@ body, html {
     padding: 0;
     margin: 0;
     font-size: 11pt;
+<<<<<<< HEAD
     font-family: 'TheMix' url('http://www.z11org.nl/documents/10156/cf1f6aa3-dc43-4fbb-8482-45a39b455ce9');
+=======
+    font-family: Arial Unicode MS, Arial, Verdana, sans-serif;
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     color: #4D4D4D;
 }
 
@@ -13,6 +17,7 @@ body, html {
 }
 
 #header {
+<<<<<<< HEAD
 	margin: 0 auto;
     background: #2B7CE9 url('../img/topdarkbg.jpg');
     height : 75px; 
@@ -41,6 +46,17 @@ ul, li, a {
 	display: inline;
 	color:white;
 }	
+=======
+    background: #2B7CE9 url('../img/rainbow_header.jpg');
+    background-size: 100%;
+
+    font-family: serif;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
 
 #wrap_menu {
     width: 200px;
@@ -65,15 +81,20 @@ ul, li, a {
 
 #footer {
     clear: both;
+<<<<<<< HEAD
     border-top: 2px solid #E5E5E5;   
     height:50px; 
     background-color: #373734;
    
+=======
+    border-top: 2px solid #E5E5E5;
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
 }
 
 .logo {
     height:35px;
 }
+<<<<<<< HEAD
 body, table { 
 				font-family: 'TheMix'; src:url('http://www.z11org.nl/documents/10156/cf1f6aa3-dc43-4fbb-8482-45a39b455ce9');
 				font-size: 12px;
@@ -88,17 +109,32 @@ td.footer {
 
 h1 {
     font-size: 15pt;
+=======
+
+td.footer {
+    padding: 10px;
+    text-align: center;
+    font-size: 75%;
+}
+
+
+h1 {
+    font-size: 26pt;
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     font-weight: bold;
     font-style: italic;
     margin: 0 10px 10px 10px;
 }
 
+<<<<<<< HEAD
 h4{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     color: #239ECB;
 }
 
+=======
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
 .listitem {
     padding: 10px 5px;
     display: block;
@@ -112,6 +148,7 @@ h4{
 }
 
 input[type="text"] {
+<<<<<<< HEAD
     border: 0.2px ,solid, lightgray;
     border-radius: 2px;
 }
@@ -124,6 +161,13 @@ input[type="text"] {
 	border:1px solid #CEDE92;
 }
 select, input {
+=======
+    border: 1px solid lightgray;
+    border-radius: 2px;
+}
+
+button, select, input {
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
     font-size: 11pt;
     padding: 5px;
     margin-bottom: 10px;

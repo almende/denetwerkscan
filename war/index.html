@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html ng-app="controller">
 <head>
+<<<<<<< HEAD
 <title>Network scan</title>
 
 <link type="text/css" rel="stylesheet" href="css/style.css">
@@ -127,6 +128,7 @@
 					<table>
 						<tr ng-show="current.relations.length">
 							<td>From</td>
+							
 							<td>Name</td>
 							<td>Frequency</td>
 							<td></td>
@@ -217,5 +219,128 @@
 		</table>
 	</div>
 
+=======
+    <title>Self Organization Test</title>
+
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+
+    <script src='lib/jquery-1.8.0.min.js' type="text/javascript"></script>
+    <script src='lib/jquery-ui-autocomplete/jquery-ui-1.8.23.custom.min.js' type="text/javascript"></script>
+    <script src="lib/angular-1.0.1.min.js" type="text/javascript"></script>
+    <script src="lib/angular-resource-1.0.1.min.js" type="text/javascript"></script>
+    <script src="lib/network/network-min.js" type="text/javascript" ></script>
+    <script src="js/controller.js" type="text/javascript" ></script>
+    <script src="js/networkview.js" type="text/javascript" ></script>
+</head>
+
+<body>
+        <div id="container" ng-controller="Controller">
+        <div id="header">
+            <h1>Who do you know?</h1>
+            <span style="font-style: italic;">analyze your social network</span>
+        </div>
+
+        <div id="wrap_menu">
+            <div id="menu">
+                <h2>Test</h2>
+
+                <select ng-model="test"
+                        ng-options="test for test in tests"></select>
+
+                <div class="listitem" ng-click="showNetwork()">
+                    Network View
+                </div>
+
+                <h2>Participants <img ng-show="querying" src="img/loading5.gif"></h2>
+                <div>
+                    <button ng-click="query()" title="Reload all participants">Refresh</button>
+                    <button ng-click="add()" title="Add new participant">Add</button>
+                </div>
+                <div>
+                    <input ng-model="search.name"
+                           type="text"
+                           placeholder="find person..." />
+                </div>
+                <div ng-repeat="person in persons | filter:search" class="listitem" ng-click="load(person.id)">
+                    {{person.name}}
+                </div>
+            </div>
+        </div>
+        <div id="wrap_contents">
+            <div id="contents">
+                <div ng-show="view == 'edit' && current">
+                    <h2>Who are you?</h2>
+                    <table>
+                        <tr><td>Name</td><td><input type="text" ng-model="current.name" /></td></tr>
+                        <tr><td>Age</td><td><input type="text" ng-model="current.age" /></td></tr>
+                        <tr><td>Gender</td><td><select ng-model="current.gender">
+                            <option value="MALE">Male</option>
+                            <option value="FEMALE">Female</option>
+                        </select></td></tr>
+                    </table>
+
+                    <h2>Who do you know?</h2>
+                    <table>
+                        <tr ng-show="current.relations.length">
+                            <td>Name</td>
+                            <td>From</td>
+                            <td>Frequency</td>
+                            <td></td>
+                        </tr>
+                        <tr ng-repeat="relation in current.relations">
+                            <td><input type="text" autocomplete="names" selection="relation.name" ng-model="relation.name"/></td>
+                            <td><select type="text"
+                                        ng-model="relation.domain"
+                                        ng-options="domain for domain in domains"></select></td>
+                            <td><select type="text"
+                                        ng-model="relation.frequency"
+                                        ng-options="frequency for frequency in frequencies"></select></td>
+                            <td><button ng-click="deleteRelation(current, relation)">Delete</button></td>
+                        </tr>
+                        <tr>
+                            <td><button ng-click="addRelation(current)" title="Add relation">Add</button></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+
+                    <h2>Done?</h2>
+                    <button ng-click="save()" ng-disabled="saving" title="Save changes">Save</button>
+                    <button ng-click="cancel()" title="Cancel changes">Cancel</button>
+                    <button ng-click="delete()" ng-disabled="deleting" title="Delete {{current.name}}">Delete</button>
+                    <span ng-show="saving">saving...</span>
+                    <span ng-show="deleting">deleting...</span>
+                    <span ng-show="loading">loading...</span>
+                </div>
+
+                <div ng-show="view == 'network'">
+                    <h2>Network view <img ng-show="networkLoading" src="img/loading5.gif"></h2>
+                    <div id="network"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="footer">
+            <table align='center' width='100%'><tr><td class='footer'>
+                <a href='http://selforganizationtest.appspot.com' target= '_blank'>
+                    http://selforganizationtest.appspot.com</a>
+            </td><td class='footer'>
+                <a href='https://developers.google.com/appengine/' target='_blank'>
+                    <img src='img/Google_App_Engine_Logo.png' class='logo'
+                         title='This application is hosted by Google App Engine'></a>
+            </td><td class='footer'>
+                <a href='http://www.almende.com' target='_blank'>
+                    <img src='img/almende-logo.png' class='logo'
+                         title='This application is developed by Almende' ></a>
+            </td><td class='footer'>
+                Background by
+                <a href='http://manicho.deviantart.com/art/Rainbowfest-wall-67367936' target= '_blank'>
+                    machino</a>
+            </td></tr>
+            </table>
+        </div>
+    </div>
+>>>>>>> 34ba9c4e978e00312d9d7f939b817be63cfe12dd
 </body>
 </html>
