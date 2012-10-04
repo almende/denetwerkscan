@@ -1,0 +1,164 @@
+
+body, html {
+    padding: 0;
+    margin: 0;
+    font-size: 11pt;
+    font-family: 'TheMix' url('http://www.z11org.nl/documents/10156/cf1f6aa3-dc43-4fbb-8482-45a39b455ce9');
+    color: #4D4D4D;
+}
+
+#container {
+    width: 900px;
+    margin: 0 auto;
+}
+
+#header {
+	margin: 0 auto;
+    background: #2B7CE9 url('../img/topdarkbg.jpg');
+    height : 75px; 
+}
+#subheader {
+	align: right;
+    font-family: serif;
+    font-weight: bold;
+    color: white; 
+    text-align: right;    
+}
+#subheader-bg{
+    align: center; 
+    background: #2B7CE9 url('../img/subheaderbgwidexxs.jpg'); 
+    height:80px;   	
+}
+#nav {
+    font-size: 13pt;
+    margin: 0 15px 15px 15px;
+    align: center;
+    text-align: center;
+    display: block;
+    width: 960px;
+}
+ul, li, a {
+	display: inline;
+	color:white;
+}	
+
+#wrap_menu {
+    width: 200px;
+    float: left;
+    overflow: auto;
+}
+
+#menu {
+    padding: 10px 10px 60px 0;
+}
+
+#wrap_contents {
+    width: 700px;
+    float: left;
+    overflow: auto;
+}
+
+#contents {
+    padding: 10px 0 60px 40px;
+    min-height: 600px;
+}
+
+#footer {
+    clear: both;
+    border-top: 2px solid #E5E5E5;   
+    height:50px; 
+    background-color: #373734;
+   
+}
+
+.logo {
+    height:35px;
+}
+body, table { 
+				font-family: 'TheMix'; src:url('http://www.z11org.nl/documents/10156/cf1f6aa3-dc43-4fbb-8482-45a39b455ce9');
+				font-size: 12px;
+				color: black;
+			}
+td.footer {
+    padding: 10px;
+    text-align: center;
+    font-size: 110%;
+    
+}
+
+h1 {
+    font-size: 15pt;
+    font-weight: bold;
+    font-style: italic;
+    margin: 0 10px 10px 10px;
+}
+
+h4{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #239ECB;
+}
+
+.listitem {
+    padding: 10px 5px;
+    display: block;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.listitem:hover {
+    background-color: #e5e5e5;
+    color: black;
+}
+
+input[type="text"] {
+    border: 0.2px ,solid, lightgray;
+    border-radius: 2px;
+}
+
+.button {
+	font-size:13pt;
+	padding:5px 20px;
+	background-color:#9AC00A;
+	color:white;
+	border:1px solid #CEDE92;
+}
+select, input {
+    font-size: 11pt;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.legend {
+    margin: 10px 0;
+}
+
+/* auto completion */
+.ui-autocomplete {
+    background-color: #f5f5f5;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+    width: 120px;
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+}
+.ui-menu-item {
+    display: block;
+    border-radius: 2px;
+    cursor: pointer;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+li.ui-menu-item a {
+    border: 1px solid transparent;
+    padding: 5px;
+    display: block;
+}
+#ui-active-menuitem {
+    background-color: white;
+    color: orange;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+}
