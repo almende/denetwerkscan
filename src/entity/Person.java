@@ -18,11 +18,11 @@ public class Person implements Serializable {
 		
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -72,8 +72,8 @@ public class Person implements Serializable {
 		this.relations = relations;
 	}
 
-	@Id private Long id = null;
-	private String test;  // name of the test, for example "Buurtlab 2011"
+	@Id private String id; // typically, the users email is used as id.
+	private String test;   // name of the test, for example "Buurtlab 2011"
 	private String name;
 	private Integer age;
 	private GENDER gender;

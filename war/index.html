@@ -1,265 +1,350 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html ng-app="controller">
 <head>
-<title>Netwerk scan</title>
+    <title>De Netwerk Scan - Stichting Zelforganisatie</title>
 
-<link type="text/css" rel="stylesheet" href="css/style.css">
+    <link type="text/css" rel="stylesheet" href="css/themix.css">
+    <link type="text/css" rel="stylesheet" href="css/style.css">
 
-<script src='lib/jquery-1.8.0.min.js' type="text/javascript"></script>
-<script src='lib/jquery-ui-autocomplete/jquery-ui-1.8.23.custom.min.js'
-	type="text/javascript"></script>
-<script src="lib/angular-1.0.1.min.js" type="text/javascript"></script>
-<script src="lib/angular-resource-1.0.1.min.js" type="text/javascript"></script>
-<script src="lib/network/network-min.js" type="text/javascript"></script>
-<script src="js/controller.js" type="text/javascript"></script>
-<script src="js/networkview.js" type="text/javascript"></script>
-
+    <script src='lib/jquery-1.8.0.min.js' type="text/javascript"></script>
+    <script src='lib/jquery-ui-autocomplete/jquery-ui-1.8.23.custom.min.js' type="text/javascript"></script>
+    <script src="lib/angular-1.0.1.min.js" type="text/javascript"></script>
+    <script src="lib/angular-resource-1.0.1.min.js" type="text/javascript"></script>
+    <script src="lib/network/network-min.js" type="text/javascript" ></script>
+    <script src="js/controller.js" type="text/javascript" ></script>
+    <script src="js/networkview.js" type="text/javascript" ></script>
 </head>
+
 <body>
-	<div id="header" class="header">
-		<div id="subheader" class="subheader">
-			<h1>Who do you know?</h1>
-			<span style="font-style: italic;">Analyze your social network
-			</span>
-		</div>
-		<div id="nav" class="nav">
-			<ul>
-				<li><a href="http://network-scan.appspot.com/">Home</a></li>
-				<li><a href="img/mindmap.png" target="_blank">Mindmap</a></li>
-			</ul>
-		</div>
-	</div>
+<div id="header">
+    <a href="http://www.z11org.nl/">
+        <img src="img/z11org/logo.jpg" alt="logo" id="logo">
+    </a>
+</div>
 
-	<div id="container" ng-controller="Controller">
+<div id="nav">
+    <ul>
+        <li>
+            <a href="#">De Netwerk Scan</a>
+        </li>
+    </ul>
+</div>
 
-		<div id="subheader-bg" class="subheader-bg"></div>
+<div id="subheader"></div>
 
-		<div id="wrap_menu">
-			<div id="menu">
-				<h4>Test</h4>
+<div id="container" ng-controller="Controller">
 
-				<select ng-model="test" ng-options="test for test in tests"></select>
+<div id="wrap-menu">
+    <div id="menu">
+        <h2>Test</h2>
 
-				<div class="listitem" ng-click="showNetwork()">Visualisatie</div>
-				<div class="listitem" ng-click="score(person.id)">Score</div>
+        <!-- TODO: selection of a test (different set of participants)
+        <select ng-model="test"
+                ng-options="test for test in tests"></select>
+        -->
 
-				<h4>
-					Deelnemers <img ng-show="querying" src="img/loading5.gif">
-				</h4>
-				<button ng-click="query()" title="Reload all participants">Vernieuwen</button>
+        <div class="listitem" >
+            <a class="page"
+               ng-click="page = 'intro'"
+               ng-class="{'selected': page=='intro'}">Introductie</a>
+        </div>
+        <div class="listitem">
+            <a class="page"
+               ng-click="page = 'form'"
+               ng-class="{'selected': page=='form'}">Formulier</a>
+        </div>
+        <div class="listitem">
+            <a class="page"
+               ng-click="showNetwork()"
+               ng-class="{'selected': page=='network'}">Netwerk</a>
+        </div>
 
-				<div>
-					<input ng-model="search.name" type="text"
-						placeholder="Zoek..." />
-				</div>
-				<div ng-repeat="person in persons | filter:search" class="listitem"
-					ng-click="load(person.id)">{{person.name}}</div>
-			</div>
-		</div>
+        <h2>Deelnemers <img ng-show="querying" src="img/loading5.gif"></h2>
+        <div>
+            <a class="refresh" ng-click="query()" title="Deelnemers lijst opnieuw laden">vernieuwen</a>
+            <input ng-model="search.name"
+                   type="text"
+                   placeholder="zoeken..." />
+        </div>
+        <div ng-repeat="person in persons | filter:search" class="listitem" >
+            <a class="person" ng-click="load(person.id)">{{person.name || person.id}}</a>
+            <a ng-click="delete(person.id, person.name)" class="delete" title="Deelnemer verwijderen">&times;</a>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+</div>
+<div id="wrap-contents">
+    <div id="contents">
+        <div ng-show="page == 'intro'">
+            <h1>
+                How connected are you?
+                        <span class="h1-subtitle">
+                            Analyze your social network
+                        </span>
+            </h1>
+            <p>
+                Deze vragenlijst heeft als doel om uw netwerk in kaart te brengen
+                en u bewust te maken van de mensen die u kent.
+                Hieraan ten grondslag ligt een theoretische onderbouwing
+                die u de noodzakelijke achtergrond informatie geeft en u in de
+                gelegenheid stelt om de vragen op een juiste manier te beantwoorden.
+                Zodoende ontstaat er een waardevol beeld van uw netwerk.
+                De theoretische onderbouwing is opgesteld door mw. Iris Meerts van Stichting Zelforganisatie,
+                zij is graag bereid u te woord te staan. Voor meer informatie over de achtergrond
+                van deze scan kunt u contact opnemen met Stichting Zelforganisatie via info@z11org.nl en
+                telefoonnummer 0104049444. Na het beantwoorden van deze Netwerk scan van
+                Stichting Zelforganisatie treft u als output een visualisatie aan.
+                De uitkomst hiervan is uitsluitend bedoeld om inzicht te geven in de opbouw
+                van uw netwerk op dit moment en levert dus geen waarde oordeel. Het gaat dus niet om goed of fout.
+                Bij deze Netwerk scan van Stichting Zelforganisatie gaan we niet uit van de
+                groep waarin u zit maar kiezen we voor de rol die u heeft.
+                Bijvoorbeeld: wanneer we kiezen voor groep, dan kunt u zo alle bloedlijnen die u heeft invullen.
+                Echter, wanneer u bijvoorbeeld met uw broer een bedrijf heeft opgericht,
+                kan het zijn dat het zakelijke contact frequenter plaatsvindt dan het familie contact.
+                Dat vinden we dus interessanter om te meten.
+            </p>
 
+            <p>
+                <a href="img/mindmap.png" target="_blank">
+                    <img alt="mindmap" src="img/mindmap_300x262.png" align="right"
+                         width="300" height="263" title="Klik voor een grotere weergave">
+                </a>
+                Ter verduidelijking ziet u hier de visualisatie van een voorbeeldnetwerk door middel van een mindmapschema;
+                u staat zelf centraal en om u heen heeft u een diversiteit aan contacten opgebouwd,
+                die u in de verschillende deelnetwerken kunt indelen.
+                U kunt ervoor kiezen om eerst een handmatige schets te maken en dan pas te kiezen voor
+                het digitaal invullen van de Netwerk scan.
+            </p>
 
-		<div id="wrap_contents">
-			<div id="contents">
-				<div ng-show="page == 'intro' ">
-					<h4>De Netwerk scan van Stichting Zelforganisatie</h4>
+            <p>
+                De datum van het invullen van De Netwerk scan van Stichting Zelforganisatie een inzage
+                van uw netwerk op dit moment op. Deze scan is een maat om een beeld te krijgen van de
+                sociale verbondenheid van mensen en uw rol hierin. Om inzicht te krijgen in de groei van het
+                netwerk biedt het periodiek invullen van de vragen hiertoe inzicht. Om in beeldspraak uit te leggen:
+                elk moment van invullen levert een foto op, diverse foto's achter elkaar vormen tesamen een film.
+            </p>
 
-					Deze vragenlijst heeft als doel om uw netwerk in kaart te brengen
-					en u bewust te maken van de mensen die u kent. Hieraan ten
-					grondslag ligt een theoretische onderbouwing die u de noodzakelijke
-					achtergrond informatie geeft en u in de gelegenheid stelt om de
-					vragen op een juiste manier te beantwoorden. Zodoende ontstaat er
-					een waardevol beeld van uw netwerk. De theoretische onderbouwing is
-					opgesteld door mw. Iris Meerts De Netwerk scan van Stichting
-					Zelforganisatie, zij is graag bereid u te woord te staan. Voor meer
-					informatie over de achtergrond van deze scan kunt u contact opnemen
-					met Stichting De Netwerk scan van Stichting Zelforganisatie via
-					info@z11org.nl en telefoonnummer 0104049444. Na het beantwoorden
-					van deze De Netwerk scan van Stichting Zelforganisatie treft u als
-					output een visualisatie aan. De uitkomst hiervan is uitsluitend
-					bedoeld om inzicht te geven in de opbouw van uw netwerk op dit
-					moment en levert dus geen waarde oordeel. Het gaat dus niet om goed
-					of fout.
+            <p>
+                <button ng-click="start()" title="Start de test">Start</button>
+            </p>
+        </div>
 
-					<p>Bij deze De Netwerk scan van Stichting Zelforganisatie gaan
-						we niet uit van de groep waarin u zit maar kiezen we voor de rol
-						die u heeft. Bijvoorbeeld: wanneer we kiezen voor groep, dan kunt
-						u zo alle bloedlijnen die u heeft invullen. Echter, wanneer u
-						bijvoorbeeld met uw broer een bedrijf heeft opgericht, kan het
-						zijn dat het zakelijke contact frequenter plaatsvindt dan het
-						familie contact. Dat vinden we dus interessanter om te meten.</P>
-					<P>De datum van het invullen van de scan levert een inzage van
-						uw netwerk op dit moment op. Deze scan is een maat om een beeld te
-						krijgen van de sociale verbondenheid van mensen en uw rol hierin.
-						Om inzicht te krijgen in de groei van het netwerk biedt het
-						periodiek invullen van de vragen hiertoe inzicht. Om in
-						beeldspraak uit te leggen: elk moment van invullen levert een foto
-						op, diverse foto’s achter elkaar vormen tesamen een film.</P>
-					<P>De getoonde lijndikte in de visualisatie geeft de mate van
-						frequentie van contact weer, hoe dikker de lijn hoe vaker contact.
-						De lijnkleur is ‘domein’ of ‘rol’ waar je iemand van kent. Je kunt
-						zelf de mate van zichtbaarheid aangeven in drie gradaties:</P>
-					1. informatie alleen voor mezelf <br> 2. zodra de ander je
-					terug noemt mag deze inzien <br> 3. zichtbaar voor iedereen.<Br>
+        <div ng-show="page == 'form'">
+            <h1>Formulier</h1>
 
+            <div ng-show="!current">
+                <button ng-click="start()" title="Open een nieuw formulier">Nieuw</button>
+            </div>
+            <div ng-show="current">
+                <!-- form paging menu -->
+                <div>
+                    <div class="arrow"
+                         ng-class="{'arrow-selected': true}"
+                         ng-click="formPage = 'self'">
+                        <!--
+                        <div class="left"></div>
+                        -->
+                        <div class="content">
+                            Wie ben je?
+                        </div>
+                        <div class="right"></div>
+                    </div>
 
-					<p>
-						<input type="submit" ng-click="start()" value="start"
-							class="button" title="Start your network scan">
+                    <div class="arrow"
+                         ng-class="{'arrow-selected': (formPage=='contacts' || formPage=='score')}"
+                         ng-click="formPage = 'contacts'">
+                        <div class="left"></div>
+                        <div class="content">
+                            Wie ken je?
+                        </div>
+                        <div class="right"></div>
+                    </div>
 
-					</p>
-				</div>
-				<div ng-show="page == 'whoyou' && current">
-					<h4>
-						We leggen graag deze vraag aan u voor<br>Wie ben jij?
-					</h4>
-					<table>
-						<tr>
-							<td>Name</td>
-							<td><input type="text" ng-model="current.name" /></td>
-						</tr>
-						<tr>
-							<td>Age</td>
-							<td><input type="text" ng-model="current.age" /></td>
-						</tr>
-						<tr>
-							<td>Gender</td>
-							<td><select ng-model="current.gender">
-									<option value="MALE">Male</option>
-									<option value="FEMALE">Female</option>
-							</select></td>
-						</tr>
-						<tr>
-							<td>Profession</td>
-							<td><input type="text" ng-model="current.profession" /></td>
-						</tr>
+                    <div class="arrow"
+                         ng-class="{'arrow-selected': formPage=='score'}"
+                         ng-click="formPage = 'score'">
+                        <div class="left"></div>
+                        <div class="content">
+                            Je score...
+                        </div>
+                        <div class="right"></div>
+                    </div>
 
-					</table>
-					<input type="submit" ng-click="setPage('intro')" value="previous "
-						class="button" title="previous "> <input type="button"
-						ng-click="viewRelationpage()" value="next" class="button">
+                    <div style="clear:both;"></div>
+                </div>
 
-				</div>
-				<div ng-show=" page== 'relation' && current">
-					<h4>
-						Wij leggen graag deze vraag aan u voor<br> Wie spreekt u in
-						welk deelnetwerk het meest en hoe vaak
-					</h4>
-					<br> <br>
+                <!-- status -->
+                <div id="status">
+                    <span ng-show="saving">bezig met opslaan...</span>
+                    <span ng-show="deleting">bezig met verwijderen...</span>
+                    <span ng-show="loading">bezig met laden...</span>
+                </div>
 
-					<table>
-						<tr ng-show="current.relations.length">
-							<td>Deelnetwerk</td>
-							<td>Contact</td>
-							<td>Frequentie</td>
-							<td></td>
-						</tr>
-						<tr ng-repeat="relation in current.relations">
-							<td><select type="text" ng-model="relation.domain"
-								ng-options="domain for domain in domains" title="school">
-							</select></td>
-							<td><input type="text" autocomplete="names"
-								selection="relation.name" ng-model="relation.name" /></td>
+                <div ng-show="formPage=='self'">
+                    <h2>Wie ben je?</h2>
+                    <p>
+                        Vul je algemene gegevens in.
+                    </p>
+                    <div class="form-frame">
+                        <table>
+                            <tr><td>Email</td><td><input type="text" ng-model="current.id" /></td></tr>
+                            <tr><td>Naam</td><td><input type="text" ng-model="current.name" /></td></tr>
+                            <tr><td>Leeftijd</td><td><input type="text" ng-model="current.age" /></td></tr>
+                            <tr><td>Geslacht</td><td><select ng-model="current.gender">
+                                <option value="MALE">Man</option>
+                                <option value="FEMALE">Vrouw</option>
+                            </select></td></tr>
+                            <tr><td>Beroep</td><td><input type="text" ng-model="current.profession" /></td></tr>
+                        </table>
+                    </div>
 
-							<td><select type="text" ng-model="relation.frequency"
-								ng-options="frequency for frequency in frequencies"></select></td>
-							<td><button ng-click="deleteRelation(current, relation)"
-									title="Delete this relation">
-									<img ng-show="Delete this relation" src="img/close.png"
-										width="15" height="15">
-								</button></td>
-						</tr>
-						<tr>
-							<td><button ng-click="addRelation(current)"
-									title="Add relation" class="button">Add relation</button></td>
-							<td></td>
-							<td></td>
-							<td></td>
-						</tr>
-					</table>
-					<input type="submit" ng-click="setPage('whoyou')" value="previous "
-						class="button" title="previous "> <input type="button"
-						ng-click="save()" ng-disabled="saving" title="Save changes"
-						value="save" class="button"> <input type="button"
-						ng-click="cancel()" title="Cancel changes" value="cancel"
-						class="button"> <input type="button" ng-click="delete()"
-						ng-disabled="deleting" title="Delete {{current.name}}"
-						value="delete" class="button"> <span ng-show="saving">saving...</span>
-					<span ng-show="deleting">deleting...</span> <span ng-show="loading">loading...</span>
-				</div>
+                    <p>
+                        <button ng-disabled="true" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="formPage='contacts'" title="Volgende pagina">Volgende &#9658;</button>
+                    </p>
+                </div>
 
-				<div ng-show=" page == 'result'  && current ">
+                <div ng-show="formPage=='contacts'">
+                    <h2>Wie ken je?</h2>
+                    <p>
+                        Vul per deelnetwerk in welke relaties je heb en hoe regelmatig je contact met hen hebt.
+                    </p>
 
-					<h4>Network scan resulting score.</h4>
-					<br>
-					<table>
-						<tr ng-show="current.relations.length">
-							<td>Contact</td>
-							<td>Score</td>
-							<td>Deelnetwerk</td>
+                    <div class="form-frame">
+                        <table>
+                            <tr ng-show="current.relations.length">
+                                <td>Deelnetwerk</td>
+                                <td>Naam</td>
+                                <td>Frequentie</td>
+                                <td></td>
+                            </tr>
+                            <tr ng-repeat="relation in current.relations">
+                                <td><select type="text"
+                                            ng-model="relation.domain"
+                                            ng-options="domain for domain in domains"></select></td>
+                                <td><input type="text" autocomplete="names" selection="relation.name" ng-model="relation.name"/></td>
+                                <td><select type="text"
+                                            ng-model="relation.frequency"
+                                            ng-options="frequency for frequency in frequencies"></select></td>
+                                <td><a ng-click="deleteRelation(current, relation)"
+                                       class="delete"
+                                       title="Relatie verwijderen">&times;</a></td>
+                            </tr>
+                            <tr>
+                                <td><button ng-click="addRelation(current)" title="Voeg een relatie toe">Toevoegen</button></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
 
-						</tr>
-						<tr ng-repeat="relation in current.relations">
-							<td><input type="text" ng-model="relation.name" DISABLED /></td>
-							<td><input type="text" ng-model="relation.weight" DISABLED /></td>
-							<td><input type="text" ng-model="relation.domain" DISABLED /></td>
+                    <p>
+                        <button ng-click="formPage='self'" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="formPage='score'" title="Volgende pagina">Volgende &#9658;</button>
+                    </p>
+                </div>
 
-						</tr>
-					</table>
-					<br> <input type="button" ng-click="setPage('relation')"
-						title="previous" value="previous" class="button"> <input
-						type="button" ng-click="close()" title="close" value="close"
-						class="button">
+                <div ng-show="formPage=='score'">
+                    <h2>Score</h2>
+                    <p>
+                        nog niet geimplementeerd...
+                    </p>
 
-				</div>
+                    <p>
+                        <button ng-click="formPage='contacts'" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-disabled="true" title="Volgende pagina">Volgende &#9658;</button>
+                    </p>
+                </div>
 
-				<div ng-show="page == 'network' ">
-					<h4>
-						Netwerk visualisatie<img ng-show="networkLoading"
-							src="img/loading5.gif">
-					</h4>
-					<div id="network"></div>
-					<div id="backbtn" align="right">
-						<input type="button" ng-click="setPage('intro')" title="Back"
-							value="Back" class="button">
-					</div>
+                <!-- TODO: cleanup
+                <h2>Klaar?</h2>
+                <button ng-click="save()" ng-disabled="saving" title="Wijzigingen opslaan">Opslaan</button>
+                <button ng-click="cancel()" title="Wijzigingen annuleren">Annuleren</button>
+                <button ng-click="delete()" ng-disabled="deleting" title="{{current.name}} verwijderen">Verwijderen</button>
+                <!-- -->
+            </div>
+        </div>
 
+        <div ng-show="page == 'network'">
+            <h1>Netwerk in kaart <img ng-show="networkLoading" src="img/loading5.gif"></h1>
 
-				</div>
-			</div>
-		</div>
-	</div>
-	<div id="mindmap"></div>
+            <p>
+                De netwerk visualizatie toont het sociale netwerk van alle deelnemers.
 
-	<div id="footer">
-		<table align='center' width='100%'>
-			<tr>
-				<td class='footer'>
-					<p>
-						<b>Netwerk Scan</b>
-					</p> <a href='http://network-scan.appspot.com/ ' target='_blank'>
-						http://network-scan.appspot.com/</a>
-				</td>
-				<td class='footer'>
-					<p>
-						<b>Contact </b>
-					</p>
-					<p>
-						Tel: 010-4049444<br> <a
-							href='https://accounts.google.com/ServiceLogin?service=mail&passive=true&rm=false&continue=http://mail.google.com/mail/&scc=1&ltmpl=default&ltmplcache=2'
-							target='_blank'>info@stichtingzelforganisatie.nl</a>
-					</p>
-				</td>
-				<td class='footer'><a href='http://www.almende.com'
-					target='_blank'> <img src='img/almende-logo.png' class='logo'
-						title='This application is developed by Almende'></a></td>
-				<td class='footer'><a
-					href='http://www.youtube.com/user/Zelforganisatie' target='_blank'>
-						<img src='img/youtube_logo.jpg' title="youtube">
-				</a></td>
-			</tr>
+                De lijn dikte intensiteit (frequentie) van het contact weer,
+                hoe dikker de lijn hoe vaker contact.
+                De lijn kleur geeft het  'deelnetwerk' of de 'rol' waar je iemand van kent.
+                Je kunt zelf de mate van zichtbaarheid aangeven in drie gradaties:
+            </p>
 
-		</table>
-	</div>
+            <ol>
+                <li>informatie alleen voor mezelf</li>
+                <li>zodra de ander je terug noemt mag deze inzien</li>
+                <li>zichtbaar voor iedereen.</li>
 
+            </ol>
+
+            <div id="network"></div>
+        </div>
+
+        <div ng-show="page == 'score'">
+            <h1>Score</h1>
+            <p>
+                Nog niet geimplemeteerd...
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="contents-end"></div>
+</div>
+
+<div id="wrapper-bottom"></div>
+
+<div id="footer">
+    <div id="footer-top"></div>
+    <div id="footer-mid">
+        <div id="footer-blocks">
+            <div class="footer-block">
+                <h4>De Netwerk Scan</h4>
+                <p>
+                    <a href="http://denetwerkscan.appspot.com" target= "_blank">
+                        denetwerkscan.appspot.com</a>
+                </p>
+                <p>
+                    <a href="http://www.almende.com" target= "_blank">Ontwikkeld door Almende</a>
+                </p>
+            </div>
+            <div class="footer-block">
+                <h4>Contact</h4>
+                <p>
+                    Tel: 010-4049444
+                </p>
+                <p>
+                    <a href="mailto:info@stichtingzelforganisatie.nl" target= "_blank">info@stichtingzelforganisatie.nl</a>
+                </p>
+            </div>
+            <div class="footer-block">
+                <h4>Connect</h4>
+                <p>
+                    <a href="http://www.twitter.com/Zelforganisatie" target= "_blank">
+                        <img alt="twitter" width="84" height="17" src="img/z11org/twitter.png"/>
+                    </a>
+                </p>
+                <p>
+                    <a href="http://www.linkedin.com/groups?home=&gid=2956564" target= "_blank">
+                        <img alt="linkedin" width="84" height="19" src="img/z11org/linkedin.png"/></a>
+                </p>
+                <p>
+                    <a href="http://www.youtube.com/user/Zelforganisatie" target= "_blank">
+                        <img alt="youtube" width="64" height="24" src="img/z11org/youtube.png"/>
+                    </a>
+                </p>
+            </div>
+            <div class="footer-block-end"></div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -8,10 +8,5 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-core-2.0.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-databind-2.0.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/twig-persist-2.0-beta4.jar"/>
-	<classpathentry kind="lib" path="D:/selfOrganizationTest/almende-selforganizationtest-34ba9c4/war/WEB-INF/lib/guava-11.0.2.jar"/>
-	<classpathentry kind="lib" path="D:/selfOrganizationTest/almende-selforganizationtest-34ba9c4/war/WEB-INF/lib/jackson-annotations-2.0.0.jar"/>
-	<classpathentry kind="lib" path="D:/selfOrganizationTest/almende-selforganizationtest-34ba9c4/war/WEB-INF/lib/jackson-core-2.0.0.jar"/>
-	<classpathentry kind="lib" path="D:/selfOrganizationTest/almende-selforganizationtest-34ba9c4/war/WEB-INF/lib/jackson-databind-2.0.0.jar"/>
-	<classpathentry kind="lib" path="D:/selfOrganizationTest/almende-selforganizationtest-34ba9c4/war/WEB-INF/lib/twig-persist-2.0-beta4.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

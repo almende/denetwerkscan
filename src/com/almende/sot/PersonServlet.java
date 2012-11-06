@@ -2,6 +2,7 @@ package com.almende.sot;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.appengine.api.urlfetch.HTTPRequest;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 import entity.Person;
 
@@ -44,7 +48,7 @@ public class PersonServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws JsonParseException, JsonMappingException, IOException {
-		Long id = getPersonId(req);		
+		String id = getPersonId(req);		
 		if (id != null) {
 			Person person = PersonService.get(id);
 			if (person != null) {
@@ -85,7 +89,7 @@ public class PersonServlet extends HttpServlet {
 				}
 				write(resp, nodes);
 			}
-		}		
+		}
 	}
 
 	/**
@@ -100,7 +104,7 @@ public class PersonServlet extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws JsonParseException, JsonMappingException, ServletException, 
 			IOException {
-		Long id = getPersonId(req);
+		String id = getPersonId(req);
 		if (id != null) {
 			throw new ServletException("unexpected id in url");
 		}
@@ -122,13 +126,13 @@ public class PersonServlet extends HttpServlet {
 	public void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws JsonParseException, JsonMappingException, ServletException, 
 			IOException {
-		Long id = getPersonId(req);
+		String id = getPersonId(req);
 		if (id == null) {
 			throw new ServletException("id missing in url");
 		}
 		
 		Person person = read(req, Person.class);
-		Long currentId = person.getId();
+		String currentId = person.getId();
 		if (currentId != null && !currentId.equals(id)) {
 			throw new ServletException ("Error: id in url does not match id in person");
 		}
@@ -149,7 +153,7 @@ public class PersonServlet extends HttpServlet {
 	@Override
 	public void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		Long id = getPersonId(req);
+		String id = getPersonId(req);
 		if (id == null) {
 			throw new ServletException("id missing in url");
 		}
@@ -200,12 +204,13 @@ public class PersonServlet extends HttpServlet {
 	 * @param req
 	 * @return id
 	 */
-	private static Long getPersonId(HttpServletRequest req) {
-		Long id = null;
+	private static String getPersonId(HttpServletRequest req) {
+		String id = null;
 		String uri = req.getRequestURI();
 		String[] path = uri.split("/");
 		if (path.length > 2) {
-			id = Long.valueOf(path[2]);
+			//id = Long.valueOf(path[2]);
+			id = path[2];
 		}
 		return id;
 	}
@@ -224,4 +229,34 @@ public class PersonServlet extends HttpServlet {
 		}
 		return out.toString();
 	}
+	
+	private String getUsername(HttpServletRequest req) {
+		UserService userService = UserServiceFactory.getUserService();
+
+		Principal principal = req.getUserPrincipal();
+		
+		if (principal != null) {
+			return principal.getName();
+		}
+		
+		return null;
+		
+		/*
+        String thisURL = req.getRequestURI();
+
+        resp.setContentType("text/html");
+        if (req.getUserPrincipal() != null) {
+            resp.getWriter().println("<p>Hello, " +
+                                     req.getUserPrincipal().getName() +
+                                     "!  You can <a href=\"" +
+                                     userService.createLogoutURL(thisURL) +
+                                     "\">sign out</a>.</p>");
+        } else {
+            resp.getWriter().println("<p>Please <a href=\"" +
+                                     userService.createLoginURL(thisURL) +
+                                     "\">sign in</a>.</p>");
+        }	
+        */	
+	}
+	
 }

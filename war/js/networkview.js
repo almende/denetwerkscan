@@ -8,8 +8,8 @@
  *                               the connections a width
  */
 function loadNetwork (container, persons, domains, frequencies) {
-	
     var network = new links.Network(container);
+
     var nodes = [];
     var connections = [];
     var ids = {};
@@ -31,7 +31,8 @@ function loadNetwork (container, persons, domains, frequencies) {
      * @private
      */
     function addPerson(person) {
-        // TODO: check if name and id are defined in person        
+        // TODO: check if name and id are defined in person
+
         var name = person.name;
         var id = ids[name];
         if (id == undefined) {
@@ -39,7 +40,7 @@ function loadNetwork (container, persons, domains, frequencies) {
             nodes.push({
                 "id": id,
                 "text": name,
-                "title": "Person<br>Name: " + name
+                "title": "Persoon<br>Naam: " + name
             });
             ids[name] = id;
         }
@@ -56,8 +57,8 @@ function loadNetwork (container, persons, domains, frequencies) {
     function addRelation(from, to, domain, frequency) {
         // TODO: check if from and to are not undefined
 
-        var value = frequencies.indexOf(frequency);
-        var title = 'Relation<br>Domain: ' + domain + ',<br>' + 'Frequency: ' + frequency;
+        var value = frequencies.length - 1 - frequencies.indexOf(frequency);
+        var title = 'Relatie<br>Deelnetwerk: ' + domain + ',<br>' + 'Frequentie: ' + frequency;
         connections.push({
             "from": from,
             "to": to,
@@ -70,9 +71,9 @@ function loadNetwork (container, persons, domains, frequencies) {
     // process the data
     for (var i = 0, iMax = persons.length; i < iMax; i++) {
         var person = persons[i];
-        var id = addPerson(person);        
+        var id = addPerson(person);
+
         var relations = person.relations;
-        console.log(relations);
         if (relations) {
             for (var j = 0, jMax = relations.length; j < jMax; j++) {
                 var relation = relations[j];
@@ -84,7 +85,7 @@ function loadNetwork (container, persons, domains, frequencies) {
 
     // initialize options
     var options = {
-        "width": "600px",
+        "width": "650px",
         "height": "400px",
         "borderColor": "lightgray",
         "nodes": {
@@ -112,7 +113,7 @@ function loadNetwork (container, persons, domains, frequencies) {
     }
     var legend = document.createElement('div');
     legend.className = 'legend';
-    legend.innerHTML = "Deelnetwerken: " + labels.join(', ');
+    legend.innerHTML = "Legenda: " + labels.join(', ');
     container.appendChild(legend);
 
     return network;

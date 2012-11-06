@@ -22,7 +22,6 @@ myApp.directive('autocomplete', function($parse) {
 
 /**
  * Angular JS controller to control the page
- * 
  * @constructor Ctrl
  */
 function Controller($scope, $resource) {
@@ -33,40 +32,40 @@ function Controller($scope, $resource) {
         'find': {method: 'GET', isArray: true}
     });
 
-    $scope.tests = [   
-        'Netwerk scan 2012'
+    $scope.tests = [
+        'netwerk_scan_1'
     ];
-    $scope.test = $scope.tests[0];// default
+    $scope.test = $scope.tests[0];
+    $scope.page = 'intro';    // Available: 'intro', 'form', 'network', 'score'
+    $scope.formPage = 'self'; // Available: 'self', 'contacts', 'score'
 
     $scope.domains = [
-                      
         'Familie',
-        'Colleague',
-        'Friends',
-        'School',
-        'Free time (hobbies, sports, etc.)',
-        'Neighbors'      
-
+        'Collega',
+        'Vriend',
+        'Studie',
+        'Hobby',
+        'Buur'
     ];
 
     $scope.frequencies = [
-        'Almost never',
-        '1x per three months',
-        '1x per six months',
-        '1x per year',
-        '1x per week',
+        'Dagelijks',
         '2x per week',
-        'Daily'
+        '1x per week',
+        '4x per jaar',
+        '2x per jaar',
+        '1x per jaar',
+        'Bijna nooit'
     ];
 
     $scope.persons = [];
     $scope.names = [];          // list with names used for auto-completion
     $scope.current = undefined; // current person
-    $scope.rel=[];
 
     /**
-	 * Query all persons. Persons are filtered by the currently selected test
-	 */
+     * Query all persons.
+     * Persons are filtered by the currently selected test
+     */
     $scope.query = function () {
         var params = {
             'test': $scope.test
@@ -76,16 +75,15 @@ function Controller($scope, $resource) {
             $scope.names = [];
             for (var i = 0; i < $scope.persons.length; i++) {
                 var name = $scope.persons[i].name;
-                $scope.names.push(name);             
-              }
-               
-            };     
+                $scope.names.push(name);
+            }
+        };
+
         $scope.querying = true;
         $scope.persons = Person.find(params, undefined, function () {
             $scope.querying = false;
             updateNames();
         });
-        
     };
 
     // create a watch which reloads persons when the test changes
@@ -93,47 +91,48 @@ function Controller($scope, $resource) {
         $scope.current = undefined;
         $scope.query();
     });
-    /**
-	 * Create hide/show to allow users to get information step by step
-	 */
 
-    $scope.viewRelationpage = function(){
-    	$scope.setPage('relation');
-    }   
-    
+    // store the input form when the page changes
+    $scope.$watch('formPage', function () {
+        $scope.save();
+    });
+    $scope.$watch('page', function (newPage, oldPage) {
+        if (oldPage == 'form') {
+            $scope.save();
+        }
+    });
+
     /**
-	 * Create a new person
-	 */
-    $scope.start = function () { 
-    	$scope.setPage('whoyou');
-        $scope.current = {};
+     * Create a new person
+     */
+    $scope.start = function () {
+        $scope.page = 'form';
+        $scope.formPage = 'self';
+        $scope.current = {
+            relations: [
+                {}
+            ]
+        };
     };
 
     /**
-	 * Add a relation
-	 * 
-	 * @param {Object}
-	 *            person
-	 */
+     * Add a relation
+     * @param {Object} person
+     */
     $scope.addRelation = function (person) {
         var relations = person.relations;
-        
         if (!relations) {
             relations = [];
             person.relations = relations;
         }
         relations.push({});
-       
     };
 
     /**
-	 * Remove a relation
-	 * 
-	 * @param {Object}
-	 *            person
-	 * @param {Object}
-	 *            relation
-	 */
+     * Remove a relation
+     * @param {Object} person
+     * @param {Object} relation
+     */
     $scope.deleteRelation = function (person, relation) {
         var relations = person.relations;
         if (!relations) {
@@ -145,143 +144,91 @@ function Controller($scope, $resource) {
             relations.splice(index, 1);
         }
     };
-  
 
     /**
-	 * Set view for the contents of the page
-	 * 
-	 * @param {String}
-	 *            view Available views: "intro","whoyou", "relation" "result"
-	 *            and "network"
-	 */
-    $scope.setPage = function (page) {
-        $scope.page = page;
-    };
-
-    /**
-	 * Load a person by id
-	 * 
-	 * @param {Number}
-	 *            id
-	 */
+     * Load a person by id
+     * @param {Number} id
+     */
     $scope.load = function (id) {
-        $scope.setPage("whoyou");
+        $scope.page = 'form';
+        $scope.formPage = 'self';
         $scope.loading = true;
         $scope.current = Person.get({'id': id}, undefined, function () {
             $scope.loading = false;
+            $scope.markUnchanged();
         });
     };
-    /**
-     * Assign weight per domain for score
-     */
-    $scope.score = function (id) {  
-        $scope.setPage('result');
-    	var person = $scope.current;
-    	var relations = person.relations;
-    	for (var i = 0 ; i< relations.length; i++){
-    		var domain = person.relations[i].domain;
-    		if(domain =='Familie'){
-    			person.relations[i].weight = 1;    			
-    		}
-    		else if(domain == 'Neighbors'){
-    			person.relations[i].weight = 0.5;    			
-    		}
-    		else if(domain == 'Friends'){
-    			person.relations[i].weight = 0.25;
-    		}
-    		else if(domain == 'Colleague'){
-    			person.relations[i].weight = 0.125;
-    		}
-    		else if(domain == 'School'){
-    			person.relations[i].weight = 0.125;
-    		}
-    		else if(domain == 'Free time (hobbies, sports, etc.)'){
-    			person.relations[i].weight = 0.125;
-    		}
-    			
-    	}
-        
-    };
-    /**
-	 * Sort the JSON object of relations for current person
-	 */
-    $scope.sort = function (id) {  
-    	var data = $scope.current.relations;
-    	data.sort(function(a, b) {
-    		if(a.weight < b.weight){
-    			return 1;
-    		}else if(a.weight>b.weight){
-    			return -1;
-    		}else{ 
-    			return 0;
-    		}
-         });
 
-    }
     /**
-	 * Save the current person
-	 */
-    $scope.save = function () {    	
-        if ($scope.current) {
-            $scope.current.test = $scope.test;
-            $scope.saving = true;
-            var id = $scope.current.id;
-            var onSave = function () {
-                $scope.saving = false;
-               // $scope.cancel();
-                $scope.query();
-                $scope.score($scope.current.id);
-                $scope.sort($scope.current.id)
-            };
-            if (id == undefined) {
-                // create new
-                $scope.current = Person.create({}, $scope.current, onSave);
-            }
-            else {
-                // update existing
-                $scope.current = Person.update({'id': id}, $scope.current, onSave);                
+     * Save the current person
+     */
+    $scope.save = function () {
+        if ($scope.current && $scope.current.id) {
+            if ($scope.isChanged()) {
+                // save when changed
+                $scope.markUnchanged();
+
+                var id = $scope.current.id;
+                $scope.current.test = $scope.test;
+                $scope.saving = true;
+                $scope.current = Person.update({'id': id}, $scope.current, function () {
+                    $scope.saving = false;
+                    $scope.query();
+                });
             }
         }
-        
     };
 
     /**
-	 * Cancel editing the current person
-	 */
+     * Mark the current form as unchanged
+     */
+    $scope.markUnchanged = function () {
+        $scope.currentPrev = JSON.stringify(angular.toJson($scope.current));
+    };
+
+    /**
+     * Check whether the form contents have changed since the last
+     * markUnchanged()
+     * @return {Boolean} changed
+     */
+    $scope.isChanged = function () {
+        var currentNow = JSON.stringify(angular.toJson($scope.current));
+        return (currentNow != $scope.currentPrev);
+    };
+
+    /**
+     * cancel editing the current person
+     */
     $scope.cancel = function () {
         $scope.current = undefined;
-        $scope.setPage("intro");
     };
 
     /**
-	 * Delete the current person
-	 */
-    $scope.delete = function () {
-        if ($scope.current && confirm("Do you really want to delete " + $scope.current.name + '?')) {
-            var id = $scope.current.id;
-            if (id) {
-                var onDelete = function () {
-                    $scope.deleting = false;
-                    $scope.current = undefined;
-                    $scope.query();
-                };
-                $scope.deleting = true;
-                Person.delete({'id': id}, undefined, onDelete);
+     * Delete a person by id
+     * @param {String} id
+     * @param {String} [name]
+     */
+    $scope.delete = function (id, name) {
+        if (id &&  confirm('Weet je zeker dat je ' + (name || id) + ' wilt verwijderen?')) {
+            var onDelete = function () {
+                $scope.deleting = false;
+                $scope.query();
+            };
+            $scope.deleting = true;
+            Person.delete({'id': id}, undefined, onDelete);
+
+            if ($scope.current.id == id) {
+                $scope.current = undefined;
             }
-            $scope.cancel();
         }
     };
 
     /**
-	 * load network page
-	 */
-        
+     * load network page
+     */
     $scope.showNetwork = function () {
-    	$scope.setPage("network");
+        $scope.page = 'network';
         if (!$scope.network) {
-            // close any opened person
-            $scope.cancel();
-            $scope.setPage("network");
             // retrieve all data with documents
             var params = {
                 'test': $scope.test,
@@ -289,15 +236,14 @@ function Controller($scope, $resource) {
             };
             $scope.networkLoading = true;
             var data = Person.query(params, undefined, function () {
-                // load container page
+                // load container view
                 var container = document.getElementById('network');
                 loadNetwork(container, data, $scope.domains, $scope.frequencies);
                 $scope.networkLoading = false;
             });
         }
     };
+
     // retrieve persons now
     $scope.query();
-    $scope.setPage("intro");
-
 }

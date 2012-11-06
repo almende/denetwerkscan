@@ -2,47 +2,72 @@
 body, html {
     padding: 0;
     margin: 0;
-    font-size: 11pt;
-    font-family: 'TheMix' url('http://www.z11org.nl/documents/10156/cf1f6aa3-dc43-4fbb-8482-45a39b455ce9');
-    color: #4D4D4D;
+    background: repeat-x url('../img/z11org/topdarkbg.jpg');
+    line-height: 22px;
 }
 
-#container {
-    width: 900px;
+
+body, html, td, tr, button, select, input {
+    font-family: Arial, Helvetica, Verdana, sans-serif;
+    font-size: 11px;
+    color: #39322A;
+}
+
+#container, #header, #nav {
+    width: 960px;
     margin: 0 auto;
 }
 
 #header {
-	margin: 0 auto;
-    background: #2B7CE9 url('../img/topdarkbg.jpg');
-    height : 75px; 
+    padding: 0;
+    margin: 0 auto;
+    height: 90px;
 }
-#subheader {
-	align: right;
-    font-family: serif;
-    font-weight: bold;
-    color: white; 
-    text-align: right;    
-}
-#subheader-bg{
-    align: center; 
-    background: #2B7CE9 url('../img/subheaderbgwidexxs.jpg'); 
-    height:80px;   	
-}
-#nav {
-    font-size: 13pt;
-    margin: 0 15px 15px 15px;
-    align: center;
-    text-align: left;
-    display: block;
-    width: 960px;
-}
-ul, li, a {
-	display: inline;
-	color:white;
-}	
 
-#wrap_menu {
+#logo {
+    width: 470px;
+    height: 80px;
+    border: none;
+}
+
+#nav {
+    height: 56px;
+}
+
+#nav ul {
+    margin: 0;
+    padding: 0;
+}
+
+#nav ul li {
+    float: left;
+    height: 56px;
+    list-style: none;
+    background: center top no-repeat url('../img/z11org/lava.gif');
+}
+
+#nav ul li a {
+    color: white;
+    font: bold 14px arial;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    display: block;
+    margin: 0;
+    padding: 19px 10px;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+#subheader {
+    background: url('../img/z11org/subheaderbgwidexxs.jpg');
+    height: 106px;
+    width: 1038px;
+    margin: 0 auto;
+}
+
+
+#wrap-menu {
     width: 200px;
     float: left;
     overflow: auto;
@@ -50,91 +75,199 @@ ul, li, a {
 
 #menu {
     padding: 10px 10px 60px 0;
+    min-height: 500px;
 }
 
-#wrap_contents {
+#wrap-contents {
     width: 700px;
     float: left;
     overflow: auto;
+    min-height: 400px;
 }
 
 #contents {
     padding: 10px 0 60px 40px;
-    min-height: 600px;
+}
+
+div.form-frame {
+    background-color: #f5f5f5;
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+    border-radius: 2px;
+}
+
+#contents-end {
+    clear: both;
+}
+
+#wrapper-bottom {
+    background: url('../img/z11org/wrapperbottom.jpg');
+    height: 145px;
+    width: 1020px;
+    margin: 0 auto;
 }
 
 #footer {
-    clear: both;
-    border-top: 2px solid #E5E5E5;   
-    height:80px; 
-    background-color: #373734;
-   
+    background: #363636;
+    width: 100%;
+    min-width: 1038px;
+    margin: 0;
+    padding: 0;
 }
 
-.logo {
-    height:35px;
+#footer-top {
+    background: repeat-x url('../img/z11org/footertopsmalldark.jpg');
+    height: 10px;
 }
-body, table { 
-				font-family: 'TheMix'; src:url('http://www.z11org.nl/documents/10156/cf1f6aa3-dc43-4fbb-8482-45a39b455ce9');
-				font-size: 12px;
-				color: black;
-			}
-td.footer {
-    padding: 10px;
-    text-align: center;
-    font-size: 110%;
-    color:white;
-    
+
+#footer-mid {
+    margin: 0 auto;
+    padding: 20px 0 30px 0;
+    width: 700px;
+}
+
+#footer-mid div {
+    color: #ccc;
+}
+
+#footer-mid div a {
+    color: #ccc;
+    text-decoration: none;
+    font-weight: bold;
+}
+#footer-mid div a:hover {
+    color: white;
+}
+
+#footer-blocks {
+}
+
+div.footer-block {
+    float: left;
+    margin: 0 40px;
+}
+
+div.footer-block-end {
+    clear: both;
 }
 
 h1 {
-    font-size: 15pt;
+    font-family: TheMix, sans-serif;
+    font-size: 1.8em;
     font-weight: bold;
+    font-style: normal;
+    color: #009FC6;
+    text-align: left;
+    margin: 1em 0;
+}
+
+.h1-subtitle {
+    font-size: 0.7em;
     font-style: italic;
-    margin: 0 10px 10px 10px;
+    font-weight: normal;
+    display: block;
 }
 
-h4{
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
-    color: #239ECB;
+h2 {
+    font-family: TheMix, sans-serif;
+    font-size:  1.5em;
+    font-weight: bold;
+    font-style: normal;
+    color: #9C0;
+    margin: 1em 0;
 }
 
-.listitem {
+h4 {
+    color: white;
+    font-size: 1.3em;
+    margin: 0 0 10px;
+}
+
+a.refresh {
+    padding: 0 5px;
+    color: #39322A;
+}
+
+a.refresh:hover {
+    color: #009FC6;
+}
+
+a.page, a.person {
     padding: 10px 5px;
     display: block;
+    text-decoration: none;
+    color: #39322A;
     border-radius: 2px;
-    cursor: pointer;
+}
+a.page:hover, a.selected, div.listitem:hover, div.listitem:hover a.person {
+    color: #009FC6;
+    background-color: #f5f5f5;
 }
 
-.listitem:hover {
-    background-color: #e5e5e5;
-    color: black;
+a.person {
+    width: 75%;
+    float: left;
+}
+
+a.delete {
+    color: gray;
+    font-size: 28px;
+    text-decoration: none;
+
+    float: right;
+}
+a.delete:hover {
+    color: #FA0A10;
+}
+div.listitem a.delete {
+    display: block;
+    padding: 6px;
+    margin: 0;
+}
+
+div.listitem a.delete {
+    visibility: hidden;
+}
+div.listitem:hover a.delete {
+    visibility: visible;
 }
 
 input[type="text"] {
-    border: 0.2px ,solid, lightgray;
+    border: 1px solid lightgray;
     border-radius: 2px;
 }
 
-.button {
-	font-size:13pt;
-	padding:5px 20px;
-	background-color:#9AC00A;
-	color:white;
-	border:1px solid #CEDE92;
-}
-#buttonback {
-	align: right;
-}
-select, input {
-    font-size: 11pt;
+button, select, input {
     padding: 5px;
     margin-bottom: 10px;
 }
 
+button {
+    font-family: TheMix, sans-serif;
+    color: white;
+    background-color: #9C0;
+    border: none;
+    border-radius: 2px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #b0e600;
+}
+button:disabled {
+    background-color: #e5e5e5;
+    color: gray;
+    cursor: default;
+}
+
+
 .legend {
     margin: 10px 0;
+}
+
+#status {
+    min-height: 22px;
+    color: #FA0A10;
 }
 
 /* auto completion */
@@ -162,7 +295,84 @@ li.ui-menu-item a {
 }
 #ui-active-menuitem {
     background-color: white;
-    color: orange;
+    color: #9C0;
     border: 1px solid lightgray;
     border-radius: 2px;
+}
+
+
+div.arrow {
+    background: #E5E5E5;
+    float: left;
+    cursor: pointer;
+}
+div.arrow div.right, div.arrow div.left {
+    width: 0;
+    height: 0;
+    float: left;
+}
+div.arrow div.right {
+    border-top: 15px solid white;
+    border-bottom: 15px solid white;
+}
+div.arrow div.left {
+    border-top: 15px solid #E5E5E5;
+    border-bottom: 15px solid #E5E5E5;
+}
+div.arrow div.content {
+    /* height + padding-top + padding-bottom = 30px */
+    height: 18px;
+    padding: 4px 10px 8px 10px;
+    float: left;
+    color: #39322A;
+}
+div.arrow div.left {
+    border-left: 7px solid white;
+}
+div.arrow div.right {
+    border-left: 7px solid #E5E5E5;
+}
+
+/* selected */
+div.arrow-selected {
+    background: #9C0;
+}
+div.arrow-selected div.content {
+    color: white;
+}
+div.arrow-selected div.right {
+    border-left: 7px solid #9C0;
+}
+div.arrow-selected div.left {
+    border-top-color: #9C0;
+    border-bottom-color: #9C0;
+}
+
+/* mouse hover */
+div.arrow:hover {
+    background: #f5f5f5;
+}
+div.arrow:hover div.content {
+}
+div.arrow:hover div.right {
+    border-left: 7px solid #f5f5f5;
+}
+div.arrow:hover div.left {
+    border-top-color: #f5f5f5;
+    border-bottom-color: #f5f5f5;
+}
+
+/* mouse hover selected */
+div.arrow-selected:hover {
+    background: #b0e600;
+}
+div.arrow-selected:hover div.content {
+    color: white;
+}
+div.arrow-selected:hover div.right {
+    border-left: 7px solid #b0e600;
+}
+div.arrow-selected:hover div.left {
+    border-top-color: #b0e600;
+    border-bottom-color: #b0e600;
 }
