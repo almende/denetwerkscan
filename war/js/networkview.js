@@ -58,7 +58,9 @@ function loadNetwork (container, persons, domains, frequencies) {
         // TODO: check if from and to are not undefined
 
         var value = frequencies.length - 1 - frequencies.indexOf(frequency);
-        var title = 'Relatie<br>Deelnetwerk: ' + domain + ',<br>' + 'Frequentie: ' + frequency;
+        var title = 'Relatie' + '<br>' +
+            'Deelnetwerk: ' + domain + '<br>' +
+            'Frequentie: ' + frequency;
         connections.push({
             "from": from,
             "to": to,

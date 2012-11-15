@@ -169,6 +169,9 @@ function Controller($scope, $resource) {
      * @param {Number} id
      */
     $scope.load = function (id) {
+        // first save any changes
+        $scope.save();
+
         $scope.page = 'form';
         $scope.formPage = 'self';
         $scope.loading = true;
@@ -221,6 +224,16 @@ function Controller($scope, $resource) {
                 });
             }
         }
+    };
+
+    $scope.describeGender = function (gender) {
+        if (gender == 'MALE') {
+            return 'Man';
+        }
+        if (gender == 'FEMALE') {
+            return 'Vrouw';
+        }
+        return '';
     };
 
     /**

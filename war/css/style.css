@@ -211,7 +211,8 @@ a.page, a.person {
     color: #39322A;
     border-radius: 2px;
 }
-a.page:hover, div.listitem:hover, div.person:hover, a.selected, div.selected {
+a.page:hover, div.listitem:hover, div.person:hover, div.person:hover a.person,
+        a.selected, div.selected, div.selected a.person {
     color: #009FC6;
     background-color: #f5f5f5;
 }
@@ -242,24 +243,14 @@ div.person a.delete {
     padding: 6px;
     margin: 0;
 }
-/*
-div.person a.delete {
-    visibility: hidden;
-}
-div.person:hover a.delete {
-    visibility: visible;
-}
-
-div.person a.delete:hover > div.person {
-    background-color: red;
-}*/
 
 input[type="text"] {
     border: 1px solid lightgray;
     border-radius: 2px;
 }
+
 input[readonly="readonly"] {
-    background-color: #f5f5f5;
+    background-color: #e5e5e5;
 }
 
 button, select, input {

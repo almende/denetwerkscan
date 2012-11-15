@@ -152,7 +152,7 @@
         </div>
 
         <div ng-show="page == 'form'">
-            <h1>Formulier</h1>
+            <h1>Gegevens</h1>
 
             <div ng-show="!user.email">
                 <p>
@@ -220,29 +220,33 @@
                             <tr><td>Email</td><td>
                                 <input type="text"
                                        ng-model="current.id"
-                                       ng-disabled="!isAdmin()"/>
+                                       ng-readonly="!isAdmin()"/>
                             </td></tr>
                             <tr><td>Naam</td><td>
                                 <input type="text"
                                        ng-model="current.name"
-                                       ng-disabled="readonly" />
+                                       ng-readonly="readonly" />
                             </td></tr>
                             <tr><td>Leeftijd</td><td>
                                 <input type="text"
                                        ng-model="current.age"
-                                       ng-disabled="readonly" />
+                                       ng-readonly="readonly" />
                             </td></tr>
                             <tr><td>Geslacht</td><td>
                                 <select ng-model="current.gender"
-                                        ng-disabled="readonly">
+                                        ng-hide="readonly">
                                     <option value="MALE">Man</option>
                                     <option value="FEMALE">Vrouw</option>
                                 </select>
+                                <input type="text"
+                                       value="{{describeGender(current.gender) }}"
+                                       ng-show="readonly"
+                                       ng-readonly="true" />
                             </td></tr>
                             <tr><td>Beroep</td><td>
                                 <input type="text"
                                        ng-model="current.profession"
-                                       ng-disabled="readonly" />
+                                       ng-readonly="readonly" />
                             </td></tr>
                         </table>
                     </div>
@@ -268,19 +272,29 @@
                                 <td></td>
                             </tr>
                             <tr ng-repeat="relation in current.relations">
-                                <td><select ng-model="relation.domain"
+                                <td>
+                                    <select ng-model="relation.domain"
                                             ng-options="domain for domain in domains"
-                                            ng-disabled="readonly"></select>
+                                            ng-hide="readonly"></select>
+                                    <input type="text"
+                                           ng-model="relation.domain"
+                                           ng-show="readonly"
+                                           ng-readonly="true" />
                                 </td>
                                 <td><input type="text"
                                            autocomplete="names"
                                            selection="relation.name"
                                            ng-model="relation.name"
-                                           ng-disabled="readonly" />
+                                           ng-readonly="readonly" />
                                 </td>
-                                <td><select ng-model="relation.frequency"
+                                <td>
+                                    <select ng-model="relation.frequency"
                                             ng-options="frequency for frequency in frequencies"
-                                            ng-disabled="readonly"></select>
+                                            ng-hide="readonly"></select>
+                                    <input type="text"
+                                           ng-model="relation.frequency"
+                                           ng-show="readonly"
+                                           ng-readonly="true" />
                                 </td>
                                 <td class="delete">
                                     <a ng-click="deleteRelation(current, relation)"
