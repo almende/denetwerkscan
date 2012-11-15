@@ -2,7 +2,6 @@ package com.almende.sot;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.appengine.api.urlfetch.HTTPRequest;
+import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
@@ -48,7 +47,14 @@ public class PersonServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws JsonParseException, JsonMappingException, IOException {
-		String id = getPersonId(req);		
+		String id = getPersonId(req);
+
+		// authorize the user
+		if (!authorize(ACTION.GET, id)) {
+			resp.sendError(403); 
+			return;
+		}
+
 		if (id != null) {
 			Person person = PersonService.get(id);
 			if (person != null) {
@@ -109,6 +115,12 @@ public class PersonServlet extends HttpServlet {
 			throw new ServletException("unexpected id in url");
 		}
 
+		// authorize the user
+		if (!authorize(ACTION.POST, null)) {
+			resp.sendError(403); // not authorized
+			return;
+		}
+
 		Person person = read(req, Person.class);
 		Person updatedPerson = PersonService.put(person);
 		write(resp, updatedPerson);
@@ -130,7 +142,13 @@ public class PersonServlet extends HttpServlet {
 		if (id == null) {
 			throw new ServletException("id missing in url");
 		}
-		
+			
+		// authorize the user
+		if (!authorize(ACTION.PUT, id)) {
+			resp.sendError(403); // not authorized
+			return;
+		}
+
 		Person person = read(req, Person.class);
 		String currentId = person.getId();
 		if (currentId != null && !currentId.equals(id)) {
@@ -157,12 +175,50 @@ public class PersonServlet extends HttpServlet {
 		if (id == null) {
 			throw new ServletException("id missing in url");
 		}
+		
+		// authorize the user
+		if (!authorize(ACTION.DELETE, id)) {
+			resp.sendError(403); // not authorized
+			return;
+		}
 
 		Person person = PersonService.get(id);
 		if (person != null) {
 			PersonService.delete(person);
 		}
 	}
+
+	/**
+	 * Authorize changing a person (get, put, post, delete)
+	 * @param action
+	 * @param id     The id of the person
+	 * @return authorized    True if authorized, else false
+	 */
+	private boolean authorize(ACTION action, String id) {
+		UserService userService = null;
+		switch (action) {
+			case GET:
+				return true;
+			
+			case PUT:
+			case POST:
+			case DELETE:
+				userService = UserServiceFactory.getUserService();
+				if (userService.isUserLoggedIn()) {
+					User user = userService.getCurrentUser();
+					String email = user.getEmail();
+					if (userService.isUserAdmin() || 
+							(id != null && email != null && email.equals(id))) {
+						return true;
+					}
+				}
+		}
+
+		return false;
+	}
+
+	// enumeration for authorization actions
+	private enum ACTION {GET, PUT, POST, DELETE};
 	
 	/**
 	 * Read the body of the given http request, which is supposed to contain a
@@ -181,7 +237,7 @@ public class PersonServlet extends HttpServlet {
 		String body = streamToString(req.getInputStream());
 		return mapper.readValue(body, type);
 	}
-	
+
 	/**
 	 * Write a Java Object as JSON into the given HTTP response body.
 	 * @param req
@@ -229,34 +285,4 @@ public class PersonServlet extends HttpServlet {
 		}
 		return out.toString();
 	}
-	
-	private String getUsername(HttpServletRequest req) {
-		UserService userService = UserServiceFactory.getUserService();
-
-		Principal principal = req.getUserPrincipal();
-		
-		if (principal != null) {
-			return principal.getName();
-		}
-		
-		return null;
-		
-		/*
-        String thisURL = req.getRequestURI();
-
-        resp.setContentType("text/html");
-        if (req.getUserPrincipal() != null) {
-            resp.getWriter().println("<p>Hello, " +
-                                     req.getUserPrincipal().getName() +
-                                     "!  You can <a href=\"" +
-                                     userService.createLogoutURL(thisURL) +
-                                     "\">sign out</a>.</p>");
-        } else {
-            resp.getWriter().println("<p>Please <a href=\"" +
-                                     userService.createLoginURL(thisURL) +
-                                     "\">sign in</a>.</p>");
-        }	
-        */	
-	}
-	
 }

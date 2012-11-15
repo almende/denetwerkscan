@@ -16,10 +16,26 @@
 </head>
 
 <body>
+
+<div id="container" ng-controller="Controller">
+
+
 <div id="header">
     <a href="http://www.z11org.nl/">
         <img src="img/z11org/logo.jpg" alt="logo" id="logo">
     </a>
+    <div id="user-menu">
+        <div ng-show="user">
+            <span ng-show="user.email" title="{{userTitle()}}">
+                [{{user.email}}]
+            </span>
+            <a ng-show="user.isLoggedIn" href="{{user.logoutUrl}}">uitloggen</a>
+            <a ng-show="!user.isLoggedIn" href="{{user.loginUrl}}">inloggen</a>
+        </div>
+        <div ng-hide="user" style="color: gray;">
+            bezig met laden...
+        </div>
+    </div>
 </div>
 
 <div id="nav">
@@ -31,8 +47,6 @@
 </div>
 
 <div id="subheader"></div>
-
-<div id="container" ng-controller="Controller">
 
 <div id="wrap-menu">
     <div id="menu">
@@ -67,8 +81,12 @@
                    placeholder="zoeken..." />
         </div>
         <div ng-repeat="person in persons | filter:search" class="listitem" >
-            <a class="person" ng-click="load(person.id)">{{person.name || person.id}}</a>
-            <a ng-click="delete(person.id, person.name)" class="delete" title="Deelnemer verwijderen">&times;</a>
+            <a class="person"
+               ng-click="load(person.id)">{{person.name || person.id}}</a>
+            <a class="delete"
+               ng-click="delete(person.id, person.name)"
+               ng-show="isAdmin()"
+               title="Deelnemer verwijderen">&times;</a>
             <div style="clear: both;"></div>
         </div>
     </div>
@@ -78,9 +96,9 @@
         <div ng-show="page == 'intro'">
             <h1>
                 How connected are you?
-                        <span class="h1-subtitle">
-                            Analyze your social network
-                        </span>
+                <span class="h1-subtitle">
+                    Analyze your social network
+                </span>
             </h1>
             <p>
                 Deze vragenlijst heeft als doel om uw netwerk in kaart te brengen
@@ -185,16 +203,35 @@
                     <p>
                         Vul je algemene gegevens in.
                     </p>
-                    <div class="form-frame">
+                    <div class="form-frame" ng-readonly="true">
                         <table>
-                            <tr><td>Email</td><td><input type="text" ng-model="current.id" /></td></tr>
-                            <tr><td>Naam</td><td><input type="text" ng-model="current.name" /></td></tr>
-                            <tr><td>Leeftijd</td><td><input type="text" ng-model="current.age" /></td></tr>
-                            <tr><td>Geslacht</td><td><select ng-model="current.gender">
-                                <option value="MALE">Man</option>
-                                <option value="FEMALE">Vrouw</option>
-                            </select></td></tr>
-                            <tr><td>Beroep</td><td><input type="text" ng-model="current.profession" /></td></tr>
+                            <tr><td>Email</td><td>
+                                <input type="text"
+                                       ng-model="current.id"
+                                       ng-disabled="!isAdmin()"/>
+                            </td></tr>
+                            <tr><td>Naam</td><td>
+                                <input type="text"
+                                       ng-model="current.name"
+                                       ng-disabled="readonly" />
+                            </td></tr>
+                            <tr><td>Leeftijd</td><td>
+                                <input type="text"
+                                       ng-model="current.age"
+                                       ng-disabled="readonly" />
+                            </td></tr>
+                            <tr><td>Geslacht</td><td>
+                                <select ng-model="current.gender"
+                                        ng-disabled="readonly">
+                                    <option value="MALE">Man</option>
+                                    <option value="FEMALE">Vrouw</option>
+                                </select>
+                            </td></tr>
+                            <tr><td>Beroep</td><td>
+                                <input type="text"
+                                       ng-model="current.profession"
+                                       ng-disabled="readonly" />
+                            </td></tr>
                         </table>
                     </div>
 
@@ -219,19 +256,33 @@
                                 <td></td>
                             </tr>
                             <tr ng-repeat="relation in current.relations">
-                                <td><select type="text"
-                                            ng-model="relation.domain"
-                                            ng-options="domain for domain in domains"></select></td>
-                                <td><input type="text" autocomplete="names" selection="relation.name" ng-model="relation.name"/></td>
-                                <td><select type="text"
-                                            ng-model="relation.frequency"
-                                            ng-options="frequency for frequency in frequencies"></select></td>
-                                <td><a ng-click="deleteRelation(current, relation)"
+                                <td><select ng-model="relation.domain"
+                                            ng-options="domain for domain in domains"
+                                            ng-disabled="readonly"></select>
+                                </td>
+                                <td><input type="text"
+                                           autocomplete="names"
+                                           selection="relation.name"
+                                           ng-model="relation.name"
+                                           ng-disabled="readonly" />
+                                </td>
+                                <td><select ng-model="relation.frequency"
+                                            ng-options="frequency for frequency in frequencies"
+                                            ng-disabled="readonly"></select>
+                                </td>
+                                <td class="delete">
+                                    <a ng-click="deleteRelation(current, relation)"
+                                       ng-show="!readonly"
                                        class="delete"
-                                       title="Relatie verwijderen">&times;</a></td>
+                                       title="Relatie verwijderen">&times;</a>
+                                </td>
                             </tr>
                             <tr>
-                                <td><button ng-click="addRelation(current)" title="Voeg een relatie toe">Toevoegen</button></td>
+                                <td>
+                                    <button ng-click="addRelation(current)"
+                                            ng-disabled="readonly"
+                                            title="Voeg een relatie toe">Toevoegen</button>
+                                </td>
                                 <td></td>
                                 <td></td>
                                 <td></td>

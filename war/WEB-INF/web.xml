@@ -13,6 +13,15 @@
 	</servlet-mapping>
 
   <servlet>
+    <servlet-name>AuthServlet</servlet-name>
+    <servlet-class>com.almende.sot.AuthServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AuthServlet</servlet-name>
+    <url-pattern>/auth/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>SystemServiceServlet</servlet-name>
     <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
     <init-param>

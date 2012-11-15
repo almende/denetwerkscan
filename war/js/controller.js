@@ -31,6 +31,7 @@ function Controller($scope, $resource) {
         'update': {method: 'PUT'},
         'find': {method: 'GET', isArray: true}
     });
+    var User = $resource('/auth');
 
     $scope.tests = [
         'netwerk_scan_1'
@@ -52,7 +53,8 @@ function Controller($scope, $resource) {
         'Dagelijks',
         '2x per week',
         '1x per week',
-        '4x per jaar',
+        '1x per maand',
+        '1x per kwartaal',
         '2x per jaar',
         '1x per jaar',
         'Bijna nooit'
@@ -109,6 +111,7 @@ function Controller($scope, $resource) {
         $scope.page = 'form';
         $scope.formPage = 'self';
         $scope.current = {
+            id: $scope.user ? $scope.user.email : '',
             relations: [
                 {}
             ]
@@ -164,7 +167,7 @@ function Controller($scope, $resource) {
      */
     $scope.save = function () {
         if ($scope.current && $scope.current.id) {
-            if ($scope.isChanged()) {
+            if ($scope.isChanged() && !$scope.readonly) {
                 // save when changed
                 $scope.markUnchanged();
 
@@ -244,6 +247,48 @@ function Controller($scope, $resource) {
         }
     };
 
+    /**
+     * Retrieve a user description,
+     * for example "Ingelogd als jos@almende.org (administrator)"
+     * @return {String} title
+     */
+    $scope.userTitle = function () {
+        var title = 'Ingelogd als ' + $scope.user.email;
+        if ($scope.user.isAdmin) {
+            title += ' (administrator)';
+        }
+        return title;
+    };
+
+    /**
+     * Check if current user is an admin
+     * @return {boolean} isAdmin
+     */
+    $scope.isAdmin = function () {
+        return $scope.user ? $scope.user.isAdmin : false;
+    };
+
+    /**
+     * Check whether the currently displayed form is read only, and put this
+     * state in the variable readonly
+     */
+    function updateReadonly() {
+        var readonly = true;
+        if ($scope.user) {
+            if ($scope.user.isAdmin ||
+                ($scope.current && $scope.current.id == $scope.user.email)) {
+                readonly = false;
+            }
+        }
+        $scope.readonly = readonly;
+    }
+    $scope.$watch('user.email', updateReadonly);
+    $scope.$watch('current.id', updateReadonly);
+    updateReadonly();
+
     // retrieve persons now
     $scope.query();
+
+    // retrieve user info (logged in or not, email, isAdmin
+    $scope.user = User.get();
 }
