@@ -82,9 +82,13 @@ function Controller($scope, $resource) {
         };
 
         $scope.querying = true;
+        $scope.error = undefined;
         $scope.persons = Person.find(params, undefined, function () {
             $scope.querying = false;
             updateNames();
+        }, function (err) {
+            $scope.querying = false;
+            console.log('Error', err);
         });
     };
 
@@ -102,20 +106,31 @@ function Controller($scope, $resource) {
         if (oldPage == 'form') {
             $scope.save();
         }
+        else {
+            if (newPage == 'form') {
+                // check if a form is loaded, if not, load the form of the
+                // current user
+                if ($scope.isLoggedIn()) {
+                    // user is logged in
+                    if (!$scope.current) {
+                        // there is no current form yet
+                        $scope.load($scope.user.email);
+                    }
+                }
+            }
+        }
     });
 
     /**
-     * Create a new person
+     * Load the form of current user and start editing
      */
     $scope.start = function () {
         $scope.page = 'form';
         $scope.formPage = 'self';
-        $scope.current = {
-            id: $scope.user ? $scope.user.email : '',
-            relations: [
-                {}
-            ]
-        };
+        if ($scope.isLoggedIn()) {
+            // load current user form
+            $scope.load($scope.user.email);
+        }
     };
 
     /**
@@ -149,16 +164,37 @@ function Controller($scope, $resource) {
     };
 
     /**
-     * Load a person by id
+     * Load a person by id. If not existing, a new form for the current user
+     * will be initialized
      * @param {Number} id
      */
     $scope.load = function (id) {
         $scope.page = 'form';
         $scope.formPage = 'self';
         $scope.loading = true;
+        $scope.error = undefined;
         $scope.current = Person.get({'id': id}, undefined, function () {
             $scope.loading = false;
             $scope.markUnchanged();
+        }, function (err) {
+            $scope.loading = false;
+            $scope.markUnchanged();
+
+            if (err.status == 404) {
+                // person does not yet exist. initialize a new form
+                if ($scope.isLoggedIn()) {
+                    $scope.current = {
+                        id: $scope.user.email,
+                        relations: [
+                            {}
+                        ]
+                    };
+                }
+            }
+            else {
+                $scope.error = 'Laden van gebruiker ' + id + ' is mislukt';
+                console.log('Error', err);
+            }
         });
     };
 
@@ -174,9 +210,14 @@ function Controller($scope, $resource) {
                 var id = $scope.current.id;
                 $scope.current.test = $scope.test;
                 $scope.saving = true;
+                $scope.error = undefined;
                 $scope.current = Person.update({'id': id}, $scope.current, function () {
                     $scope.saving = false;
                     $scope.query();
+                }, function (err) {
+                    $scope.saving = false;
+                    $scope.error = 'Opslaan van gebruiker ' + id + ' is mislukt';
+                    console.log('Error', err);
                 });
             }
         }
@@ -213,14 +254,17 @@ function Controller($scope, $resource) {
      */
     $scope.delete = function (id, name) {
         if (id &&  confirm('Weet je zeker dat je ' + (name || id) + ' wilt verwijderen?')) {
-            var onDelete = function () {
+            $scope.deleting = true;
+            $scope.error = undefined;
+            Person.delete({'id': id}, undefined, function () {
                 $scope.deleting = false;
                 $scope.query();
-            };
-            $scope.deleting = true;
-            Person.delete({'id': id}, undefined, onDelete);
+            }, function (err) {
+                $scope.deleting = false;
+                $scope.error = 'Verwijderen van gebruiker ' + id + ' is mislukt';
+            });
 
-            if ($scope.current.id == id) {
+            if ($scope.current && $scope.current.id == id) {
                 $scope.current = undefined;
             }
         }
@@ -243,6 +287,11 @@ function Controller($scope, $resource) {
                 var container = document.getElementById('network');
                 loadNetwork(container, data, $scope.domains, $scope.frequencies);
                 $scope.networkLoading = false;
+            },
+            function (err) {
+                $scope.networkLoading = false;
+                // TODO: display error on screen
+                console.log('Error', err);
             });
         }
     };
@@ -254,7 +303,7 @@ function Controller($scope, $resource) {
      */
     $scope.userTitle = function () {
         var title = 'Ingelogd als ' + $scope.user.email;
-        if ($scope.user.isAdmin) {
+        if ($scope.isAdmin()) {
             title += ' (administrator)';
         }
         return title;
@@ -266,6 +315,23 @@ function Controller($scope, $resource) {
      */
     $scope.isAdmin = function () {
         return $scope.user ? $scope.user.isAdmin : false;
+    };
+
+    /**
+     * Check if current user is logged in
+     * @return {boolean} isLoggedIn
+     */
+    $scope.isLoggedIn = function () {
+        return $scope.user ? $scope.user.isLoggedIn : false;
+    };
+
+    /**
+     * Login
+     */
+    $scope.login = function () {
+        if ($scope.user && $scope.user.loginUrl) {
+            document.location.href = $scope.user.loginUrl;
+        }
     };
 
     /**

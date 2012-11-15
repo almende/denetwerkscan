@@ -64,30 +64,34 @@
         </div>
         <div class="listitem">
             <a class="page"
-               ng-click="page = 'form'"
-               ng-class="{'selected': page=='form'}">Formulier</a>
+               ng-click="start()"
+               ng-class="{'selected': (page=='form' && current.id==user.email)}">Mijn Gegevens</a>
         </div>
         <div class="listitem">
             <a class="page"
                ng-click="showNetwork()"
-               ng-class="{'selected': page=='network'}">Netwerk</a>
+               ng-class="{'selected': page=='network'}">Mijn Netwerk</a>
         </div>
 
         <h2>Deelnemers <img ng-show="querying" src="img/loading5.gif"></h2>
         <div>
-            <a class="refresh" ng-click="query()" title="Deelnemers lijst opnieuw laden">vernieuwen</a>
+            <a class="refresh"
+               ng-click="query()"
+               title="Deelnemers lijst opnieuw laden">vernieuwen</a>
             <input ng-model="search.name"
                    type="text"
                    placeholder="zoeken..." />
         </div>
-        <div ng-repeat="person in persons | filter:search" class="listitem" >
-            <a class="person"
-               ng-click="load(person.id)">{{person.name || person.id}}</a>
-            <a class="delete"
-               ng-click="delete(person.id, person.name)"
-               ng-show="isAdmin()"
-               title="Deelnemer verwijderen">&times;</a>
-            <div style="clear: both;"></div>
+        <div ng-repeat="person in persons | filter:search" class="person">
+            <div ng-class="{'selected': current.id==person.id}" >
+                <a class="person"
+                   ng-click="load(person.id)">{{person.name || person.id}}</a>
+                <a class="delete"
+                   ng-click="delete(person.id, person.name)"
+                   ng-show="(current.id==person.id) && (isAdmin() || (user.email==person.id))"
+                   title="Deelnemer verwijderen">&times;</a>
+                <div style="clear: both;"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -150,10 +154,17 @@
         <div ng-show="page == 'form'">
             <h1>Formulier</h1>
 
-            <div ng-show="!current">
+            <div ng-show="!user.email">
+                <p>
+                    Voordat je gegevens kunt invullen of bekijken moet je eerst inloggen.
+                </p>
+                <button ng-click="login()" title="Inloggen">Inloggen</button>
+            </div>
+
+            <div ng-show="user.email && !current">
                 <button ng-click="start()" title="Open een nieuw formulier">Nieuw</button>
             </div>
-            <div ng-show="current">
+            <div ng-show="user.email && current">
                 <!-- form paging menu -->
                 <div>
                     <div class="arrow"
@@ -196,6 +207,7 @@
                     <span ng-show="saving">bezig met opslaan...</span>
                     <span ng-show="deleting">bezig met verwijderen...</span>
                     <span ng-show="loading">bezig met laden...</span>
+                    <span ng-show="error">Error: {{error}}</span>
                 </div>
 
                 <div ng-show="formPage=='self'">

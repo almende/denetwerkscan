@@ -211,7 +211,7 @@ a.page, a.person {
     color: #39322A;
     border-radius: 2px;
 }
-a.page:hover, a.selected, div.listitem:hover, div.listitem:hover a.person {
+a.page:hover, div.listitem:hover, div.person:hover, a.selected, div.selected {
     color: #009FC6;
     background-color: #f5f5f5;
 }
@@ -232,22 +232,27 @@ a.delete {
 a.delete:hover {
     color: #FA0A10;
 }
+
 td.delete {
     vertical-align: top;
     padding-left: 10px;
 }
-div.listitem a.delete {
+div.person a.delete {
     display: block;
     padding: 6px;
     margin: 0;
 }
-
-div.listitem a.delete {
+/*
+div.person a.delete {
     visibility: hidden;
 }
-div.listitem:hover a.delete {
+div.person:hover a.delete {
     visibility: visible;
 }
+
+div.person a.delete:hover > div.person {
+    background-color: red;
+}*/
 
 input[type="text"] {
     border: 1px solid lightgray;
