@@ -69,6 +69,10 @@ function Controller($scope, $resource) {
      * Persons are filtered by the currently selected test
      */
     $scope.query = function () {
+        if (!$scope.isLoggedIn()) {
+            return;
+        }
+
         var params = {
             'test': $scope.test
         };
@@ -370,4 +374,23 @@ function Controller($scope, $resource) {
 
     // retrieve user info (logged in or not, email, isAdmin
     $scope.user = User.get();
+    $scope.$watch('user.isLoggedIn', function (isLoggedIn) {
+        if (isLoggedIn) {
+            $scope.query();
+        }
+    });
+
+    $scope.currentInq = undefined;
+    $scope.updateINQ = function (formPage) {
+        if (formPage == 'score' && $scope.current) {
+            var value = inq.getScore($scope.current, $scope.frequencies);
+
+            // round to 3 digits
+            value = Math.round(value * 1000) / 1000;
+            $scope.currentInq = value;
+        }
+    };
+
+    $scope.$watch('formPage', $scope.updateINQ);
+    $scope.$watch('current.id', $scope.updateINQ);
 }

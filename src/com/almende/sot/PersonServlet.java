@@ -189,21 +189,22 @@ public class PersonServlet extends HttpServlet {
 	}
 
 	/**
-	 * Authorize changing a person (get, put, post, delete)
+	 * Authorize getting information (get, put, post, delete)
 	 * @param action
 	 * @param id     The id of the person
 	 * @return authorized    True if authorized, else false
 	 */
 	private boolean authorize(ACTION action, String id) {
-		UserService userService = null;
+		UserService userService = UserServiceFactory.getUserService();
 		switch (action) {
 			case GET:
-				return true;
+				if (userService.isUserLoggedIn()) {
+					return true;
+				}
 			
 			case PUT:
 			case POST:
 			case DELETE:
-				userService = UserServiceFactory.getUserService();
 				if (userService.isUserLoggedIn()) {
 					User user = userService.getCurrentUser();
 					String email = user.getEmail();

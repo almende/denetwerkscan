@@ -13,6 +13,7 @@
     <script src="lib/network/network-min.js" type="text/javascript" ></script>
     <script src="js/controller.js" type="text/javascript" ></script>
     <script src="js/networkview.js" type="text/javascript" ></script>
+    <script src="js/inq.js" type="text/javascript" ></script>
 </head>
 
 <body>
@@ -325,7 +326,10 @@
                 <div ng-show="formPage=='score'">
                     <h2>Score</h2>
                     <p>
-                        nog niet geimplementeerd...
+                        Je Individuele Netwerk Co&euml;ffici&euml;nt (INQ) is:
+                        <span style="font-weight: bold;">
+                            {{currentInq}}
+                        </span>
                     </p>
 
                     <p>
@@ -387,10 +391,13 @@
                 <h4>De Netwerk Scan</h4>
                 <p>
                     <a href="http://denetwerkscan.appspot.com" target= "_blank">
-                        denetwerkscan.appspot.com</a>
+                        denetwerkscan.appspot.com
+                    </a>
                 </p>
                 <p>
-                    <a href="http://www.almende.com" target= "_blank">Ontwikkeld door Almende</a>
+                    <a href="https://github.com/almende/selforganizationtest" target= "_blank">
+                        Ontwikkeld door Almende
+                    </a>
                 </p>
             </div>
             <div class="footer-block">
@@ -399,7 +406,9 @@
                     Tel: 010-4049444
                 </p>
                 <p>
-                    <a href="mailto:info@stichtingzelforganisatie.nl" target= "_blank">info@stichtingzelforganisatie.nl</a>
+                    <a href="mailto:info@stichtingzelforganisatie.nl" target= "_blank">
+                        info@stichtingzelforganisatie.nl
+                    </a>
                 </p>
             </div>
             <div class="footer-block">
