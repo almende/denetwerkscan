@@ -3,11 +3,13 @@ package entity;
 import java.io.Serializable;
 import java.util.List;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.code.twig.annotation.Id;
+import com.google.code.twig.annotation.Index;
+import com.google.code.twig.annotation.Type;
 
 @SuppressWarnings("serial")
 public class Person implements Serializable {
-
 	protected Person() {}
 	
 	public Person(String name, String profession, Integer age, GENDER gender ) {
@@ -64,22 +66,21 @@ public class Person implements Serializable {
 		this.profession = profession;
 	}
 	
-	public List<Relation> getRelations() {
-		return relations;
+	public List<Domain> getDomains() {
+		return domains;
 	}
 
-	public void setRelations(List<Relation> relations) {
-		this.relations = relations;
+	public void setDomains(List<Domain> domains) {
+		this.domains = domains;
 	}
 
 	@Id private String id; // typically, the users email is used as id.
 	private String test;   // name of the test, for example "Buurtlab 2011"
 	private String name;
-	private Integer age;
-	private GENDER gender;
-	private String profession;
-
-	private List<Relation> relations;
+	@Index(false) private Integer age;
+	@Index(false) private GENDER gender;
+	@Index(false) private String profession;
+	@Index(false) @Type(Blob.class) private List<Domain> domains;
 	
 	public enum GENDER {MALE, FEMALE};
 }

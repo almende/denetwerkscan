@@ -26,8 +26,8 @@ function loadNetwork (container, persons, domains, frequencies) {
 
     /**
      * Create a node from a person. No duplicates will be created
-     * @param person
-     * @return id
+     * @param {Object} person
+     * @return {Number} id
      * @private
      */
     function addPerson(person) {
@@ -49,23 +49,25 @@ function loadNetwork (container, persons, domains, frequencies) {
 
     /**
      * Create a connection between two persons
-     * @param from
-     * @param to
-     * @param domain
-     * @param frequency
+     * @param {Number} from
+     * @param {Number} to
+     * @param {String} domain
+     * @param {String} frequency
+     * @param {Number} score
      */
-    function addRelation(from, to, domain, frequency) {
+    function addRelation(from, to, domain, frequency, score) {
         // TODO: check if from and to are not undefined
 
         var value = frequencies.length - 1 - frequencies.indexOf(frequency);
         var title = 'Relatie' + '<br>' +
             'Deelnetwerk: ' + domain + '<br>' +
-            'Frequentie: ' + frequency;
+            'Frequentie: ' + frequency + '<br>' +
+            'Score: ' + score;
         connections.push({
             "from": from,
             "to": to,
             "color": colors[domain],
-            "value": value,
+            "value": score,
             "title": title
         });
     }
@@ -75,13 +77,19 @@ function loadNetwork (container, persons, domains, frequencies) {
         var person = persons[i];
         var id = addPerson(person);
 
-        var relations = person.relations;
-        if (relations) {
-            for (var j = 0, jMax = relations.length; j < jMax; j++) {
-                var relation = relations[j];
-                var relId = addPerson(relation);
-                addRelation(id, relId, relation.domain, relation.frequency);
-            }
+        if (person.domains) {
+            person.domains.forEach(function (domain, domainIndex) {
+                if (domain.relations) {
+                    domain.relations.forEach(function (relation, relationIndex) {
+                        var frequency = relation.frequency;
+                        var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
+                        var relId = addPerson(relation);
+                        var partialScore = inq.partialScore(domainIndex,
+                            relationIndex, frequencyIndex);
+                        addRelation(id, relId, domain.name, frequency, partialScore);
+                    });
+                }
+            });
         }
     }
 

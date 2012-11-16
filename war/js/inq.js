@@ -3,65 +3,58 @@
 var inq = {};
 
 /**
- * Calculate the INQ for given person
+ * Calculate the INQ (Individual Network Coefficient) for given person
  * @param {Object} person
  * @param {String[]} frequencies
- * @return {Number} inq
+ * @return {Number} score
  */
 inq.getScore = function (person, frequencies) {
-    var relations = (person ? person.relations : undefined) || [];
-    frequencies = frequencies || [];
-
-    // determine the order of domains and filter the relations per domain
-    var order = 0;
-    var domains = [];
-    var listedDomains = {};
-    relations.forEach(function (relation) {
-        var name = relation.domain;
-        if (name) {
-            if (!(name in listedDomains)) {
-                listedDomains[name] = true;
-
-                var filteredRelations = relations.filter(function (relation) {
-                    return (relation.domain == name);
+    var score = 0;
+    if (person.domains) {
+        person.domains.forEach(function (domain, domainIndex) {
+            if (domain.relations) {
+                domain.relations.forEach(function (relation, relationIndex) {
+                    var frequency = relation.frequency;
+                    var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
+                    if (frequencyIndex != -1) {
+                        score += inq.partialScore(domainIndex, relationIndex, frequencyIndex);
+                    }
+                    else {
+                        console.log('WARNING: Unknown frequency "' + frequency + '"');
+                    }
                 });
-
-                domains.push(filteredRelations);
-            }
-        }
-    });
-
-    /**
-     * Calculate a coefficient from an index
-     * @param {Number} index
-     * @return {Number} coefficient
-     */
-    var getCoefficient = function (index) {
-        if (index == 0) return 1;
-        if (index == 1) return 1/2;
-        if (index == 2) return 1/4;
-        if (index == 3) return 1/8;
-        if (index == 4) return 1/8;
-        return 0;
-    };
-
-    // calculate the INQ (Individual Network Coefficient)
-    var inq = 0;
-    domains.forEach(function (relations, domainIndex) {
-        relations.forEach(function (relation, relationIndex) {
-            var frequency = relation.frequency;
-            var frequencyIndex = frequencies.indexOf(frequency);
-            if (frequencyIndex != -1) {
-                inq +=
-                    getCoefficient(domainIndex + 1) *
-                    getCoefficient(relationIndex + 1) *
-                    getCoefficient(frequencyIndex);
-            }
-            else {
-                console.log('WARNING: Unknown frequency "' + frequency + '"');
             }
         });
-    });
+    }
 
-    return inq;
+    return score;
+};
+
+/**
+ * Calculate the INQ score for a single relation
+ * @private
+ * @param domainIndex
+ * @param relationIndex
+ * @param frequencyIndex
+ * @return {Number} partialScore
+ */
+inq.partialScore = function (domainIndex, relationIndex, frequencyIndex) {
+    return inq.getCoefficient(domainIndex + 1) *
+        inq.getCoefficient(relationIndex + 1) *
+        inq.getCoefficient(frequencyIndex);
+};
+
+/**
+ * Calculate the coefficient for an index
+ * @private
+ * @param {Number} index
+ * @return {Number} coefficient
+ */
+inq.getCoefficient = function (index) {
+    if (index == 0) return 1;
+    if (index == 1) return 1/2;
+    if (index == 2) return 1/4;
+    if (index == 3) return 1/8;
+    if (index == 4) return 1/8;
+    return 0;
 };

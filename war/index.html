@@ -175,7 +175,7 @@
                         <div class="left"></div>
                         -->
                         <div class="content">
-                            Wie ben je?
+                            Persoonsgegevens
                         </div>
                         <div class="right"></div>
                     </div>
@@ -185,7 +185,7 @@
                          ng-click="formPage = 'contacts'">
                         <div class="left"></div>
                         <div class="content">
-                            Wie ken je?
+                            Contacten
                         </div>
                         <div class="right"></div>
                     </div>
@@ -195,7 +195,7 @@
                          ng-click="formPage = 'score'">
                         <div class="left"></div>
                         <div class="content">
-                            Je score...
+                            Score
                         </div>
                         <div class="right"></div>
                     </div>
@@ -259,63 +259,82 @@
                 </div>
 
                 <div ng-show="formPage=='contacts'">
-                    <h2>Wie ken je?</h2>
-                    <p>
-                        Vul per deelnetwerk in welke relaties je heb en hoe regelmatig je contact met hen hebt.
-                    </p>
 
-                    <div class="form-frame">
-                        <table>
-                            <tr ng-show="current.relations.length">
-                                <td>Deelnetwerk</td>
-                                <td>Naam</td>
-                                <td>Frequentie</td>
-                                <td></td>
-                            </tr>
-                            <tr ng-repeat="relation in current.relations">
-                                <td>
-                                    <select ng-model="relation.domain"
-                                            ng-options="domain for domain in domains"
-                                            ng-hide="readonly"></select>
-                                    <input type="text"
-                                           ng-model="relation.domain"
-                                           ng-show="readonly"
-                                           ng-readonly="true" />
-                                </td>
-                                <td><input type="text"
-                                           autocomplete="names"
-                                           selection="relation.name"
-                                           ng-model="relation.name"
-                                           ng-readonly="readonly" />
-                                </td>
-                                <td>
-                                    <select ng-model="relation.frequency"
-                                            ng-options="frequency for frequency in frequencies"
-                                            ng-hide="readonly"></select>
-                                    <input type="text"
-                                           ng-model="relation.frequency"
-                                           ng-show="readonly"
-                                           ng-readonly="true" />
-                                </td>
-                                <td class="delete">
-                                    <a ng-click="deleteRelation(current, relation)"
-                                       ng-show="!readonly"
-                                       class="delete"
-                                       title="Relatie verwijderen">&times;</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button ng-click="addRelation(current)"
-                                            ng-disabled="readonly"
-                                            title="Voeg een relatie toe">Toevoegen</button>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </table>
+                    <div ng-repeat="domain in current.domains">
+                        <a ng-click="deleteDomain(current, domain)"
+                           ng-show="!readonly"
+                           class="delete"
+                           title="Deelnetwerk {{domain.name}} verwijderen">&times;</a>
+
+                        <h2>{{domain.name}}</h2>
+                        <p>
+                            Vul de namen van je {{domain.name.toLowerCase() }} in dit deelnetwerk in,
+                            en geef aan hoe intensief je contact met elk van hen hebt.
+                        </p>
+
+                        <div class="form-frame">
+                            <table>
+                                <tr ng-show="domain.relations.length">
+                                    <td>Naam</td>
+                                    <td>Contact</td>
+                                </tr>
+                                <tr ng-repeat="relation in domain.relations">
+                                    <td><input type="text"
+                                               autocomplete="names"
+                                               selection="relation.name"
+                                               ng-model="relation.name"
+                                               ng-readonly="readonly" />
+                                    </td>
+                                    <td>
+                                        <select ng-model="relation.frequency"
+                                                ng-options="frequency for frequency in frequencies"
+                                                ng-hide="readonly"></select>
+                                        <input type="text"
+                                               ng-model="relation.frequency"
+                                               ng-show="readonly"
+                                               ng-readonly="true" />
+                                    </td>
+                                    <td class="delete">
+                                        <a ng-click="deleteRelation(domain, relation)"
+                                           ng-show="!readonly"
+                                           class="delete"
+                                           title="Relatie verwijderen">&times;</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button ng-click="addRelation(domain)"
+                                                ng-disabled="readonly"
+                                                title="Voeg een relatie toe">Toevoegen</button>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
+
+
+                    <div>
+                        <h2>Deelnetwerk toevoegen</h2>
+                        <p>
+                            Kies een deelnetwerk om je contacten van in te vullen,
+                            of kies "Volgende" als je al je deelnetwerken hebt ingevuld.
+                            Vul alleen de voor jou relevante deelnetwerken in.
+                        </p>
+
+                        <div class="form-frame">
+                            Deelnetwerk toevoegen:
+                            <span ng-repeat="domainName in domains">
+                                <button ng-click="addDomain(current, domainName)"
+                                        ng-disabled="readonly"
+                                        ng-hide="getDomain(current, domainName)"
+                                        title="Voeg het deelnetwerk '{{domainName}}'toe">{{domainName}}</button>
+
+                            </span>
+                        </div>
+                    </div>
+
 
                     <p>
                         <button ng-click="formPage='self'" title="Vorige pagina">&#9668; Vorige</button>
@@ -337,13 +356,6 @@
                         <button ng-disabled="true" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
-
-                <!-- TODO: cleanup
-                <h2>Klaar?</h2>
-                <button ng-click="save()" ng-disabled="saving" title="Wijzigingen opslaan">Opslaan</button>
-                <button ng-click="cancel()" title="Wijzigingen annuleren">Annuleren</button>
-                <button ng-click="delete()" ng-disabled="deleting" title="{{current.name}} verwijderen">Verwijderen</button>
-                <!-- -->
             </div>
         </div>
 
@@ -353,9 +365,9 @@
             <p>
                 De netwerk visualizatie toont het sociale netwerk van alle deelnemers.
 
-                De lijn dikte intensiteit (frequentie) van het contact weer,
-                hoe dikker de lijn hoe vaker contact.
-                De lijn kleur geeft het  'deelnetwerk' of de 'rol' waar je iemand van kent.
+                De lijn dikte geeft de bijdrage van dit contact aan je INQ weer,
+                hoe dikker de lijn hoe intensiever het contact.
+                De lijn kleur geeft het 'deelnetwerk' of de 'rol' waar je iemand van kent.
                 Je kunt zelf de mate van zichtbaarheid aangeven in drie gradaties:
             </p>
 

@@ -42,11 +42,10 @@ function Controller($scope, $resource) {
 
     $scope.domains = [
         'Familie',
-        'Collega',
-        'Vriend',
-        'Studie',
-        'Hobby',
-        'Buur'
+        'Vrienden',
+        'Collega\'s',
+        'Buren',
+        'Overig'
     ];
 
     $scope.frequencies = [
@@ -138,28 +137,77 @@ function Controller($scope, $resource) {
     };
 
     /**
-     * Add a relation
+     * Add a domain
      * @param {Object} person
+     * @param {String} domainName
      */
-    $scope.addRelation = function (person) {
-        var relations = person.relations;
+    $scope.addDomain = function (person, domainName) {
+        var domains = person.domains;
+        if (!domains) {
+            domains = [];
+            person.domains = domains;
+        }
+        domains.push({
+            'name': domainName
+        });
+    };
+
+    /**
+     * Remove a domain
+     * @param {Object} person
+     * @param {Object} domain
+     */
+    $scope.deleteDomain = function (person, domain) {
+        var domains = person.domains;
+        if (!domains) {
+            domains = [];
+            person.domains = domains;
+        }
+        var index = domains.indexOf(domain);
+        if (index != -1) {
+            domains.splice(index, 1);
+        }
+    };
+
+    /**
+     * Get a domain by name
+     * @param {Object} person
+     * @param {String} domainName
+     * @return {Object | undefined} domain
+     */
+    $scope.getDomain = function(person, domainName) {
+        if (person && person.domains) {
+            var results = person.domains.filter(function (domain) {
+                return (domain.name == domainName);
+            });
+            return results[0];
+        }
+        return undefined;
+    };
+
+    /**
+     * Add a relation
+     * @param {Object} domain
+     */
+    $scope.addRelation = function (domain) {
+        var relations = domain.relations;
         if (!relations) {
             relations = [];
-            person.relations = relations;
+            domain.relations = relations;
         }
         relations.push({});
     };
 
     /**
      * Remove a relation
-     * @param {Object} person
+     * @param {Object} domain
      * @param {Object} relation
      */
-    $scope.deleteRelation = function (person, relation) {
-        var relations = person.relations;
+    $scope.deleteRelation = function (domain, relation) {
+        var relations = domain.relations;
         if (!relations) {
             relations = [];
-            person.relations = relations;
+            domain.relations = relations;
         }
         var index = relations.indexOf(relation);
         if (index != -1) {
@@ -191,10 +239,7 @@ function Controller($scope, $resource) {
                 // person does not yet exist. initialize a new form
                 if ($scope.isLoggedIn()) {
                     $scope.current = {
-                        id: $scope.user.email,
-                        relations: [
-                            {}
-                        ]
+                        id: $scope.user.email
                     };
                 }
             }
@@ -390,7 +435,6 @@ function Controller($scope, $resource) {
             $scope.currentInq = value;
         }
     };
-
     $scope.$watch('formPage', $scope.updateINQ);
     $scope.$watch('current.id', $scope.updateINQ);
 }
