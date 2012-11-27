@@ -436,4 +436,14 @@ function Controller($scope, $resource) {
     };
     $scope.$watch('formPage', $scope.updateINQ);
     $scope.$watch('current.id', $scope.updateINQ);
+
+    // create the tooltips
+    var tooltips = ['frequentie', 'contact', 'deelnetwerk', 'score'];
+    tooltips.forEach(function (tooltip) {
+        $('#tooltip-' + tooltip).simpletip({
+            content: $('#tooltip-text-' + tooltip).html(),
+            fixed: true,
+            offset: [0, 20]
+        });
+    });
 }

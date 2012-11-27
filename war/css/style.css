@@ -99,6 +99,7 @@ body, html, td, tr, button, select, input {
 
 #contents {
     padding: 10px 0 60px 40px;
+    overflow-x: hidden;
 }
 
 div.form-frame {
@@ -324,34 +325,32 @@ li.ui-menu-item a {
     border-radius: 2px;
 }
 
-div.info-tooltip {
+#tooltip-frequentie, #tooltip-contact, #tooltip-deelnetwerk, #tooltip-score  {
     background-color: #c4c4c4;
     border-radius: 3px;
     color: white;
-    padding: 0 5px;
-    display: inline;
-    position: relative;
 }
 
-div.info-tooltip div {
+#tooltip-text-frequentie, #tooltip-text-contact, #tooltip-text-deelnetwerk, #tooltip-text-score {
     display: none;
+}
+
+.tooltip {
     position: absolute;
-    left: 20px;
     top: 0;
-    width: 300px;
+    left: 0;
+    display: none;
+
+    width: 350px;
     color: #39322A;
     background-color: white;
     border: 1px solid gray;
     border-radius: 3px;
-    box-shadow: 0 0 15px rgba(128, 128, 128, 0.5);
+    box-shadow: 0 0 15px rgba(128, 128, 128, 0.7);
+    box-sizing: border-box;
     padding: 10px;
-    clear: both;
-    z-index: 999;
 }
 
-div.info-tooltip:hover div {
-    display: block;
-}
 
 div.arrow {
     background: #E5E5E5;

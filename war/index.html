@@ -8,6 +8,7 @@
 
     <script src='lib/jquery-1.8.0.min.js' type="text/javascript"></script>
     <script src='lib/jquery-ui-autocomplete/jquery-ui-1.8.23.custom.min.js' type="text/javascript"></script>
+    <script src='lib/jquery.simpletip-1.3.1.min.js' type="text/javascript"></script>
     <script src="lib/angular-1.0.1.min.js" type="text/javascript"></script>
     <script src="lib/angular-resource-1.0.1.min.js" type="text/javascript"></script>
     <script src="lib/network/network-min.js" type="text/javascript" ></script>
@@ -105,6 +106,7 @@
                     Let's analyze your social network
                 </span>
             </h1>
+
             <p>
                 De Netwerk Scan van Stichting Zelforganisatie heeft als doel om
                 uw netwerk in kaart te brengen en u feedback te geven op de mate
@@ -117,7 +119,9 @@
                 in deze Netwerk Scan. Vult u de scan astublieft zo volledig
                 mogelijk in zodat wij u een zo compleet mogelijk beeld van uw
                 netwerk kunnen geven.
+            </p>
 
+            <p>
                 Bij de Netwerk Scan gaan we niet uit van de groep waarin u zit
                 (familie, vriendenkring) maar kiezen we voor de verschillende
                 rollen die u heeft als ouder, vriend of collega. Bijvoorbeeld:
@@ -125,21 +129,24 @@
                 alle bloedlijnen die u heeft invullen. Echter, wanneer u
                 bijvoorbeeld met uw broer een bedrijf heeft opgericht, kan het
                 zijn dat het zakelijk contact frequenter plaatsvindt dan het
-                familiecontact. Aangezien het ons gaat om de frequentie van het
+                familiecontact <span id="tooltip-contact">&nbsp;?&nbsp;</span>.
+                Aangezien het ons gaat om de
+                frequentie <span id="tooltip-frequentie">&nbsp;?&nbsp;</span> van het
                 contact meten we hier de mate van contact uit hoofde van een
                 bepaalde rol (zakelijk partner).
             </p>
 
-            <p>
-                <a href="img/mindmap.png" target="_blank">
-                    <img alt="mindmap" src="img/mindmap_300x262.png" align="right"
-                         width="300" height="263" title="Klik voor een grotere weergave">
-                </a>
+            <a href="img/mindmap.png" target="_blank">
+                <img alt="mindmap" src="img/mindmap_300x262.png" align="right"
+                     width="300" height="263" title="Klik voor een grotere weergave">
+            </a>
 
+            <p>
                 Ter verduidelijking ziet u hiernaast de visualisatie van een
                 voorbeeldnetwerk in een mindmapschema; u staat zelf centraal
                 en om u heen heeft u een diversiteit aan contacten opgebouwd,
-                die in verschillende deelnetwerken zijn te verdelen.
+                die in verschillende deelnetwerken
+                <span id="tooltip-deelnetwerk">&nbsp;?&nbsp;</span> zijn te verdelen.
                 Voor de volledigheid kunt u kunt ervoor kiezen om eerst een
                 handmatige schets te maken en dan pas de Netwerk Scan in te vullen.
             </p>
@@ -147,7 +154,8 @@
             <p>
                 Uiteraard is uw netwerk niet altijd hetzelfde;
                 over aan jaar kan het er heel anders uitzien.
-                Het is dan ook goed om u te realiseren dat de score een momentopname is.
+                Het is dan ook goed om u te realiseren dat de
+                score <span id="tooltip-score">&nbsp;?&nbsp;</span> een momentopname is.
                 Na het invullen van de Netwerk Scan treft u als output ook een
                 visualisatie van uw netwerk aan.
                 Deze is uitsluitend bedoeld om u inzicht te geven in de opbouw
@@ -293,37 +301,8 @@
                         <div class="form-frame">
                             <table>
                                 <tr ng-show="domain.relations.length">
-                                    <td>
-                                        Naam
-                                        <div class="info-tooltip">?
-                                            <div>
-                                                <h3>
-                                                    Toelichting op het begrip 'naam'
-                                                </h3>
-                                                <p>
-                                                    Vul hier de volledige naam van uw contact in:
-                                                    voornaam en achternaam.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        Frequentie
-                                        <div class="info-tooltip">?
-                                            <div>
-                                                <h3>
-                                                    Toelichting op het begrip 'frequentie'
-                                                </h3>
-                                                <p>
-                                                    Definitie van frequentie: dit verdelen wij onder in dagelijks,
-                                                    wekelijks, maandelijks, eens per kwartaal of jaarlijks contact.
-                                                    Alle vormen van contact tellen mee, niet alleen direct het
-                                                    face to face contact maar ook contact via de telefoon,
-                                                    per mail, sms, internet of sociale media.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <td>Naam</td>
+                                    <td>Frequentie</td>
                                 </tr>
                                 <tr ng-repeat="relation in domain.relations">
                                     <td><input type="text"
@@ -365,38 +344,7 @@
                     <div>
                         <h2>Deelnetwerk toevoegen</h2>
 
-                        Kies een deelnetwerk
-
-                        <div class="info-tooltip">?
-                            <div>
-                                <h3>
-                                    Toelichting op het begrip 'deelnetwerk'
-                                </h3>
-                                <p>
-                                    Het deelnetwerk 'vrije tijd' omvat bijvoorbeeld mensen die u spreekt
-                                    als u uw hobby of sport uitoefent. Het deelnetwerk 'overig'
-                                    omvat bijvoorbeeld mensen die u ontmoet als u uitgaat of op vakantie gaat.
-                                </p>
-                            </div>
-                        </div>&nbsp;
-
-                        om uw contacten
-
-                        <div class="info-tooltip">?
-                            <div>
-                                <h3>
-                                    Toelichting op het begrip 'contact'
-                                </h3>
-                                <p>
-                                    Defintie van contact: het geven van instructies of inlichtingen
-                                    aan elkaar en het ontvangen van informatie van de ander als middel
-                                    om elkaars gedachtewereld te leren kennen. Dit proces kan in &eacute;&eacute;n
-                                    richting, vice versa dan wel over meerdere stations verlopen.
-                                </p>
-                            </div>
-                        </div>&nbsp;
-
-                        in te voeren.
+                        Kies een deelnetwerk om uw contacten in te voeren.
                         U hoeft alleen contacten in te voeren bij deelnetwerken
                         die voor u relevant zijn. Mist u een netwerk?
                         Vul dit dan in bij 'Overig'.
@@ -532,5 +480,64 @@
         </div>
     </div>
 </div>
+
+<!-- tooltip texts -->
+<div id="tooltip-text-frequentie">
+    <h3>Toelichting op het begrip 'frequentie'</h3>
+    <p>
+        Definitie van frequentie: dit verdelen wij onder in dagelijks,
+        wekelijks, maandelijks, eens per kwartaal of jaarlijks contact.
+        Alle vormen van contact tellen mee, niet alleen direct het
+        face to face contact maar ook contact via de telefoon,
+        per mail, sms, internet of sociale media.
+    </p>
+</div>
+
+<div id="tooltip-text-contact">
+    <h3>
+        Toelichting op het begrip 'contact'
+    </h3>
+    <p>
+        Defintie van contact: het geven van instructies of inlichtingen
+        aan elkaar en het ontvangen van informatie van de ander als middel
+        om elkaars gedachtewereld te leren kennen. Dit proces kan in &eacute;&eacute;n
+        richting, vice versa dan wel over meerdere stations verlopen.
+    </p>
+</div>
+
+<div id="tooltip-text-deelnetwerk">
+    <h3>
+        Toelichting op het begrip 'deelnetwerk'
+    </h3>
+    <p>
+        Het deelnetwerk 'vrije tijd' omvat bijvoorbeeld mensen die u spreekt
+        als u uw hobby of sport uitoefent. Het deelnetwerk 'overig'
+        omvat bijvoorbeeld mensen die u ontmoet als u uitgaat of op vakantie gaat.
+    </p>
+</div>
+
+<div id="tooltip-text-score">
+    <h3>
+        Toelichting op het begrip 'score'
+    </h3>
+    <p>
+        De gegevens die u invult in deze scan resulteren een persoonlijke score.
+        Deze geeft de mate weer waarin u verbonden bent met uw netwerk.
+        Het eerst aangeklikte deelnetwerk krijgt de score 1/2, het tweede 1/4,
+        het derde 1/8 en het vierde ook 1/8. Hetzelfde geldt voor de personen die u noemt.
+        De eerste persoon die u noemt telt voor 1/2, de tweede voor 1/4,
+        de derde voor 1/8 en de vierde ook weer voor 1/8.
+    </p>
+    <p>
+        Voorbeeld 1: Een man die samenleeft met 1 persoon (1 netwerk) en verder
+        niemand spreekt heeft een score van 0.25 (1/2 x 1/2).
+    </p>
+    <p>
+        Voorbeeld 2: Een vrouw die alleen leeft en jaarlijks 5 kennissen ziet
+        uit 2 verschillende netwerken scoort 0.1.
+    </p>
+</div>
+
+
 </body>
 </html>
