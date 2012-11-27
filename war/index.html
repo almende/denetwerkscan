@@ -70,7 +70,7 @@
         </div>
         <div class="listitem">
             <a class="page"
-               ng-click="showNetwork()"
+               ng-click="page='network'"
                ng-class="{'selected': page=='network'}">Mijn Netwerk</a>
         </div>
 
@@ -102,29 +102,32 @@
             <h1>
                 How connected are you?
                 <span class="h1-subtitle">
-                    Analyze your social network
+                    Let's analyze your social network
                 </span>
             </h1>
             <p>
-                Deze vragenlijst heeft als doel om uw netwerk in kaart te brengen
-                en u bewust te maken van de mensen die u kent.
-                Hieraan ten grondslag ligt een theoretische onderbouwing
-                die u de noodzakelijke achtergrond informatie geeft en u in de
-                gelegenheid stelt om de vragen op een juiste manier te beantwoorden.
-                Zodoende ontstaat er een waardevol beeld van uw netwerk.
-                De theoretische onderbouwing is opgesteld door mw. Iris Meerts van Stichting Zelforganisatie,
-                zij is graag bereid u te woord te staan. Voor meer informatie over de achtergrond
-                van deze scan kunt u contact opnemen met Stichting Zelforganisatie via info@z11org.nl en
-                telefoonnummer 0104049444. Na het beantwoorden van deze Netwerk scan van
-                Stichting Zelforganisatie treft u als output een visualisatie aan.
-                De uitkomst hiervan is uitsluitend bedoeld om inzicht te geven in de opbouw
-                van uw netwerk op dit moment en levert dus geen waarde oordeel. Het gaat dus niet om goed of fout.
-                Bij deze Netwerk scan van Stichting Zelforganisatie gaan we niet uit van de
-                groep waarin u zit maar kiezen we voor de rol die u heeft.
-                Bijvoorbeeld: wanneer we kiezen voor groep, dan kunt u zo alle bloedlijnen die u heeft invullen.
-                Echter, wanneer u bijvoorbeeld met uw broer een bedrijf heeft opgericht,
-                kan het zijn dat het zakelijke contact frequenter plaatsvindt dan het familie contact.
-                Dat vinden we dus interessanter om te meten.
+                De Netwerk Scan van Stichting Zelforganisatie heeft als doel om
+                uw netwerk in kaart te brengen en u feedback te geven op de mate
+                waarin u verbonden bent met uw netwerk. Netwerken die zich lenen
+                voor zelforganisatie vertonen in de praktijk alle dezelfde
+                kenmerken. Dit is niet alleen zichtbaar bij mensen en het
+                internet maar ook bij vogels, vissen en insecten.
+                We noemen dergelijke netwerken scale free.
+                In hoeverre is uw netwerk scale free? Dat inventariseren we
+                in deze Netwerk Scan. Vult u de scan astublieft zo volledig
+                mogelijk in zodat wij u een zo compleet mogelijk beeld van uw
+                netwerk kunnen geven.
+
+                Bij de Netwerk Scan gaan we niet uit van de groep waarin u zit
+                (familie, vriendenkring) maar kiezen we voor de verschillende
+                rollen die u heeft als ouder, vriend of collega. Bijvoorbeeld:
+                wanneer we kiezen voor een indeling in groepen, dan kunt u zo
+                alle bloedlijnen die u heeft invullen. Echter, wanneer u
+                bijvoorbeeld met uw broer een bedrijf heeft opgericht, kan het
+                zijn dat het zakelijk contact frequenter plaatsvindt dan het
+                familiecontact. Aangezien het ons gaat om de frequentie van het
+                contact meten we hier de mate van contact uit hoofde van een
+                bepaalde rol (zakelijk partner).
             </p>
 
             <p>
@@ -132,19 +135,34 @@
                     <img alt="mindmap" src="img/mindmap_300x262.png" align="right"
                          width="300" height="263" title="Klik voor een grotere weergave">
                 </a>
-                Ter verduidelijking ziet u hier de visualisatie van een voorbeeldnetwerk door middel van een mindmapschema;
-                u staat zelf centraal en om u heen heeft u een diversiteit aan contacten opgebouwd,
-                die u in de verschillende deelnetwerken kunt indelen.
-                U kunt ervoor kiezen om eerst een handmatige schets te maken en dan pas te kiezen voor
-                het digitaal invullen van de Netwerk scan.
+
+                Ter verduidelijking ziet u hiernaast de visualisatie van een
+                voorbeeldnetwerk in een mindmapschema; u staat zelf centraal
+                en om u heen heeft u een diversiteit aan contacten opgebouwd,
+                die in verschillende deelnetwerken zijn te verdelen.
+                Voor de volledigheid kunt u kunt ervoor kiezen om eerst een
+                handmatige schets te maken en dan pas de Netwerk Scan in te vullen.
             </p>
 
             <p>
-                De datum van het invullen van De Netwerk scan van Stichting Zelforganisatie een inzage
-                van uw netwerk op dit moment op. Deze scan is een maat om een beeld te krijgen van de
-                sociale verbondenheid van mensen en uw rol hierin. Om inzicht te krijgen in de groei van het
-                netwerk biedt het periodiek invullen van de vragen hiertoe inzicht. Om in beeldspraak uit te leggen:
-                elk moment van invullen levert een foto op, diverse foto's achter elkaar vormen tesamen een film.
+                Uiteraard is uw netwerk niet altijd hetzelfde;
+                over aan jaar kan het er heel anders uitzien.
+                Het is dan ook goed om u te realiseren dat de score een momentopname is.
+                Na het invullen van de Netwerk Scan treft u als output ook een
+                visualisatie van uw netwerk aan.
+                Deze is uitsluitend bedoeld om u inzicht te geven in de opbouw
+                van uw netwerk op dit moment en geeft dus geen waardeoordeel.
+                Er is geen 'goed' of 'fout'. Wel is het mogelijk om op basis van
+                het huidige plaatje bepaalde veranderingen aan te brengen die
+                uw netwerk later meer scale free maken. Dit resulteert in een
+                andere netwerkscore en een ander plaatje van uw netwerk.
+                Om het in beeldspraak te zeggen: de scan levert op moment x een
+                'foto' op van uw netwerk. Wanneer u dit later een paar keer zou
+                herhalen, vormen de diverse foto's op moment y tezamen een 'film'.
+            </p>
+
+            <p>
+                Heeft u hier vragen over? <a href="mailto:info@z11org.nl">Wij helpen u graag!</a>
             </p>
 
             <p>
@@ -157,7 +175,7 @@
 
             <div ng-show="!user.email">
                 <p>
-                    Voordat je gegevens kunt invullen of bekijken moet je eerst inloggen.
+                    Voordat u uw gegevens kunt invullen of bekijken, dient u in te loggen.
                 </p>
                 <button ng-click="login()" title="Inloggen">Inloggen</button>
             </div>
@@ -212,9 +230,9 @@
                 </div>
 
                 <div ng-show="formPage=='self'">
-                    <h2>Wie ben je?</h2>
+                    <h2>Wie bent u?</h2>
                     <p>
-                        Vul je algemene gegevens in.
+                        Vul uw algemene gegevens in.
                     </p>
                     <div class="form-frame" ng-readonly="true">
                         <table>
@@ -268,15 +286,44 @@
 
                         <h2>{{domain.name}}</h2>
                         <p>
-                            Vul de namen van je {{domain.name.toLowerCase() }} in dit deelnetwerk in,
-                            en geef aan hoe intensief je contact met elk van hen hebt.
+                            Vul de namen van uw {{domain.name.toLowerCase()}} in, en geef aan hoe
+                            intensief contact u met elk van hen hebt.
                         </p>
 
                         <div class="form-frame">
                             <table>
                                 <tr ng-show="domain.relations.length">
-                                    <td>Naam</td>
-                                    <td>Contact</td>
+                                    <td>
+                                        Naam
+                                        <div class="info-tooltip">?
+                                            <div>
+                                                <h3>
+                                                    Toelichting op het begrip 'naam'
+                                                </h3>
+                                                <p>
+                                                    Vul hier de volledige naam van uw contact in:
+                                                    voornaam en achternaam.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        Frequentie
+                                        <div class="info-tooltip">?
+                                            <div>
+                                                <h3>
+                                                    Toelichting op het begrip 'frequentie'
+                                                </h3>
+                                                <p>
+                                                    Definitie van frequentie: dit verdelen wij onder in dagelijks,
+                                                    wekelijks, maandelijks, eens per kwartaal of jaarlijks contact.
+                                                    Alle vormen van contact tellen mee, niet alleen direct het
+                                                    face to face contact maar ook contact via de telefoon,
+                                                    per mail, sms, internet of sociale media.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr ng-repeat="relation in domain.relations">
                                     <td><input type="text"
@@ -317,11 +364,44 @@
 
                     <div>
                         <h2>Deelnetwerk toevoegen</h2>
-                        <p>
-                            Kies een deelnetwerk om je contacten van in te vullen,
-                            of kies "Volgende" als je al je deelnetwerken hebt ingevuld.
-                            Vul alleen de voor jou relevante deelnetwerken in.
-                        </p>
+
+                        Kies een deelnetwerk
+
+                        <div class="info-tooltip">?
+                            <div>
+                                <h3>
+                                    Toelichting op het begrip 'deelnetwerk'
+                                </h3>
+                                <p>
+                                    Het deelnetwerk 'vrije tijd' omvat bijvoorbeeld mensen die u spreekt
+                                    als u uw hobby of sport uitoefent. Het deelnetwerk 'overig'
+                                    omvat bijvoorbeeld mensen die u ontmoet als u uitgaat of op vakantie gaat.
+                                </p>
+                            </div>
+                        </div>&nbsp;
+
+                        om uw contacten
+
+                        <div class="info-tooltip">?
+                            <div>
+                                <h3>
+                                    Toelichting op het begrip 'contact'
+                                </h3>
+                                <p>
+                                    Defintie van contact: het geven van instructies of inlichtingen
+                                    aan elkaar en het ontvangen van informatie van de ander als middel
+                                    om elkaars gedachtewereld te leren kennen. Dit proces kan in &eacute;&eacute;n
+                                    richting, vice versa dan wel over meerdere stations verlopen.
+                                </p>
+                            </div>
+                        </div>&nbsp;
+
+                        in te voeren.
+                        U hoeft alleen contacten in te voeren bij deelnetwerken
+                        die voor u relevant zijn. Mist u een netwerk?
+                        Vul dit dan in bij 'Overig'.
+                        Bent u klaar? Klik dan op 'Volgende'.
+                        <p></p>
 
                         <div class="form-frame">
                             Deelnetwerk toevoegen:
@@ -345,10 +425,14 @@
                 <div ng-show="formPage=='score'">
                     <h2>Score</h2>
                     <p>
-                        Je Individuele Netwerk Co&euml;ffici&euml;nt (INQ) is:
+                        Uw Individuele Netwerk Co&euml;ffici&euml;nt (INQ) is:
                         <span style="font-weight: bold;">
                             {{currentInq}}
                         </span>
+                    </p>
+
+                    <p>
+                        <a ng-click="page='network'">Klik hier</a> voor een visualisatie van uw netwerk op dit moment.
                     </p>
 
                     <p>
@@ -360,22 +444,22 @@
         </div>
 
         <div ng-show="page == 'network'">
-            <h1>Netwerk in kaart <img ng-show="networkLoading" src="img/loading5.gif"></h1>
+            <h1>Uw netwerk in kaart <img ng-show="networkLoading" src="img/loading5.gif"></h1>
 
             <p>
-                De netwerk visualizatie toont het sociale netwerk van alle deelnemers.
+                De netwerkvisualisatie toont een plaatje van uw sociale netwerk op dit moment.
+                De dikte van de lijn tussen twee mensen geeft intensiteit van
+                het contact aan - hoe dikker de lijn is, des te intensiever is het contact.
+                De lijnkleur geeft aan in welke rol u contact heeft met iemand anders
+                (in welk 'deelnetwerk').
 
-                De lijn dikte geeft de bijdrage van dit contact aan je INQ weer,
-                hoe dikker de lijn hoe intensiever het contact.
-                De lijn kleur geeft het 'deelnetwerk' of de 'rol' waar je iemand van kent.
-                Je kunt zelf de mate van zichtbaarheid aangeven in drie gradaties:
+                U kunt zelf aangeven in hoeverre anderen uw gegevens mogen inzien:
             </p>
 
             <ol>
-                <li>informatie alleen voor mezelf</li>
-                <li>zodra de ander je terug noemt mag deze inzien</li>
-                <li>zichtbaar voor iedereen.</li>
-
+                <li>de informatie is alleen bestemd voor uzelf;</li>
+                <li>anderen mogen de informatie zien zodra zij u terugnoemen;</li>
+                <li>iedereen mag uw informatie zien.</li>
             </ol>
 
             <div id="network"></div>
@@ -418,8 +502,8 @@
                     Tel: 010-4049444
                 </p>
                 <p>
-                    <a href="mailto:info@stichtingzelforganisatie.nl" target= "_blank">
-                        info@stichtingzelforganisatie.nl
+                    <a href="mailto:info@z11org.nl" target= "_blank">
+                        info@z11org.nl
                     </a>
                 </p>
             </div>
@@ -427,12 +511,16 @@
                 <h4>Connect</h4>
                 <p>
                     <a href="http://www.twitter.com/Zelforganisatie" target= "_blank">
-                        <img alt="twitter" width="84" height="17" src="img/z11org/twitter.png"/>
+                        <img alt="twitter" width="72" height="17" src="img/z11org/twitter.png"/>
                     </a>
                 </p>
                 <p>
                     <a href="http://www.linkedin.com/groups?home=&gid=2956564" target= "_blank">
-                        <img alt="linkedin" width="84" height="19" src="img/z11org/linkedin.png"/></a>
+                        <img alt="linkedin" width="74" height="19" src="img/z11org/linkedin.png"/></a>
+                </p>
+                <p>
+                    <a href="http://www.facebook.com/zelforganisatie" target= "_blank">
+                        <img alt="facebook" width="96" height="36" src="img/z11org/facebook.jpg"/></a>
                 </p>
                 <p>
                     <a href="http://www.youtube.com/user/Zelforganisatie" target= "_blank">

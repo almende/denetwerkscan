@@ -122,6 +122,10 @@ function Controller($scope, $resource) {
                 }
             }
         }
+
+        if (newPage == 'network') {
+            $scope.loadNetwork();
+        }
     });
 
     /**
@@ -335,8 +339,7 @@ function Controller($scope, $resource) {
     /**
      * load network page
      */
-    $scope.showNetwork = function () {
-        $scope.page = 'network';
+    $scope.loadNetwork = function () {
         if (!$scope.network) {
             // retrieve all data with documents
             var params = {
@@ -428,11 +431,7 @@ function Controller($scope, $resource) {
     $scope.currentInq = undefined;
     $scope.updateINQ = function (formPage) {
         if (formPage == 'score' && $scope.current) {
-            var value = inq.getScore($scope.current, $scope.frequencies);
-
-            // round to 3 digits
-            value = Math.round(value * 1000) / 1000;
-            $scope.currentInq = value;
+            $scope.currentInq = inq.getScore($scope.current, $scope.frequencies);
         }
     };
     $scope.$watch('formPage', $scope.updateINQ);

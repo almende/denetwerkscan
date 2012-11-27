@@ -27,6 +27,9 @@ inq.getScore = function (person, frequencies) {
         });
     }
 
+    // round to 3 digits
+    score = Math.round(score * 1000) / 1000;
+
     return score;
 };
 

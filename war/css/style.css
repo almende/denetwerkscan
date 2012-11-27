@@ -8,8 +8,8 @@ body, html {
 
 
 body, html, td, tr, button, select, input {
-    font-family: Verdana, sans-serif;
-    font-size: 11px;
+    font-family: TheMix, Verdana, sans-serif;
+    font-size: 12px;
     color: #39322A;
 }
 
@@ -195,6 +195,14 @@ h4 {
     margin: 0 0 10px;
 }
 
+a {
+    color: #39322A;
+}
+a:hover {
+    color: #009FC6;
+}
+
+
 a.refresh {
     padding: 0 5px;
     color: #39322A;
@@ -316,6 +324,34 @@ li.ui-menu-item a {
     border-radius: 2px;
 }
 
+div.info-tooltip {
+    background-color: #c4c4c4;
+    border-radius: 3px;
+    color: white;
+    padding: 0 5px;
+    display: inline;
+    position: relative;
+}
+
+div.info-tooltip div {
+    display: none;
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 300px;
+    color: #39322A;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 3px;
+    box-shadow: 0 0 15px rgba(128, 128, 128, 0.5);
+    padding: 10px;
+    clear: both;
+    z-index: 999;
+}
+
+div.info-tooltip:hover div {
+    display: block;
+}
 
 div.arrow {
     background: #E5E5E5;

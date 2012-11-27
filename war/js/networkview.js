@@ -36,11 +36,13 @@ function loadNetwork (container, persons, domains, frequencies) {
         var name = person.name;
         var id = ids[name];
         if (id == undefined) {
+            var score = inq.getScore(person, frequencies);
             id = nodes.length;
             nodes.push({
-                "id": id,
-                "text": name,
-                "title": "Persoon<br>Naam: " + name
+                'id': id,
+                'text': name,
+                'title': 'Persoon<br>Naam: ' + name + '<br>Score: ' + score,
+                'value': score
             });
             ids[name] = id;
         }
@@ -64,11 +66,11 @@ function loadNetwork (container, persons, domains, frequencies) {
             'Frequentie: ' + frequency + '<br>' +
             'Score: ' + score;
         connections.push({
-            "from": from,
-            "to": to,
-            "color": colors[domain],
-            "value": score,
-            "title": title
+            'from': from,
+            'to': to,
+            'color': colors[domain],
+            'value': score,
+            'title': title
         });
     }
 
@@ -95,17 +97,17 @@ function loadNetwork (container, persons, domains, frequencies) {
 
     // initialize options
     var options = {
-        "width": "650px",
-        "height": "400px",
-        "borderColor": "lightgray",
-        "nodes": {
-            "style": "dot",
-            "radius": 10,
+        'width': '650px',
+        'height': '400px',
+        'borderColor': 'lightgray',
+        'nodes': {
+            'style': 'dot',
+            'radius': 10,
             'backgroundColor': 'lightgray',
             'borderColor': '#4d4d4d'
         },
-        "links": {
-            "defaultLength": 120
+        'links': {
+            'defaultLength': 120
         }
     };
 
