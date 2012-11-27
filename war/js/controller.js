@@ -442,6 +442,7 @@ function Controller($scope, $resource) {
     tooltips.forEach(function (tooltip) {
         $('#tooltip-' + tooltip).simpletip({
             content: $('#tooltip-text-' + tooltip).html(),
+            persistent: true,
             fixed: true,
             offset: [0, 20]
         });
