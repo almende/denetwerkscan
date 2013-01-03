@@ -444,8 +444,8 @@ function Controller($scope, $resource) {
 
     // retrieve user info (logged in or not, email, isAdmin)
     $scope.user = User.get();
-    $scope.$watch('user.isLoggedIn', function (isLoggedIn) {
-        // TODO: clear search results?
+    $scope.$watch('user.isLoggedIn', function () {
+        $scope.search.results = undefined;
     });
 
     // search parameters

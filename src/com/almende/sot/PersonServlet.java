@@ -318,8 +318,6 @@ public class PersonServlet extends HttpServlet {
 	private static ObjectNode extendWithRelations(Person person) {
 		ObjectNode json = mapper.convertValue(person, ObjectNode.class);
 		
-		System.out.println("retrieving relations of " + person.getId()); // TODO: cleanup
-		
 		if (json.has("domains") && json.get("domains").isArray()) {
 			// loop over all domains
 			ArrayNode domains = (ArrayNode) json.get("domains");
@@ -327,15 +325,14 @@ public class PersonServlet extends HttpServlet {
 				if (domains.get(i).isObject()) {
 					ObjectNode domain = (ObjectNode) domains.get(i);
 					if (domain.has("relations") && domain.get("relations").isArray()) {
+						// loop over all relations
 						ArrayNode relations = (ArrayNode) domain.get("relations");
 						for (int j = 0; j < relations.size(); j++) {
 							if (relations.get(i).isObject()) {
 								ObjectNode relation = (ObjectNode) relations.get(i);
 								if (relation.has("id") && relation.get("id").isTextual()) {
+									// merge the relations data
 									String id = relation.get("id").asText();
-									
-									System.out.println("retrieve relation " + id); // TODO: cleanup
-									
 									Person rel = PersonService.get(id);
 									if (rel != null) {
 										merge(relation, rel);
