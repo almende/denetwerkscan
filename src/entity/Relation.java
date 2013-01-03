@@ -29,6 +29,16 @@ public class Relation implements Serializable {
 		this.frequency = frequency;
 	}
 
-	@Index(false) private String name;        // Name of the friend
-	@Index(false) private String frequency;   // every day, once per month, ...
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	@Index(false) private String name;      // name of the friend
+	@Index(false) private String id;        // optional. typically the email 
+										    // of the relation, used for authorization
+	@Index(false) private String frequency; // every day, once per month, ...
 }

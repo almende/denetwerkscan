@@ -33,10 +33,6 @@ function Controller($scope, $resource) {
     });
     var User = $resource('/auth');
 
-    $scope.tests = [
-        'netwerk_scan_1'
-    ];
-    $scope.test = $scope.tests[0];
     $scope.page = 'intro';    // Available: 'intro', 'form', 'network', 'score'
     $scope.formPage = 'self'; // Available: 'self', 'contacts', 'score'
 
@@ -65,16 +61,11 @@ function Controller($scope, $resource) {
 
     /**
      * Query all persons.
-     * Persons are filtered by the currently selected test
      */
     $scope.query = function () {
         if (!$scope.isLoggedIn()) {
             return;
         }
-
-        var params = {
-            'test': $scope.test
-        };
 
         var updateNames = function () {
             $scope.names = [];
@@ -86,7 +77,7 @@ function Controller($scope, $resource) {
 
         $scope.querying = true;
         $scope.error = undefined;
-        $scope.persons = Person.find(params, undefined, function () {
+        $scope.persons = Person.find({}, undefined, function () {
             $scope.querying = false;
             updateNames();
         }, function (err) {
@@ -94,12 +85,6 @@ function Controller($scope, $resource) {
             console.log('Error', err);
         });
     };
-
-    // create a watch which reloads persons when the test changes
-    $scope.$watch('test', function () {
-        $scope.current = undefined;
-        $scope.query();
-    });
 
     // store the input form when the page changes
     $scope.$watch('formPage', function () {
@@ -243,9 +228,14 @@ function Controller($scope, $resource) {
                 // person does not yet exist. initialize a new form
                 if ($scope.isLoggedIn()) {
                     $scope.current = {
-                        id: $scope.user.email
+                        id: $scope.user.email,
+                        privacyPolicy: 'PUBLIC_FOR_RELATIONS'
                     };
                 }
+            }
+            else if (err.status == 403) {
+                $scope.error = 'U hebt geen toestemming om de gegevens ' +
+                    'van gebruiker ' + id + ' te bekijken.';
             }
             else {
                 $scope.error = 'Laden van gebruiker ' + id + ' is mislukt';
@@ -264,7 +254,6 @@ function Controller($scope, $resource) {
                 $scope.markUnchanged();
 
                 var id = $scope.current.id;
-                $scope.current.test = $scope.test;
                 $scope.saving = true;
                 $scope.error = undefined;
                 $scope.current = Person.update({'id': id}, $scope.current, function () {
@@ -279,12 +268,29 @@ function Controller($scope, $resource) {
         }
     };
 
+    /**
+     * Give a dutch description of the given gender
+     * @param {String} gender
+     * @return {String}
+     */
     $scope.describeGender = function (gender) {
-        if (gender == 'MALE') {
-            return 'Man';
+        switch (gender) {
+            case 'MALE': return 'Man';
+            case 'FEMALE': return 'Vrouw';
         }
-        if (gender == 'FEMALE') {
-            return 'Vrouw';
+        return '';
+    };
+
+    /**
+     * Give a dutch description of a privacy policy
+     * @param {String} privacyPolicy
+     * @return {String}
+     */
+    $scope.describePolicy = function (privacyPolicy) {
+        switch (privacyPolicy) {
+            case 'PRIVATE': return 'Niemand mag mijn gegevens zien';
+            case 'PUBLIC': return 'Iedereen mag mijn gegevens zien';
+            case 'PUBLIC_FOR_RELATIONS': return 'Mijn relaties mogen mijn gegevens zien';
         }
         return '';
     };
@@ -343,8 +349,7 @@ function Controller($scope, $resource) {
         if (!$scope.network) {
             // retrieve all data with documents
             var params = {
-                'test': $scope.test,
-                'include_docs': true
+                'include_persons': true
             };
             $scope.networkLoading = true;
             var data = Person.query(params, undefined, function () {

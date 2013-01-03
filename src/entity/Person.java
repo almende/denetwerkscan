@@ -26,14 +26,9 @@ public class Person implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getTest() {
-		return test;
-	}
-
-	public void setTest(String test) {
-		this.test = test;
+		if (nameLowerCase == null) {
+			nameLowerCase = id;
+		}
 	}
 
 	public String getName() {
@@ -42,6 +37,7 @@ public class Person implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+		this.nameLowerCase = (name != null) ? name.toLowerCase() : id;
 	}
 
 	public Integer getAge() {
@@ -59,13 +55,23 @@ public class Person implements Serializable {
 	public void setGender(GENDER gender) {
 		this.gender = gender;
 	}
+	
 	public String getProfession(){
 		return profession;
 	}
+	
 	public void setProfession(String profession){
 		this.profession = profession;
 	}
 	
+	public PRIVACY_POLICY getPrivacyPolicy() {
+		return privacyPolicy;
+	}
+
+	public void setPrivacyPolicy(PRIVACY_POLICY privacyPolicy) {
+		this.privacyPolicy = privacyPolicy;
+	}
+
 	public List<Domain> getDomains() {
 		return domains;
 	}
@@ -73,14 +79,35 @@ public class Person implements Serializable {
 	public void setDomains(List<Domain> domains) {
 		this.domains = domains;
 	}
+	
+	public boolean hasRelation(String id) {
+		if (id == null || domains == null) {
+			return false;
+		}
+	
+		for (Domain domain : domains) {
+			if (domain.getRelations() != null) {
+				for (Relation relation : domain.getRelations()) {
+					if (id.equals(relation.getId())) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
 
 	@Id private String id; // typically, the users email is used as id.
-	private String test;   // name of the test, for example "Buurtlab 2011"
-	private String name;
+	@Index(false) private String name;
+	private String nameLowerCase;  // for indexed search on lower case name
+	@Index(false) private PRIVACY_POLICY privacyPolicy = PRIVACY_POLICY.PUBLIC_FOR_RELATIONS;
 	@Index(false) private Integer age;
 	@Index(false) private GENDER gender;
 	@Index(false) private String profession;
 	@Index(false) @Type(Blob.class) private List<Domain> domains;
 	
 	public enum GENDER {MALE, FEMALE};
+	public enum PRIVACY_POLICY {PRIVATE, PUBLIC_FOR_RELATIONS, PUBLIC};
 }
+

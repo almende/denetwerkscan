@@ -54,11 +54,6 @@
     <div id="menu">
         <h2>Test</h2>
 
-        <!-- TODO: selection of a test (different set of participants)
-        <select ng-model="test"
-                ng-options="test for test in tests"></select>
-        -->
-
         <div class="listitem" >
             <a class="page"
                ng-click="page = 'intro'"
@@ -129,9 +124,9 @@
                 alle bloedlijnen die u heeft invullen. Echter, wanneer u
                 bijvoorbeeld met uw broer een bedrijf heeft opgericht, kan het
                 zijn dat het zakelijk contact frequenter plaatsvindt dan het
-                familiecontact <span id="tooltip-contact">&nbsp;?&nbsp;</span>.
+                familiecontact <span id="tooltip-contact" class="tooltip-anchor">&nbsp;i&nbsp;</span>.
                 Aangezien het ons gaat om de
-                frequentie <span id="tooltip-frequentie">&nbsp;?&nbsp;</span> van het
+                frequentie <span id="tooltip-frequentie" class="tooltip-anchor">&nbsp;i&nbsp;</span> van het
                 contact meten we hier de mate van contact uit hoofde van een
                 bepaalde rol (zakelijk partner).
             </p>
@@ -146,7 +141,7 @@
                 voorbeeldnetwerk in een mindmapschema; u staat zelf centraal
                 en om u heen heeft u een diversiteit aan contacten opgebouwd,
                 die in verschillende deelnetwerken
-                <span id="tooltip-deelnetwerk">&nbsp;?&nbsp;</span> zijn te verdelen.
+                <span id="tooltip-deelnetwerk" class="tooltip-anchor">&nbsp;i&nbsp;</span> zijn te verdelen.
                 Voor de volledigheid kunt u kunt ervoor kiezen om eerst een
                 handmatige schets te maken en dan pas de Netwerk Scan in te vullen.
             </p>
@@ -155,7 +150,7 @@
                 Uiteraard is uw netwerk niet altijd hetzelfde;
                 over een jaar kan het er heel anders uitzien.
                 Het is dan ook goed om u te realiseren dat de
-                score <span id="tooltip-score">&nbsp;?&nbsp;</span> een momentopname is.
+                score <span id="tooltip-score" class="tooltip-anchor">&nbsp;i&nbsp;</span> een momentopname is.
                 Na het invullen van de Netwerk Scan treft u als output ook een
                 visualisatie van uw netwerk aan.
                 Deze is uitsluitend bedoeld om u inzicht te geven in de opbouw
@@ -262,8 +257,8 @@
                             <tr><td>Geslacht</td><td>
                                 <select ng-model="current.gender"
                                         ng-hide="readonly">
-                                    <option value="MALE">Man</option>
-                                    <option value="FEMALE">Vrouw</option>
+                                    <option value="MALE">{{ describeGender('MALE') }}</option>
+                                    <option value="FEMALE">{{ describeGender('FEMALE') }}</option>
                                 </select>
                                 <input type="text"
                                        value="{{describeGender(current.gender) }}"
@@ -278,6 +273,22 @@
                         </table>
                     </div>
 
+                    <h2>Privacy</h2>
+                    <p>
+                        Maak een keuze voor de privacy instellingen van uw gegevens.
+                    </p>
+                    <div class="form-frame" ng-readonly="true">
+                        <select ng-model="current.privacyPolicy"
+                                ng-hide="readonly">
+                            <option value="PRIVATE">{{ describePolicy('PRIVATE') }}</option>
+                            <option value="PUBLIC">{{ describePolicy('PUBLIC') }}</option>
+                            <option value="PUBLIC_FOR_RELATIONS">{{ describePolicy('PUBLIC_FOR_RELATIONS') }}</option>
+                        </select>
+                        <div ng-show="readonly">
+                            {{ describePolicy(current.privacyPolicy) || '(geen privacy instellingen gevonden)' }}
+                        </div>
+                    </div>
+
                     <p>
                         <button ng-disabled="true" title="Vorige pagina">&#9668; Vorige</button>
                         <button ng-click="formPage='contacts'" title="Volgende pagina">Volgende &#9658;</button>
@@ -285,7 +296,6 @@
                 </div>
 
                 <div ng-show="formPage=='contacts'">
-
                     <div ng-repeat="domain in current.domains">
                         <a ng-click="deleteDomain(current, domain)"
                            ng-show="!readonly"
@@ -302,6 +312,7 @@
                             <table>
                                 <tr ng-show="domain.relations.length">
                                     <td>Naam</td>
+                                    <td>Email</td>
                                     <td>Frequentie</td>
                                 </tr>
                                 <tr ng-repeat="relation in domain.relations">
@@ -309,6 +320,11 @@
                                                autocomplete="names"
                                                selection="relation.name"
                                                ng-model="relation.name"
+                                               ng-readonly="readonly" />
+                                    </td>
+                                    <td><input type="text"
+                                               selection="relation.id"
+                                               ng-model="relation.id"
                                                ng-readonly="readonly" />
                                     </td>
                                     <td>
@@ -362,7 +378,6 @@
                             </span>
                         </div>
                     </div>
-
 
                     <p>
                         <button ng-click="formPage='self'" title="Vorige pagina">&#9668; Vorige</button>
@@ -482,7 +497,7 @@
 </div>
 
 <!-- tooltip texts -->
-<div id="tooltip-text-frequentie">
+<div id="tooltip-text-frequentie" class="tooltip-contents">
     <h3>Toelichting op het begrip 'frequentie'</h3>
     <p>
         Definitie van frequentie: dit verdelen wij onder in dagelijks,
@@ -493,7 +508,7 @@
     </p>
 </div>
 
-<div id="tooltip-text-contact">
+<div id="tooltip-text-contact" class="tooltip-contents">
     <h3>
         Toelichting op het begrip 'contact'
     </h3>
@@ -505,7 +520,7 @@
     </p>
 </div>
 
-<div id="tooltip-text-deelnetwerk">
+<div id="tooltip-text-deelnetwerk" class="tooltip-contents">
     <h3>
         Toelichting op het begrip 'deelnetwerk'
     </h3>
@@ -516,7 +531,7 @@
     </p>
 </div>
 
-<div id="tooltip-text-score">
+<div id="tooltip-text-score" class="tooltip-contents">
     <h3>
         Toelichting op het begrip 'score'
     </h3>

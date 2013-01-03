@@ -29,6 +29,11 @@ public class PersonServlet extends HttpServlet {
 	 * When id is specified in the url, the person with that id will be 
 	 * returned. If the person is not found, a 404 is returned.
      *
+     * Query parameters:
+     * - {Boolean} include_relations   Include all relations. Only relations
+     *                                 which are authorized for this current 
+     *                                 user will be included. 
+     *
  	 * GET /persons/
  	 * 
 	 * When id is not specified in the url, a list with all persons will be 
@@ -37,20 +42,20 @@ public class PersonServlet extends HttpServlet {
 	 * found, an empty array will be returned
 	 * 
 	 * Query parameters:
-	 * - {String} name           Filter by name
-	 * - {String} test           Filter by test
-	 * - {Number} limit          Maximum number of persons to retrieve
-	 * - {Boolean} include_docs  If true, the complete person objects are 
-	 *                           included in the response. If false, only the 
-	 *                           id and name of the persons is returned.
+	 * - {String} name              Filter by name
+	 * - {Number} limit             Maximum number of persons to retrieve
+	 * - {Boolean} include_persons  If true, the complete person objects are 
+	 *                              included in the response. If false, only the 
+	 *                              id and name of the persons is returned.
 	 */
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws JsonParseException, JsonMappingException, IOException {
 		String id = getPersonId(req);
-
-		// authorize the user
-		if (!authorize(ACTION.GET, id)) {
+		
+		// basic authorization: must be logged in
+		CurrentUser user = new CurrentUser();
+		if (!user.isLoggedIn()) {
 			resp.sendError(403); 
 			return;
 		}
@@ -58,6 +63,22 @@ public class PersonServlet extends HttpServlet {
 		if (id != null) {
 			Person person = PersonService.get(id);
 			if (person != null) {
+				// authorize the user to view this person
+				if (!isAutorizedToView(user, person)) {
+					resp.sendError(403); 
+					return;
+				}
+				
+				boolean include_relations = false;
+				if (req.getParameter("include_relations") != null) {
+					include_relations = Boolean.valueOf(req.getParameter("include_relations"));
+				}
+				
+				if (include_relations) {
+					// loop over all relations and retrieve them (when authorized)
+					
+				}
+
 				write(resp, person);
 			}
 			else {
@@ -68,23 +89,36 @@ public class PersonServlet extends HttpServlet {
 		}
 		else {
 			String name = req.getParameter("name");
-			String test = req.getParameter("test");
 			Integer limit = null;
 			if (req.getParameter("limit") != null) {
 				limit = Integer.valueOf(req.getParameter("limit"));
 			}
-			Boolean include_docs = false;
-			if (req.getParameter("include_docs") != null) {
-				include_docs = Boolean.valueOf(req.getParameter("include_docs"));
+			boolean include_persons = false;
+			if (req.getParameter("include_persons") != null) {
+				include_persons = Boolean.valueOf(req.getParameter("include_persons"));
 			}
-			List<Person> persons = PersonService.find(name, test, limit);
+			List<Person> persons = PersonService.find(name, limit);
 			
-			if (include_docs) {
+			if (include_persons) {
+				// remove all persons which the user is not authorized to see
+				int i = 0;
+				while (i < persons.size()) {
+					Person person = persons.get(i);
+					if (isAutorizedToView(user, person)) {
+						i++;
+					}
+					else {
+						persons.remove(i);
+					}
+				}
+				
 				// return all persons
 				write(resp, persons);
 			}
 			else {
 				// extract the ids/names from the person and only return that
+				// note that we do not filter on authorized persons: a persons 
+				// name and id are public.
 				ObjectMapper mapper = new ObjectMapper();
 				ArrayNode nodes = mapper.createArrayNode();
 				for (Person person : persons) {
@@ -116,7 +150,9 @@ public class PersonServlet extends HttpServlet {
 		}
 
 		// authorize the user
-		if (!authorize(ACTION.POST, null)) {
+		CurrentUser user = new CurrentUser();
+		boolean authorized = user.isLoggedIn();
+		if (!authorized) {
 			resp.sendError(403); // not authorized
 			return;
 		}
@@ -142,9 +178,12 @@ public class PersonServlet extends HttpServlet {
 		if (id == null) {
 			throw new ServletException("id missing in url");
 		}
-			
+
 		// authorize the user
-		if (!authorize(ACTION.PUT, id)) {
+		CurrentUser user = new CurrentUser();
+		boolean authorized = user.isLoggedIn() && 
+				(user.isAdmin() || user.isSelf(id));
+		if (!authorized) {
 			resp.sendError(403); // not authorized
 			return;
 		}
@@ -177,7 +216,10 @@ public class PersonServlet extends HttpServlet {
 		}
 		
 		// authorize the user
-		if (!authorize(ACTION.DELETE, id)) {
+		CurrentUser user = new CurrentUser();
+		boolean authorized = user.isLoggedIn() && 
+				(user.isAdmin() || user.isSelf(id));
+		if (!authorized) {
 			resp.sendError(403); // not authorized
 			return;
 		}
@@ -189,37 +231,77 @@ public class PersonServlet extends HttpServlet {
 	}
 
 	/**
-	 * Authorize getting information (get, put, post, delete)
-	 * @param action
-	 * @param id     The id of the person
-	 * @return authorized    True if authorized, else false
+	 * Check whether a user is authorized to see a person, using this persons
+	 * privacy policy
+	 * @param user
+	 * @param person
+	 * @return
 	 */
-	private boolean authorize(ACTION action, String id) {
-		UserService userService = UserServiceFactory.getUserService();
-		switch (action) {
-			case GET:
-				if (userService.isUserLoggedIn()) {
-					return true;
-				}
-			
-			case PUT:
-			case POST:
-			case DELETE:
-				if (userService.isUserLoggedIn()) {
-					User user = userService.getCurrentUser();
-					String email = user.getEmail();
-					if (userService.isUserAdmin() || 
-							(id != null && email != null && email.equals(id))) {
-						return true;
-					}
-				}
+	private boolean isAutorizedToView(CurrentUser user, Person person) {
+		if (!user.isLoggedIn()) {
+			return false;
+		}
+		if (user.isAdmin()) {
+			return true;
+		}
+		
+		switch (person.getPrivacyPolicy()) {
+			case PRIVATE:
+				return (user.isSelf(person.getId()));
+
+			case PUBLIC_FOR_RELATIONS:
+				return user.isSelf(person.getId()) || person.hasRelation(user.getId());
+				
+			case PUBLIC:
+				return true;
+
+			default:
+				return false;
+		}
+	}
+	
+	/**
+	 * Helper class with method to authorize the current user
+	 */
+	private class CurrentUser {
+		private UserService userService = null;
+		private User user = null;
+
+		public CurrentUser() {
+			userService = UserServiceFactory.getUserService();
+			user = userService.getCurrentUser();
+		}
+		
+		public boolean isLoggedIn() {
+			return userService.isUserLoggedIn();
+		}
+	
+		public boolean isAdmin() {
+			return userService.isUserAdmin();
+		}
+	
+		/**
+		 * Get the users id (its email). Can be null
+		 * @return id
+		 */
+		public String getId() {
+			return user.getEmail();
 		}
 
-		return false;
-	}
+		/**
+		 * Test if the current user has the given id
+		 * @param id
+		 * @param isSelf
+		 */
+		public boolean isSelf(String id) {
+			String userId = getId();
+			if (userId == null || id == null) {
+				return false;
+			}
 
-	// enumeration for authorization actions
-	private enum ACTION {GET, PUT, POST, DELETE};
+			return userId.equals(id);
+		}
+	}
 	
 	/**
 	 * Read the body of the given http request, which is supposed to contain a

@@ -16,47 +16,33 @@ public class PersonService {
 	private PersonService() {}
 	
 	/**
-	 * Find a person by name
+	 * Find a person by name. Search is case insensitive.
+	 * Note that a search can never return more than 1000 results.
 	 * @param name (optional)
-	 * @param test (optional)
 	 * @param limit (optional)
 	 * @return persons
 	 * @throws Exception
 	 */
-	public static List<Person> find(String name, String test, Integer limit) {
+	public static List<Person> find(String name, Integer limit) {
 		ObjectDatastore datastore = new AnnotationObjectDatastore();
 		RootFindCommand<Person> command = datastore.find().type(Person.class);
-		if (test != null) {
-			command = command.addFilter("test", FilterOperator.EQUAL, test);
-		}
-		/* TODO: name search, but the following is case sensitive and 
-		 * only searches for "starts with"
 		if (name != null) {
-			command = command.addFilter("name", FilterOperator.GREATER_THAN_OR_EQUAL, name);
-			command = command.addFilter("name", FilterOperator.LESS_THAN, name + "\ufffd");
+			String nameLowerCase = name.toLowerCase();
+			command = command.addFilter("nameLowerCase", 
+					FilterOperator.GREATER_THAN_OR_EQUAL, nameLowerCase);
+			command = command.addFilter("nameLowerCase", 
+					FilterOperator.LESS_THAN, nameLowerCase + "\ufffd");
 		}
-		*/
 		if (limit != null) {
 			command = command.fetchMaximum(limit);
 		}
-		command = command.addSort("name");
+		command = command.addSort("nameLowerCase");
 		QueryResultIterator<Person> query = command.now();
 
-		// TODO: querying over all Persons to filter by name is slow/expensive.
-		// implement real full text search?
+		// retrieve all query results
 		List<Person> persons = new ArrayList<Person>();
 		while (query.hasNext()) {
-			Person person = query.next();
-			if (person != null) {
-				String pName = person.getName();
-				// filter by name
-				if (name == null) {
-					persons.add(person); // not filtered
-				}
-				else if ((pName != null && pName.toLowerCase().contains(name))) {
-					persons.add(person);
-				}
-			}
+			persons.add(query.next());
 		}
 		
 		return persons;

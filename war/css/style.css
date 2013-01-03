@@ -325,15 +325,23 @@ li.ui-menu-item a {
     border-radius: 2px;
 }
 
-#tooltip-frequentie, #tooltip-contact, #tooltip-deelnetwerk, #tooltip-score  {
+.tooltip-anchor {
     background-color: #c4c4c4;
     border-radius: 3px;
     color: white;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 3px 2px 0 2px;
 }
 
-#tooltip-text-frequentie, #tooltip-text-contact, #tooltip-text-deelnetwerk, #tooltip-text-score {
+.tooltip-anchor:hover {
+    background-color: gray;
+}
+
+.tooltip-contents {
     display: none;
 }
+
 
 .tooltip {
     position: absolute;
