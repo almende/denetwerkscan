@@ -290,7 +290,7 @@ button:disabled {
     margin: 10px 0;
 }
 
-#status {
+#status, .error {
     min-height: 22px;
     color: #FA0A10;
 }
@@ -351,6 +351,7 @@ li.ui-menu-item a {
 
     width: 350px;
     color: #39322A;
+    font-weight: normal;
     background-color: white;
     border: 1px solid gray;
     border-radius: 3px;

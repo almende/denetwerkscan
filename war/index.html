@@ -52,7 +52,7 @@
 
 <div id="wrap-menu">
     <div id="menu">
-        <h2>Test</h2>
+        <h2>Menu</h2>
 
         <div class="listitem" >
             <a class="page"
@@ -70,16 +70,21 @@
                ng-class="{'selected': page=='network'}">Mijn Netwerk</a>
         </div>
 
-        <h2>Deelnemers <img ng-show="querying" src="img/loading5.gif"></h2>
+        <h2>Deelnemers</h2>
         <div>
-            <a class="refresh"
-               ng-click="query()"
-               title="Deelnemers lijst opnieuw laden">vernieuwen</a>
+            Zoek andere deelnemers:
             <input ng-model="search.name"
                    type="text"
                    placeholder="zoeken..." />
+            <img ng-show="search.searching" src="img/loading5.gif">
+            <div ng-show="search.error" class="error">
+                Error: {{search.error}}
+            </div>
         </div>
-        <div ng-repeat="person in persons | filter:search" class="person">
+        <div ng-show="!search.error && !search.results">
+            (geen resultaten)
+        </div>
+        <div ng-repeat="person in search.results" class="person">
             <div ng-class="{'selected': current.id==person.id}" >
                 <a class="person"
                    ng-click="load(person.id)">{{person.name || person.id}}</a>
@@ -124,9 +129,13 @@
                 alle bloedlijnen die u heeft invullen. Echter, wanneer u
                 bijvoorbeeld met uw broer een bedrijf heeft opgericht, kan het
                 zijn dat het zakelijk contact frequenter plaatsvindt dan het
-                familiecontact <span id="tooltip-contact" class="tooltip-anchor">&nbsp;i&nbsp;</span>.
+                familiecontact&nbsp;<span id="tooltip-contact"
+                    class="tooltip-anchor"
+                    title="Klik hier voor een toelichting op het begrip 'contact'">&nbsp;i&nbsp;</span>.
                 Aangezien het ons gaat om de
-                frequentie <span id="tooltip-frequentie" class="tooltip-anchor">&nbsp;i&nbsp;</span> van het
+                frequentie&nbsp;<span id="tooltip-frequentie"
+                    class="tooltip-anchor"
+                    title="Klik hier voor een toelichting op het begrip 'frequentie'">&nbsp;i&nbsp;</span> van het
                 contact meten we hier de mate van contact uit hoofde van een
                 bepaalde rol (zakelijk partner).
             </p>
@@ -140,8 +149,10 @@
                 Ter verduidelijking ziet u hiernaast de visualisatie van een
                 voorbeeldnetwerk in een mindmapschema; u staat zelf centraal
                 en om u heen heeft u een diversiteit aan contacten opgebouwd,
-                die in verschillende deelnetwerken
-                <span id="tooltip-deelnetwerk" class="tooltip-anchor">&nbsp;i&nbsp;</span> zijn te verdelen.
+                die in verschillende
+                deelnetwerken&nbsp;<span id="tooltip-deelnetwerk"
+                    class="tooltip-anchor"
+                    title="Klik hier voor een toelichting op het begrip 'deelnetwerk'">&nbsp;i&nbsp;</span> zijn te verdelen.
                 Voor de volledigheid kunt u kunt ervoor kiezen om eerst een
                 handmatige schets te maken en dan pas de Netwerk Scan in te vullen.
             </p>
@@ -150,7 +161,9 @@
                 Uiteraard is uw netwerk niet altijd hetzelfde;
                 over een jaar kan het er heel anders uitzien.
                 Het is dan ook goed om u te realiseren dat de
-                score <span id="tooltip-score" class="tooltip-anchor">&nbsp;i&nbsp;</span> een momentopname is.
+                score&nbsp;<span id="tooltip-score"
+                    class="tooltip-anchor"
+                    title="Klik hier voor een toelichting op het begrip 'score'">&nbsp;i&nbsp;</span> een momentopname is.
                 Na het invullen van de Netwerk Scan treft u als output ook een
                 visualisatie van uw netwerk aan.
                 Deze is uitsluitend bedoeld om u inzicht te geven in de opbouw
@@ -278,15 +291,17 @@
                         Maak een keuze voor de privacy instellingen van uw gegevens.
                     </p>
                     <div class="form-frame" ng-readonly="true">
+                        Mijn gegevens mogen ingezien worden door:
                         <select ng-model="current.privacyPolicy"
                                 ng-hide="readonly">
                             <option value="PRIVATE">{{ describePolicy('PRIVATE') }}</option>
-                            <option value="PUBLIC">{{ describePolicy('PUBLIC') }}</option>
                             <option value="PUBLIC_FOR_RELATIONS">{{ describePolicy('PUBLIC_FOR_RELATIONS') }}</option>
+                            <option value="PUBLIC">{{ describePolicy('PUBLIC') }}</option>
                         </select>
-                        <div ng-show="readonly">
-                            {{ describePolicy(current.privacyPolicy) || '(geen privacy instellingen gevonden)' }}
-                        </div>
+                        <input type="text"
+                               value="{{describePolicy(current.privacyPolicy) }}"
+                               ng-show="readonly"
+                               ng-readonly="true" />
                     </div>
 
                     <p>
@@ -424,6 +439,10 @@
                 <li>anderen mogen de informatie zien zodra zij u terugnoemen;</li>
                 <li>iedereen mag uw informatie zien.</li>
             </ol>
+
+            <div ng-show="networkError" class="error">
+                Error: {{networkError}}
+            </div>
 
             <div id="network"></div>
         </div>

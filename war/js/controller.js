@@ -9,7 +9,33 @@ myApp.directive('autocomplete', function($parse) {
         var setSelection = $parse(attrs['selection']).assign;
         scope.$watch(attrs.autocomplete, function(value) {
             element.autocomplete({
-                source: value,
+                source: function (request, response) {
+                    var name = request.term; // search term
+                    try {
+                        $.ajax({
+                            url: '/persons/?name=' + name + '&limit=10',
+                            dataType: 'json',
+                            success: function (persons) {
+                                var data = [];
+                                $.each(persons, function () {
+                                    data.push({
+                                        'label': this.name || this.id,
+                                        'value': this.name || this.id
+                                    });
+                                });
+                                response(data);
+                            },
+                            error: function (err) {
+                                response([]);
+                                console.log(err);
+                            }
+                        });
+                    }
+                    catch (err) {
+                        response([]);
+                        console.log(err);
+                    }
+                },
                 select: function(event, ui) {
                     setSelection(scope, ui.item.value);
                     scope.$apply();
@@ -46,44 +72,34 @@ function Controller($scope, $resource) {
 
     $scope.frequencies = [
         'Dagelijks',
-        '2x per week',
-        '1x per week',
-        '1x per maand',
-        '1x per kwartaal',
-        '2x per jaar',
-        '1x per jaar',
-        'Bijna nooit'
+        'Weekelijks',
+        'Maandelijks',
+        'Jaarlijks'
     ];
 
-    $scope.persons = [];
-    $scope.names = [];          // list with names used for auto-completion
-    $scope.current = undefined; // current person
+    // current person
+    $scope.current = undefined;
 
     /**
-     * Query all persons.
+     * Search persons
+     * @param {String} name
+     * @param {function} callback. Called after the search is done.
+     *                             Will be called as callback(results, error),
+     *                             where results is an array containing the
+     *                             persons, and each person is an object
+     *                             containing id and name.
      */
-    $scope.query = function () {
-        if (!$scope.isLoggedIn()) {
-            return;
+    $scope.find = function (name, callback) {
+        try {
+            Person.find({'name': name, 'limit': 10}, undefined, function (result) {
+                callback(result, undefined);
+            }, function (err) {
+                callback(undefined, err);
+            });
         }
-
-        var updateNames = function () {
-            $scope.names = [];
-            for (var i = 0; i < $scope.persons.length; i++) {
-                var name = $scope.persons[i].name;
-                $scope.names.push(name);
-            }
-        };
-
-        $scope.querying = true;
-        $scope.error = undefined;
-        $scope.persons = Person.find({}, undefined, function () {
-            $scope.querying = false;
-            updateNames();
-        }, function (err) {
-            $scope.querying = false;
-            console.log('Error', err);
-        });
+        catch (err) {
+            callback(undefined, err);
+        }
     };
 
     // store the input form when the page changes
@@ -258,7 +274,6 @@ function Controller($scope, $resource) {
                 $scope.error = undefined;
                 $scope.current = Person.update({'id': id}, $scope.current, function () {
                     $scope.saving = false;
-                    $scope.query();
                 }, function (err) {
                     $scope.saving = false;
                     $scope.error = 'Opslaan van gebruiker ' + id + ' is mislukt';
@@ -288,9 +303,9 @@ function Controller($scope, $resource) {
      */
     $scope.describePolicy = function (privacyPolicy) {
         switch (privacyPolicy) {
-            case 'PRIVATE': return 'Niemand mag mijn gegevens zien';
-            case 'PUBLIC': return 'Iedereen mag mijn gegevens zien';
-            case 'PUBLIC_FOR_RELATIONS': return 'Mijn relaties mogen mijn gegevens zien';
+            case 'PRIVATE': return 'Niemand';
+            case 'PUBLIC_FOR_RELATIONS': return 'Mijn relaties';
+            case 'PUBLIC': return 'Iedereen';
         }
         return '';
     };
@@ -325,15 +340,16 @@ function Controller($scope, $resource) {
      * @param {String} [name]
      */
     $scope.delete = function (id, name) {
-        if (id &&  confirm('Weet je zeker dat je ' + (name || id) + ' wilt verwijderen?')) {
+        if (id && confirm('Weet je zeker dat je ' + (name || id) +
+                ' (' + id + ') wilt verwijderen?')) {
             $scope.deleting = true;
             $scope.error = undefined;
             Person.delete({'id': id}, undefined, function () {
                 $scope.deleting = false;
-                $scope.query();
             }, function (err) {
                 $scope.deleting = false;
                 $scope.error = 'Verwijderen van gebruiker ' + id + ' is mislukt';
+                console.log(err);
             });
 
             if ($scope.current && $scope.current.id == id) {
@@ -347,20 +363,24 @@ function Controller($scope, $resource) {
      */
     $scope.loadNetwork = function () {
         if (!$scope.network) {
-            // retrieve all data with documents
+            // retrieve the current user data including its relations
+            var id =  $scope.user.email;
             var params = {
-                'include_persons': true
+                'id': id,
+                'include_relations': true
             };
             $scope.networkLoading = true;
-            var data = Person.query(params, undefined, function () {
+            $scope.networkError = undefined;
+
+            Person.get(params, undefined, function (person) {
                 // load container view
                 var container = document.getElementById('network');
-                loadNetwork(container, data, $scope.domains, $scope.frequencies);
+                loadNetwork(container, person, $scope.domains, $scope.frequencies);
                 $scope.networkLoading = false;
             },
             function (err) {
                 $scope.networkLoading = false;
-                // TODO: display error on screen
+                $scope.networkError = 'Er is een fout opgetreden bij het ophalen van het netwerk.';
                 console.log('Error', err);
             });
         }
@@ -422,16 +442,46 @@ function Controller($scope, $resource) {
     $scope.$watch('current.id', updateReadonly);
     updateReadonly();
 
-    // retrieve persons now
-    $scope.query();
-
-    // retrieve user info (logged in or not, email, isAdmin
+    // retrieve user info (logged in or not, email, isAdmin)
     $scope.user = User.get();
     $scope.$watch('user.isLoggedIn', function (isLoggedIn) {
-        if (isLoggedIn) {
-            $scope.query();
+        // TODO: clear search results?
+    });
+
+    // search parameters
+    $scope.search = {
+        name: '',
+        sequence: 0,  // number of the latest search request
+        searching: false,
+        results: undefined
+    };
+    $scope.$watch('search.name', function (name) {
+        var sequence = (++$scope.search.sequence);
+
+        if (name) {
+            // find by name
+            $scope.search.searching = true;
+            $scope.search.error = undefined;
+            $scope.find(name, function (results, err) {
+                if (sequence == $scope.search.sequence) {
+                    // ok, no other searches started while this search was running
+                    $scope.search.searching = false;
+                    $scope.search.results = results;
+                    if (err) {
+                        $scope.search.error = 'Argh! Er is iets misgegaan.';
+                        console.log(err);
+                    }
+                }
+            });
+        }
+        else {
+            // clear search results
+            $scope.search.results = [];
+            $scope.search.searching = false;
+            $scope.search.error = undefined;
         }
     });
+
 
     $scope.currentInq = undefined;
     $scope.updateINQ = function (formPage) {

@@ -2,7 +2,9 @@ package com.almende.sot;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -10,6 +12,7 @@ import javax.servlet.http.*;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -21,6 +24,8 @@ import entity.Person;
 
 @SuppressWarnings("serial")
 public class PersonServlet extends HttpServlet {
+	private static ObjectMapper mapper = new ObjectMapper();
+	
 	/**
 	 * Get a Person or a list of persons
 	 * 
@@ -76,10 +81,12 @@ public class PersonServlet extends HttpServlet {
 				
 				if (include_relations) {
 					// loop over all relations and retrieve them (when authorized)
-					
+					ObjectNode personWithRelations = extendWithRelations(person);
+					write(resp, personWithRelations);
 				}
-
-				write(resp, person);
+				else {
+					write(resp, person);
+				}
 			}
 			else {
 				// return 404 not found when person == null
@@ -119,7 +126,7 @@ public class PersonServlet extends HttpServlet {
 				// extract the ids/names from the person and only return that
 				// note that we do not filter on authorized persons: a persons 
 				// name and id are public.
-				ObjectMapper mapper = new ObjectMapper();
+				mapper = new ObjectMapper();
 				ArrayNode nodes = mapper.createArrayNode();
 				for (Person person : persons) {
 					ObjectNode node = mapper.createObjectNode();
@@ -304,6 +311,62 @@ public class PersonServlet extends HttpServlet {
 	}
 	
 	/**
+	 * Inject all relations into a persons data
+	 * @param person
+	 * @return personWithRelations
+	 */
+	private static ObjectNode extendWithRelations(Person person) {
+		ObjectNode json = mapper.convertValue(person, ObjectNode.class);
+		
+		System.out.println("retrieving relations of " + person.getId()); // TODO: cleanup
+		
+		if (json.has("domains") && json.get("domains").isArray()) {
+			// loop over all domains
+			ArrayNode domains = (ArrayNode) json.get("domains");
+			for (int i = 0; i < domains.size(); i++) {
+				if (domains.get(i).isObject()) {
+					ObjectNode domain = (ObjectNode) domains.get(i);
+					if (domain.has("relations") && domain.get("relations").isArray()) {
+						ArrayNode relations = (ArrayNode) domain.get("relations");
+						for (int j = 0; j < relations.size(); j++) {
+							if (relations.get(i).isObject()) {
+								ObjectNode relation = (ObjectNode) relations.get(i);
+								if (relation.has("id") && relation.get("id").isTextual()) {
+									String id = relation.get("id").asText();
+									
+									System.out.println("retrieve relation " + id); // TODO: cleanup
+									
+									Person rel = PersonService.get(id);
+									if (rel != null) {
+										merge(relation, rel);
+									}									
+								}
+							}						
+						}
+					}
+				}
+			}
+		}
+		
+		return json;
+	}
+	
+	/**
+	 * Extend a JSON object with the parameters of a person
+	 * @param json
+	 * @param person
+	 */
+	private static void merge(ObjectNode json, Person person) {
+		ObjectNode personJson = mapper.convertValue(person, ObjectNode.class);
+		
+		Iterator<Entry<String, JsonNode>> fields = personJson.fields();
+		while (fields.hasNext()) {
+			Entry<String, JsonNode> field = fields.next();
+			json.put(field.getKey(), field.getValue());
+		}
+	}
+	
+	/**
 	 * Read the body of the given http request, which is supposed to contain a
 	 * JSON object, and deserialize the JSON object into the requested 
 	 * Java Object type.
@@ -316,7 +379,7 @@ public class PersonServlet extends HttpServlet {
 	 */
 	private static <T> T read(HttpServletRequest req, Class<T> type) 
 			throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
+		mapper = new ObjectMapper();
 		String body = streamToString(req.getInputStream());
 		return mapper.readValue(body, type);
 	}
@@ -332,7 +395,7 @@ public class PersonServlet extends HttpServlet {
 	 */
 	private static void write(HttpServletResponse resp, Object obj) 
 			throws JsonGenerationException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
+		mapper = new ObjectMapper();
 		resp.setContentType("application/json");
 		resp.getWriter().write(mapper.writeValueAsString(obj));
 	}

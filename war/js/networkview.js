@@ -1,13 +1,13 @@
 /**
  * Load a network view showing the persons and their relations
  * @param {Element} container    HTML DIV element
- * @param {Array} persons        Array with persons and their relations
+ * @param {Object} person        Object containing the person and his relations
  * @param {String[]} domains     List with available domains, used to color
  *                               the connections.
  * @param {String[]} frequencies List with available frequencies, used to give
  *                               the connections a width
  */
-function loadNetwork (container, persons, domains, frequencies) {
+function loadNetwork (container, person, domains, frequencies) {
     var network = new links.Network(container);
 
     var nodes = [];
@@ -25,7 +25,8 @@ function loadNetwork (container, persons, domains, frequencies) {
     }
 
     /**
-     * Create a node from a person. No duplicates will be created
+     * Create a node from a person, and recursively iterate over all its
+     * relations.
      * @param {Object} person
      * @return {Number} id
      * @private
@@ -36,15 +37,37 @@ function loadNetwork (container, persons, domains, frequencies) {
         var name = person.name;
         var id = ids[name];
         if (id == undefined) {
-            var score = inq.getScore(person, frequencies);
+            var score = undefined;
+            if (person.domains) {
+                score = inq.getScore(person, frequencies);
+            }
             id = nodes.length;
+            ids[name] = id;
             nodes.push({
                 'id': id,
                 'text': name,
-                'title': 'Persoon<br>Naam: ' + name + '<br>Score: ' + score,
-                'value': score
+                'title': 'Persoon<br>' +
+                    'Naam: ' + name + '<br>' +
+                    'Score: ' + ((score != undefined) ? score : 'onbekend'),
+                'value': (score != undefined) ? score : 0
             });
-            ids[name] = id;
+
+            // iterate over all domains and relations
+            if (person.domains) {
+                person.domains.forEach(function (domain, domainIndex) {
+                    if (domain.relations) {
+                        domain.relations.forEach(function (relation, relationIndex) {
+                            var frequency = relation.frequency;
+                            var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
+                            var relId = addPerson(relation);
+                            var partialScore = inq.partialScore(domainIndex,
+                                relationIndex, frequencyIndex);
+                            addRelation(id, relId, domain.name, frequency, partialScore);
+                        });
+                    }
+                });
+            }
+
         }
         return id;
     }
@@ -75,25 +98,7 @@ function loadNetwork (container, persons, domains, frequencies) {
     }
 
     // process the data
-    for (var i = 0, iMax = persons.length; i < iMax; i++) {
-        var person = persons[i];
-        var id = addPerson(person);
-
-        if (person.domains) {
-            person.domains.forEach(function (domain, domainIndex) {
-                if (domain.relations) {
-                    domain.relations.forEach(function (relation, relationIndex) {
-                        var frequency = relation.frequency;
-                        var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
-                        var relId = addPerson(relation);
-                        var partialScore = inq.partialScore(domainIndex,
-                            relationIndex, frequencyIndex);
-                        addRelation(id, relId, domain.name, frequency, partialScore);
-                    });
-                }
-            });
-        }
-    }
+    addPerson(person);
 
     // initialize options
     var options = {
