@@ -9,6 +9,33 @@ var myApp = angular.module('controller', ['ngResource']);
  * Create a directive for using the jquery-ui-autocomplete widget
  */
 myApp.directive('autocomplete', function($parse) {
+    /**
+     * Sort the given array with autocompletion objects and remove duplicates
+     * @param data
+     */
+    function sortAndremoveDuplicates(data) {
+        // sort
+        data.sort(function (a, b) {
+            if (a.name < b.name) return 1;
+            if (a.name > b.name) return -1;
+            return -1;
+        });
+
+        // remove duplicates
+        var i = 0;
+        var prevName = undefined;
+        while (i < data.length) {
+            var name = data[i].name;
+            if (prevName && name == prevName) {
+                data.splice(i, 1);
+            }
+            else {
+                prevName = name;
+                i++;
+            }
+        }
+    }
+
     return function(scope, element, attrs) {
         var updateName = $parse(attrs['relationname']).assign;
         var updateId = $parse(attrs['relationid']).assign;
@@ -29,6 +56,24 @@ myApp.directive('autocomplete', function($parse) {
                                         id: this.id
                                     });
                                 });
+
+                                // merge imported facebook friends
+                                if (scope.facebook.friends) {
+                                    // filter by lower case name
+                                    var filteredFriends =
+                                        filterFacebookFriends(scope.facebook.friends, name);
+                                    $.each(filteredFriends, function () {
+                                        data.push({
+                                            value: this.name,
+                                            label: this.name
+                                        });
+                                    });
+                                }
+
+                                // remove duplicates
+                                sortAndremoveDuplicates(data);
+
+                                // return the data
                                 response(data);
                             },
                             error: function (err) {
