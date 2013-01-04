@@ -339,10 +339,12 @@ public class PersonServlet extends HttpServlet {
 								if (relation.has("id") && relation.get("id").isTextual()) {
 									// merge the relations data
 									String id = relation.get("id").asText();
-									Person rel = PersonService.get(id);
-									if (rel != null) {
-										merge(relation, rel);
-									}									
+									if (!id.isEmpty()) {
+										Person rel = PersonService.get(id);
+										if (rel != null) {
+											merge(relation, rel);
+										}
+									}
 								}
 							}						
 						}

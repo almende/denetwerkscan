@@ -1,5 +1,5 @@
 /**
- * Import connections from facebook
+ * Import Facebook friends
  * @param {function} callback  A status callback event which is called multiple
  *                             times, giving status information.
  *                             The method is called with one object as parameter,
@@ -8,6 +8,7 @@
  *                                 {'status': 'login'}   user needs to log in by clicking on a facebook login button
  *                                 {'status': 'import'}  busy importing the friends
  *                                 {'status': 'success', 'friends': [...]}  finished successfully, returns the retrieved friends.
+ *                                                                          the friends are objects like {'id':123, 'name': 'Friend Name'}
  */
 function importFacebookFriends(callback) {
     if (!window.fbAsyncInit) {
@@ -69,4 +70,18 @@ function importFacebookFriends(callback) {
             });
         });
     }
+}
+
+/**
+ * Filter given array with friends. Friends which have a lower case name
+ * starting with parameter name will be returned
+ * @param {Object[]} friends
+ * @param {String} name
+ * @return {Object[]} filteredFriends
+ */
+function filterFacebookFriends(friends, name) {
+    return $.grep(friends, function (friend) {
+        return (friend && friend.name &&
+            friend.name.toLowerCase().indexOf(name.toLowerCase()) == 0);
+    });
 }

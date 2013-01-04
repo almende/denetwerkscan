@@ -411,7 +411,6 @@ function Controller($scope, $resource) {
         importStatus: undefined,
         startImport: function () {
             importFacebookFriends(function (result) {
-                console.log('result', result);
                 $scope.facebook.importStatus = result.status;
                 if (result.friends) {
                     $scope.facebook.friends = result.friends;
