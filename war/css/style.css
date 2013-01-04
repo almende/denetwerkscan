@@ -304,6 +304,7 @@ button:disabled {
     list-style: none;
     padding: 5px;
     margin: 0;
+    box-shadow: 0 5px 10px rgba(128,128,128, 0.5);
 }
 .ui-menu-item {
     display: block;
@@ -318,11 +319,18 @@ li.ui-menu-item a {
     padding: 5px;
     display: block;
 }
+.ui-menu-item .desc {
+    color: gray;
+}
+
 #ui-active-menuitem {
     background-color: white;
     color: #9C0;
     border: 1px solid lightgray;
     border-radius: 2px;
+}
+#ui-active-menuitem .desc {
+    color: #9C0;
 }
 
 .tooltip-anchor {
