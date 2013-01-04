@@ -81,13 +81,14 @@
                 Error: {{search.error}}
             </div>
         </div>
-        <div ng-show="!search.error && !search.results">
+        <div ng-show="!search.error && search.results && search.results.length == 0">
             (geen resultaten)
         </div>
         <div ng-repeat="person in search.results" class="person">
-            <div ng-class="{'selected': current.id==person.id}" >
+            <div ng-class="{'selected': current.id==person.id}"
+                    title="{{ person.name }} ({{ person.id || 'emailadres niet toegankelijk' }})">
                 <a class="person"
-                   ng-click="load(person.id)">{{person.name || person.id}}</a>
+                   ng-click="load(person.id, person.name)">{{person.name || person.id}}</a>
                 <a class="delete"
                    ng-click="delete(person.id, person.name)"
                    ng-show="(current.id==person.id) && (isAdmin() || (user.email==person.id))"
@@ -421,24 +422,41 @@
             </div>
         </div>
 
+        <div ng-show="page == 'noaccess'">
+            <h1>Geen toegang</h1>
+            <p>
+                U hebt geen toestemming om de gegevens van
+                {{ current.name || 'deze gebruiker' }}
+                te bekijken.
+            </p>
+            <p>
+                U kunt zijn of haar gegevens bekijken wanneer:
+            </p>
+            <ul>
+                <li>{{ current.name || 'deze gebruiker' }} heeft aangegeven dat
+                    iedereen zijn of haar gegevens mag inzien.</li>
+                <li>{{ current.name || 'deze gebruiker' }} heeft aangegeven dat
+                    relaties zijn of haar gegevens mogen inzien, en hij of zij u
+                    als relatie heeft ingevuld met uw emailadres ({{user.email}}).</li>
+            </ul>
+        </div>
+
         <div ng-show="page == 'network'">
             <h1>Uw netwerk in kaart <img ng-show="networkLoading" src="img/loading5.gif"></h1>
 
             <p>
                 De netwerkvisualisatie toont een plaatje van uw sociale netwerk op dit moment.
-                De dikte van de lijn tussen twee mensen geeft intensiteit van
+
+                Al uw contacten worden weergegeven. Wanneer deze contacten de netwerk scan
+                ook hebben ingevuld en deze voor u toegankelijk is, worden ook hun contacten
+                weergegeven.
+            </p>
+            <p>
+                De dikte van de lijn tussen twee personen geeft de intensiteit van
                 het contact aan - hoe dikker de lijn is, des te intensiever is het contact.
                 De lijnkleur geeft aan in welke rol u contact heeft met iemand anders
                 (in welk 'deelnetwerk').
-
-                U kunt zelf aangeven in hoeverre anderen uw gegevens mogen inzien:
             </p>
-
-            <ol>
-                <li>de informatie is alleen bestemd voor uzelf;</li>
-                <li>anderen mogen de informatie zien zodra zij u terugnoemen;</li>
-                <li>iedereen mag uw informatie zien.</li>
-            </ol>
 
             <div ng-show="networkError" class="error">
                 Error: {{networkError}}

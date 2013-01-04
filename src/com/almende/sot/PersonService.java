@@ -34,7 +34,9 @@ public class PersonService {
 					FilterOperator.LESS_THAN, nameLowerCase + "\ufffd");
 		}
 		if (limit != null) {
-			command = command.fetchMaximum(limit);
+			// fetchMaximum is zero based or something? Anyway, add 1 to the
+			// limit, then we actually retrieve 10 persons when limit=10
+			command = command.fetchMaximum(limit + 1);
 		}
 		command = command.addSort("nameLowerCase");
 		QueryResultIterator<Person> query = command.now();

@@ -35,9 +35,9 @@ public class PersonServlet extends HttpServlet {
 	 * returned. If the person is not found, a 404 is returned.
      *
      * Query parameters:
-     * - {Boolean} include_relations   Include all relations. Only relations
-     *                                 which are authorized for this current 
-     *                                 user will be included. 
+     * - {Boolean} include_relations Include all relations. Only relations
+     *                               which are authorized for this current 
+     *                               user will be included. 
      *
  	 * GET /persons/
  	 * 
@@ -47,16 +47,35 @@ public class PersonServlet extends HttpServlet {
 	 * found, an empty array will be returned
 	 * 
 	 * Query parameters:
-	 * - {String} name              Filter by name
-	 * - {Number} limit             Maximum number of persons to retrieve
-	 * - {Boolean} include_persons  If true, the complete person objects are 
-	 *                              included in the response. If false, only the 
-	 *                              id and name of the persons is returned.
+	 * - {String} name               Filter by name
+	 * - {Number} limit              Maximum number of persons to retrieve
+	 * - {Boolean} include_persons   If true, the complete person objects are 
+	 *                               included in the response. If false, only the 
+	 *                               id and name of the persons is returned.
+     * - {Boolean} include_relations Include all relations. Only relations
+     *                               which are authorized for this current 
+     *                               user will be included. Only applicable when
+     *                               parameter include_persons is true. 
 	 */
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws JsonParseException, JsonMappingException, IOException {
 		String id = getPersonId(req);
+		
+		// read query parameters
+		String name = req.getParameter("name");
+		Integer limit = null;
+		if (req.getParameter("limit") != null) {
+			limit = Integer.valueOf(req.getParameter("limit"));
+		}
+		boolean include_persons = false;
+		if (req.getParameter("include_persons") != null) {
+			include_persons = Boolean.valueOf(req.getParameter("include_persons"));
+		}		
+		boolean include_relations = false;
+		if (req.getParameter("include_relations") != null) {
+			include_relations = Boolean.valueOf(req.getParameter("include_relations"));
+		}
 		
 		// basic authorization: must be logged in
 		CurrentUser user = new CurrentUser();
@@ -74,14 +93,9 @@ public class PersonServlet extends HttpServlet {
 					return;
 				}
 				
-				boolean include_relations = false;
-				if (req.getParameter("include_relations") != null) {
-					include_relations = Boolean.valueOf(req.getParameter("include_relations"));
-				}
-				
 				if (include_relations) {
 					// loop over all relations and retrieve them (when authorized)
-					ObjectNode personWithRelations = extendWithRelations(person);
+					ObjectNode personWithRelations = mergeRelations(person);
 					write(resp, personWithRelations);
 				}
 				else {
@@ -95,47 +109,39 @@ public class PersonServlet extends HttpServlet {
 			}
 		}
 		else {
-			String name = req.getParameter("name");
-			Integer limit = null;
-			if (req.getParameter("limit") != null) {
-				limit = Integer.valueOf(req.getParameter("limit"));
-			}
-			boolean include_persons = false;
-			if (req.getParameter("include_persons") != null) {
-				include_persons = Boolean.valueOf(req.getParameter("include_persons"));
-			}
 			List<Person> persons = PersonService.find(name, limit);
 			
-			if (include_persons) {
-				// remove all persons which the user is not authorized to see
-				int i = 0;
-				while (i < persons.size()) {
-					Person person = persons.get(i);
-					if (isAutorizedToView(user, person)) {
-						i++;
+			// TODO: improve performance by writing to stream.
+			mapper = new ObjectMapper();
+			ArrayNode nodes = mapper.createArrayNode();
+			for (Person person : persons) {
+				ObjectNode node;
+				if (isAutorizedToView(user, person)) {
+					if (include_persons) {
+						// return the complete person
+						if (include_relations) {
+							// merge the persons relations
+							node = mergeRelations(person);
+						}
+						else {
+							node = mapper.convertValue(person, ObjectNode.class);
+						}
 					}
 					else {
-						persons.remove(i);
+						// return the persons name and id (email)
+						node = mapper.createObjectNode();
+						node.put("name", person.getName());
+						node.put("id", person.getId());
 					}
 				}
-				
-				// return all persons
-				write(resp, persons);
-			}
-			else {
-				// extract the ids/names from the person and only return that
-				// note that we do not filter on authorized persons: a persons 
-				// name and id are public.
-				mapper = new ObjectMapper();
-				ArrayNode nodes = mapper.createArrayNode();
-				for (Person person : persons) {
-					ObjectNode node = mapper.createObjectNode();
-					node.put("id", person.getId());
+				else {
+					// return the persons name only
+					node = mapper.createObjectNode();
 					node.put("name", person.getName());
-					nodes.add(node);
 				}
-				write(resp, nodes);
+				nodes.add(node);
 			}
+			write(resp, nodes);
 		}
 	}
 
@@ -311,11 +317,11 @@ public class PersonServlet extends HttpServlet {
 	}
 	
 	/**
-	 * Inject all relations into a persons data
+	 * Merge all relations into a persons data
 	 * @param person
 	 * @return personWithRelations
 	 */
-	private static ObjectNode extendWithRelations(Person person) {
+	private static ObjectNode mergeRelations(Person person) {
 		ObjectNode json = mapper.convertValue(person, ObjectNode.class);
 		
 		if (json.has("domains") && json.get("domains").isArray()) {

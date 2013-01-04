@@ -39,7 +39,8 @@ function loadNetwork (container, person, domains, frequencies) {
         if (id == undefined) {
             var score = undefined;
             if (person.domains) {
-                score = inq.getScore(person, frequencies);
+                var rounding = true;
+                score = inq.getScore(person, frequencies, rounding);
             }
             id = nodes.length;
             ids[name] = id;
@@ -53,21 +54,21 @@ function loadNetwork (container, person, domains, frequencies) {
             });
 
             // iterate over all domains and relations
-            if (person.domains) {
+            if (person.domains instanceof Array) {
                 person.domains.forEach(function (domain, domainIndex) {
-                    if (domain.relations) {
+                    if (domain.relations instanceof Array) {
                         domain.relations.forEach(function (relation, relationIndex) {
                             var frequency = relation.frequency;
                             var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
                             var relId = addPerson(relation);
+                            var rounding = true;
                             var partialScore = inq.partialScore(domainIndex,
-                                relationIndex, frequencyIndex);
+                                relationIndex, frequencyIndex, rounding);
                             addRelation(id, relId, domain.name, frequency, partialScore);
                         });
                     }
                 });
             }
-
         }
         return id;
     }

@@ -223,11 +223,22 @@ function Controller($scope, $resource) {
     /**
      * Load a person by id. If not existing, a new form for the current user
      * will be initialized
-     * @param {Number} id
+     * @param {String | undefined} id
+     * @param {String} [name]  optional name, for better error messages.
      */
-    $scope.load = function (id) {
+    $scope.load = function (id, name) {
         // first save any changes
         $scope.save();
+
+        // check if there is an id given
+        if (id == undefined) {
+            $scope.current = {
+                name: name
+            };
+            $scope.page = 'noaccess';
+            return;
+        }
+
 
         $scope.page = 'form';
         $scope.formPage = 'self';
@@ -248,10 +259,6 @@ function Controller($scope, $resource) {
                         privacyPolicy: 'PUBLIC_FOR_RELATIONS'
                     };
                 }
-            }
-            else if (err.status == 403) {
-                $scope.error = 'U hebt geen toestemming om de gegevens ' +
-                    'van gebruiker ' + id + ' te bekijken.';
             }
             else {
                 $scope.error = 'Laden van gebruiker ' + id + ' is mislukt';
@@ -476,17 +483,17 @@ function Controller($scope, $resource) {
         }
         else {
             // clear search results
-            $scope.search.results = [];
             $scope.search.searching = false;
+            $scope.search.results = undefined;
             $scope.search.error = undefined;
         }
     });
 
-
     $scope.currentInq = undefined;
     $scope.updateINQ = function (formPage) {
         if (formPage == 'score' && $scope.current) {
-            $scope.currentInq = inq.getScore($scope.current, $scope.frequencies);
+            var rounding = true;
+            $scope.currentInq = inq.getScore($scope.current, $scope.frequencies, rounding);
         }
     };
     $scope.$watch('formPage', $scope.updateINQ);
