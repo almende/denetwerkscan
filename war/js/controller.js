@@ -12,8 +12,8 @@ function Controller($scope, $resource) {
     });
     var User = $resource('/auth');
 
-    $scope.page = 'intro';    // Available: 'intro', 'form', 'network', 'score'
-    $scope.formPage = 'self'; // Available: 'self', 'contacts', 'score'
+    $scope.page = 'intro';       // Available: 'intro', 'form', 'network', 'score'
+    $scope.formPage = 'privacy'; // Available: 'privacy', 'import', 'self', 'contacts', 'score'
 
     $scope.domains = [
         'Familie',
@@ -87,7 +87,7 @@ function Controller($scope, $resource) {
      */
     $scope.start = function () {
         $scope.page = 'form';
-        $scope.formPage = 'self';
+        $scope.formPage = 'privacy';
         if ($scope.isLoggedIn()) {
             // load current user form
             $scope.load($scope.user.email);
@@ -194,7 +194,7 @@ function Controller($scope, $resource) {
 
 
         $scope.page = 'form';
-        $scope.formPage = 'self';
+        $scope.formPage = 'privacy';
         $scope.loading = true;
         $scope.error = undefined;
         $scope.current = Person.get({'id': id}, undefined, function () {
@@ -322,6 +322,10 @@ function Controller($scope, $resource) {
      * load network page
      */
     $scope.loadNetwork = function () {
+        if (!$scope.isLoggedIn()) {
+            return;
+        }
+
         // retrieve the current user data including its relations
         var id =  $scope.user.email;
         var params = {
@@ -414,6 +418,18 @@ function Controller($scope, $resource) {
                 $scope.facebook.importStatus = result.status;
                 if (result.friends) {
                     $scope.facebook.friends = result.friends;
+                }
+                if (result.me) {
+                    $scope.facebook.me = result.me;
+                    if (!$scope.current.name) {
+                        $scope.current.name = result.me.name;
+                    }
+                    if (!$scope.current.gender && result.me.gender) {
+                        $scope.current.gender = result.me.gender.toUpperCase();
+                    }
+                    if (!$scope.current.age && result.me.birthday) {
+                        $scope.current.age = getAge(result.me.birthday);
+                    }
                 }
 
                 // http://onehungrymind.com/notes-on-angularjs-scope-life-cycle/

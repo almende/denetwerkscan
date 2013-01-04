@@ -7,7 +7,8 @@
  *                                 {'status': 'init'}    facebook client library is initializing
  *                                 {'status': 'login'}   user needs to log in by clicking on a facebook login button
  *                                 {'status': 'import'}  busy importing the friends
- *                                 {'status': 'success', 'friends': [...]}  finished successfully, returns the retrieved friends.
+ *                                 {'status': 'me', 'me': {...}}  finished successfully, returns the retrieved personal information.
+ *                                 {'status': 'friends', 'friends': [...]}  finished successfully, returns the retrieved friends.
  *                                                                          the friends are objects like {'id':123, 'name': 'Friend Name'}
  */
 function importFacebookFriends(callback) {
@@ -28,7 +29,7 @@ function importFacebookFriends(callback) {
 
             /* All the events registered */
             FB.Event.subscribe('auth.login', function(response) {
-                getConnections();
+                authorize();
             });
 
             getLoginStatus();
@@ -53,19 +54,38 @@ function importFacebookFriends(callback) {
     function getLoginStatus() {
         FB.getLoginStatus(function(response) {
             if (response.status == "connected") {
-                getConnections();
+                getMe();
             } else {
                 callback({status: 'login'});
             }
         });
     }
 
-    function getConnections () {
+    // TODO: use authorize to get the users birthday
+    function authorize() {
+        FB.login(function() {
+            getMe();
+        }, {scope: 'user_birthday'});
+    }
+
+    function getMe () {
+        callback({status: 'import'});
+        var id = 'me';
+        FB.api('/' + id, function(result) {
+            callback({
+                status: 'me',
+                me: result
+            });
+            getFriends();
+        });
+    }
+
+    function getFriends () {
         callback({status: 'import'});
         var id = 'me';
         FB.api('/' + id + '/friends', function(result) {
             callback({
-                status: 'success',
+                status: 'friends',
                 friends: result.data
             });
         });
@@ -84,4 +104,21 @@ function filterFacebookFriends(friends, name) {
         return (friend && friend.name &&
             friend.name.toLowerCase().indexOf(name.toLowerCase()) == 0);
     });
+}
+
+/**
+ * Calculate age based on birthday
+ * http://stackoverflow.com/a/7091965/1262753
+ * @param {String} dateString
+ * @return {Number} age
+ */
+function getAge(dateString) {
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
 }

@@ -207,25 +207,36 @@
                 <div>
                     <div class="arrow"
                          ng-class="{'arrow-selected': true}"
-                         ng-click="formPage = 'self'">
+                         ng-click="formPage = 'privacy'">
                         <!--
                         <div class="left"></div>
                         -->
                         <div class="content">
-                            Persoonsgegevens
+                            Privacy
                         </div>
                         <div class="right"></div>
                     </div>
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': (formPage=='import' || formPage=='contacts' || formPage=='score')}"
+                         ng-class="{'arrow-selected': (formPage=='import' || formPage=='self' || formPage=='contacts' || formPage=='score')}"
                          ng-click="formPage = 'import'">
                         <div class="left"></div>
                         <div class="content">
-                            Importeren
+                            Gegevens Importeren
                         </div>
                         <div class="right"></div>
                     </div>
+
+                    <div class="arrow"
+                         ng-class="{'arrow-selected': (formPage=='self' || formPage=='contacts' || formPage=='score')}"
+                         ng-click="formPage = 'self'">
+                        <div class="left"></div>
+                        <div class="content">
+                            Persoonlijke gegevens
+                        </div>
+                        <div class="right"></div>
+                    </div>
+
 
                     <div class="arrow"
                          ng-class="{'arrow-selected': (formPage=='contacts' || formPage=='score')}"
@@ -256,6 +267,74 @@
                     <span ng-show="deleting">bezig met verwijderen...</span>
                     <span ng-show="loading">bezig met laden...</span>
                     <span ng-show="error">Error: {{error}}</span>
+                </div>
+
+                <div ng-show="formPage=='privacy'">
+                    <h2>Privacy</h2>
+                    <p>
+                        Maak een keuze voor de privacy instellingen van uw gegevens.
+                    </p>
+                    <div class="form-frame" ng-readonly="true">
+                        Mijn gegevens mogen ingezien worden door:
+                        <select ng-model="current.privacyPolicy"
+                                ng-hide="readonly">
+                            <option value="PRIVATE">{{ describePolicy('PRIVATE') }}</option>
+                            <option value="PUBLIC_FOR_RELATIONS">{{ describePolicy('PUBLIC_FOR_RELATIONS') }}</option>
+                            <option value="PUBLIC">{{ describePolicy('PUBLIC') }}</option>
+                        </select>
+                        <input type="text"
+                               value="{{describePolicy(current.privacyPolicy) }}"
+                               ng-show="readonly"
+                               ng-readonly="true" />
+                    </div>
+
+                    <p>
+                        <button ng-disabled="true" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="formPage='import'" title="Volgende pagina">Volgende &#9658;</button>
+                    </p>
+                </div>
+
+                <div ng-show="formPage=='import'">
+                    <h2>Gegevens importeren (optioneel)</h2>
+
+                    <p>
+                        Om uw netwerk makkelijker te kunnen invullen,
+                        kunt u uw Facebook vrienden importeren.
+                        De geimporteerde vrienden worden straks gebruikt om de
+                        namen van uw contacten automatisch aan te vullen.
+                    </p>
+
+                    <div class="form-frame">
+                        <div ng-show="!facebook.importStatus">
+                            <button id="facebook_import"
+                                    ng-click="facebook.startImport()"
+                                    ng-readonly="readonly">Importeer Facebook vrienden</button>
+                        </div>
+                        <div ng-show="facebook.importStatus == 'init'" class="bold">
+                            Verbinding met Facebook maken...
+                        </div>
+                        <div ng-show="facebook.importStatus == 'login'">
+                            <p class="bold">
+                                Voordat uw vrienden uit Facebook geimporteerd kunnen worden moet u eerst inloggen.
+                            </p>
+                            <p>
+                                <fb:login-button></fb:login-button>
+                                <a ng-click="facebook.cancelImport()">Annuleren</a>
+                            </p>
+                            <p></p>
+                        </div>
+                        <div ng-show="facebook.importStatus == 'import'" class="bold">
+                            Bezig met vrienden importeren...
+                        </div>
+                        <div ng-show="facebook.importStatus == 'friends'" class="bold">
+                            Er zijn {{facebook.friends.length || 0}} vrienden uit Facebook geimporteerd.
+                        </div>
+                    </div>
+
+                    <p>
+                        <button ng-click="formPage='privacy'" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="formPage='self'" title="Volgende pagina">Volgende &#9658;</button>
+                    </p>
                 </div>
 
                 <div ng-show="formPage=='self'">
@@ -299,69 +378,8 @@
                         </table>
                     </div>
 
-                    <h2>Privacy</h2>
                     <p>
-                        Maak een keuze voor de privacy instellingen van uw gegevens.
-                    </p>
-                    <div class="form-frame" ng-readonly="true">
-                        Mijn gegevens mogen ingezien worden door:
-                        <select ng-model="current.privacyPolicy"
-                                ng-hide="readonly">
-                            <option value="PRIVATE">{{ describePolicy('PRIVATE') }}</option>
-                            <option value="PUBLIC_FOR_RELATIONS">{{ describePolicy('PUBLIC_FOR_RELATIONS') }}</option>
-                            <option value="PUBLIC">{{ describePolicy('PUBLIC') }}</option>
-                        </select>
-                        <input type="text"
-                               value="{{describePolicy(current.privacyPolicy) }}"
-                               ng-show="readonly"
-                               ng-readonly="true" />
-                    </div>
-
-                    <p>
-                        <button ng-disabled="true" title="Vorige pagina">&#9668; Vorige</button>
-                        <button ng-click="formPage='import'" title="Volgende pagina">Volgende &#9658;</button>
-                    </p>
-                </div>
-
-                <div ng-show="formPage=='import'">
-                    <h2>Contacten importeren (optioneel)</h2>
-
-                    <p>
-                        Om uw netwerk makkelijker te kunnen invullen,
-                        kunt u uw Facebook vrienden importeren.
-                        De geimporteerde vrienden worden straks gebruikt om de
-                        namen van uw contacten automatisch aan te vullen.
-                    </p>
-
-                    <div class="form-frame">
-                        <div ng-show="!facebook.importStatus">
-                            <button id="facebook_import"
-                                    ng-click="facebook.startImport()"
-                                    ng-readonly="readonly">Importeer Facebook vrienden</button>
-                        </div>
-                        <div ng-show="facebook.importStatus == 'init'" class="bold">
-                            Verbinding met Facebook maken...
-                        </div>
-                        <div ng-show="facebook.importStatus == 'login'">
-                            <p class="bold">
-                                Voordat uw vrienden uit Facebook geimporteerd kunnen worden moet u eerst inloggen.
-                            </p>
-                            <p>
-                                <fb:login-button></fb:login-button>
-                                <a ng-click="facebook.cancelImport()">Annuleren</a>
-                            </p>
-                            <p></p>
-                        </div>
-                        <div ng-show="facebook.importStatus == 'import'" class="bold">
-                            Bezig met vrienden importeren...
-                        </div>
-                        <div ng-show="facebook.importStatus == 'success'" class="bold">
-                            Er zijn {{facebook.friends.length || 0}} vrienden uit Facebook geimporteerd.
-                        </div>
-                    </div>
-
-                    <p>
-                        <button ng-click="formPage='self'" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="formPage='import'" title="Vorige pagina">&#9668; Vorige</button>
                         <button ng-click="formPage='contacts'" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
@@ -451,7 +469,7 @@
                     </div>
 
                     <p>
-                        <button ng-click="formPage='import'" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="formPage='self'" title="Vorige pagina">&#9668; Vorige</button>
                         <button ng-click="formPage='score'" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
