@@ -2,6 +2,7 @@
  * Autocompletion directive using jQuery UI Autocomplete
  * @type {module}
  */
+
 var myApp = angular.module('controller', ['ngResource']);
 
 /**

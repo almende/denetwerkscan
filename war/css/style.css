@@ -444,3 +444,7 @@ div.arrow-selected:hover div.left {
     border-top-color: #b0e600;
     border-bottom-color: #b0e600;
 }
+
+.bold {
+    font-weight: bold;
+}

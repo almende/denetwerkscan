@@ -58,13 +58,16 @@ function loadNetwork (container, person, domains, frequencies) {
                 person.domains.forEach(function (domain, domainIndex) {
                     if (domain.relations instanceof Array) {
                         domain.relations.forEach(function (relation, relationIndex) {
-                            var frequency = relation.frequency;
-                            var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
-                            var relId = addPerson(relation);
-                            var rounding = true;
-                            var partialScore = inq.partialScore(domainIndex,
-                                relationIndex, frequencyIndex, rounding);
-                            addRelation(id, relId, domain.name, frequency, partialScore);
+                            if (relation.name) {
+                                // TODO: check if frequency is "null" or undefined or "undefined" etc
+                                var frequency = relation.frequency;
+                                var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
+                                var relId = addPerson(relation);
+                                var rounding = true;
+                                var partialScore = inq.partialScore(domainIndex,
+                                    relationIndex, frequencyIndex, rounding);
+                                addRelation(id, relId, domain.name, frequency, partialScore);
+                            }
                         });
                     }
                 });
@@ -104,13 +107,17 @@ function loadNetwork (container, person, domains, frequencies) {
     // initialize options
     var options = {
         'width': '650px',
-        'height': '400px',
+        'height': '600px',
         'borderColor': 'lightgray',
         'nodes': {
             'style': 'dot',
             'radius': 10,
             'backgroundColor': 'lightgray',
-            'borderColor': '#4d4d4d'
+            'highlightColor': 'lightgray',
+            'borderColor': '#4d4d4d',
+            'fontFace': 'verdana',
+            'fontSize': 12,
+            'fontColor': 'black'
         },
         'links': {
             'defaultLength': 120

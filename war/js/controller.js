@@ -322,28 +322,26 @@ function Controller($scope, $resource) {
      * load network page
      */
     $scope.loadNetwork = function () {
-        if (!$scope.network) {
-            // retrieve the current user data including its relations
-            var id =  $scope.user.email;
-            var params = {
-                'id': id,
-                'include_relations': true
-            };
-            $scope.networkLoading = true;
-            $scope.networkError = undefined;
+        // retrieve the current user data including its relations
+        var id =  $scope.user.email;
+        var params = {
+            'id': id,
+            'include_relations': true
+        };
+        $scope.networkLoading = true;
+        $scope.networkError = undefined;
 
-            Person.get(params, undefined, function (person) {
-                // load container view
-                var container = document.getElementById('network');
-                loadNetwork(container, person, $scope.domains, $scope.frequencies);
-                $scope.networkLoading = false;
-            },
-            function (err) {
-                $scope.networkLoading = false;
-                $scope.networkError = 'Er is een fout opgetreden bij het ophalen van het netwerk.';
-                console.log('Error', err);
-            });
-        }
+        Person.get(params, undefined, function (person) {
+            // load container view
+            var container = document.getElementById('network');
+            loadNetwork(container, person, $scope.domains, $scope.frequencies);
+            $scope.networkLoading = false;
+        },
+        function (err) {
+            $scope.networkLoading = false;
+            $scope.networkError = 'Er is een fout opgetreden bij het ophalen van het netwerk.';
+            console.log('Error', err);
+        });
     };
 
     /**
@@ -407,6 +405,29 @@ function Controller($scope, $resource) {
     $scope.$watch('user.isLoggedIn', function () {
         $scope.search.results = undefined;
     });
+
+    // facebook import
+    $scope.facebook = {
+        importStatus: undefined,
+        startImport: function () {
+            importFacebookFriends(function (result) {
+                console.log('result', result);
+                $scope.facebook.importStatus = result.status;
+                if (result.friends) {
+                    $scope.facebook.friends = result.friends;
+                }
+
+                // http://onehungrymind.com/notes-on-angularjs-scope-life-cycle/
+                if(!$scope.$$phase) { //this is used to prevent an overlap of scope digestion
+                    $scope.$apply(); //this will kickstart angular to recognize the change
+                }
+            });
+        },
+        cancelImport: function () {
+            $scope.facebook.importStatus = undefined;
+        },
+        friends: undefined
+    };
 
     // search parameters
     $scope.search = {
