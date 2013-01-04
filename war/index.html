@@ -335,12 +335,12 @@
                                 <tr ng-repeat="relation in domain.relations">
                                     <td><input type="text"
                                                autocomplete="names"
-                                               selection="relation.name"
+                                               relationname="relation.name"
+                                               relationid="relation.id"
                                                ng-model="relation.name"
                                                ng-readonly="readonly" />
                                     </td>
                                     <td><input type="text"
-                                               selection="relation.id"
                                                ng-model="relation.id"
                                                ng-readonly="readonly" />
                                     </td>
