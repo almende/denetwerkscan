@@ -352,6 +352,7 @@ function Controller($scope, $resource) {
     $scope.loadNetwork = function (id, name) {
         $scope.page = 'network';
         $scope.network.id = undefined;
+        $scope.network.name = undefined;
         $scope.network.inq = undefined;
         var container = document.getElementById('network');
         container.style.display = 'none';
@@ -386,8 +387,13 @@ function Controller($scope, $resource) {
         },
         function (err) {
             $scope.network.loading = false;
-            $scope.network.error = 'Er is een fout opgetreden bij het ophalen van het netwerk.';
-            console.log('Error', err);
+            if (err.status == 404) {
+                $scope.error = 'U hebt de test nog niet ingevuld, er geen gegevens gevonden.';
+            }
+            else {
+                $scope.network.error = 'Er is een fout opgetreden bij het ophalen van het netwerk.';
+                console.log('Error', err);
+            }
         });
     };
 
