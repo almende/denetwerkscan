@@ -1,4 +1,4 @@
-package entity;
+package com.almende.denetwerkscan.entity;
 
 import java.io.Serializable;
 import java.util.List;

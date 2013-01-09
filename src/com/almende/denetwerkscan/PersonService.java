@@ -1,16 +1,16 @@
-package com.almende.sot;
+package com.almende.denetwerkscan;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.almende.denetwerkscan.entity.Person;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.code.twig.FindCommand.RootFindCommand;
 import com.google.code.twig.ObjectDatastore;
 import com.google.code.twig.annotation.AnnotationObjectDatastore;
 
-import entity.Person;
 
 public class PersonService {
 	private PersonService() {}
@@ -60,6 +60,25 @@ public class PersonService {
 		ObjectDatastore datastore = new AnnotationObjectDatastore();
 		Person person = datastore.load(Person.class, id);
 		return person;
+	}
+	/**
+	 * Get a person by its facebookId
+	 * @param facebookId
+	 * @return
+	 * @throws Exception
+	 */
+	public static Person getByFacebookId(String facebookId) {
+		ObjectDatastore datastore = new AnnotationObjectDatastore();
+		RootFindCommand<Person> command = datastore.find()
+				.type(Person.class)
+				.addFilter("facebookId", FilterOperator.EQUAL, facebookId);
+		QueryResultIterator<Person> query = command.now();
+
+		// retrieve first result
+		if (query.hasNext()) {
+			return query.next();
+		}
+		return null;
 	}
 	
 	/**

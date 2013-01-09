@@ -1,5 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html ng-app="controller">
+<html ng-app="controller" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
 <head>
     <title>De Netwerk Scan - Stichting Zelforganisatie</title>
 
@@ -16,7 +17,7 @@
     <script src="js/autocompletion.js" type="text/javascript" ></script>
     <script src="js/networkview.js" type="text/javascript" ></script>
     <script src="js/inq.js" type="text/javascript" ></script>
-    <script src="js/facebook.js" type="text/javascript" ></script>
+    <script src="js/hash.js" type="text/javascript" ></script>
 </head>
 
 <body>
@@ -29,14 +30,14 @@
         <img src="img/z11org/logo.jpg" alt="logo" id="logo">
     </a>
     <div id="user-menu">
-        <div ng-show="user">
+        <div ng-show="appIsReady()">
             <span ng-show="user.email" title="{{userTitle()}}">
                 [{{user.email}}]
             </span>
             <a ng-show="user.isLoggedIn" href="{{user.logoutUrl}}">uitloggen</a>
             <a ng-show="!user.isLoggedIn" href="{{user.loginUrl}}">inloggen</a>
         </div>
-        <div ng-hide="user" style="color: gray;">
+        <div ng-hide="appIsReady()">
             bezig met laden...
         </div>
     </div>
@@ -52,7 +53,11 @@
 
 <div id="subheader"></div>
 
-<div id="wrap-menu">
+<div ng-hide="appIsReady()" style="min-height: 400px;">
+    Bezig met laden...
+</div>
+
+<div id="wrap-menu" ng-show="appIsReady()">
     <div id="menu">
         <h2>Menu</h2>
 
@@ -68,8 +73,8 @@
         </div>
         <div class="listitem">
             <a class="page"
-               ng-click="page='network'"
-               ng-class="{'selected': page=='network'}">Mijn Netwerk</a>
+               ng-click="loadNetwork(user.email)"
+               ng-class="{'selected': (page=='network' && network.id==user.email)}">Mijn Netwerk</a>
         </div>
 
         <h2>Deelnemers</h2>
@@ -87,20 +92,20 @@
             (geen resultaten)
         </div>
         <div ng-repeat="person in search.results" class="person">
-            <div ng-class="{'selected': current.id==person.id}"
+            <div ng-class="{'selected': (page=='network' && network.id==person.id)}"
                     title="{{ person.name }} ({{ person.id || 'emailadres niet toegankelijk' }})">
                 <a class="person"
-                   ng-click="load(person.id, person.name)">{{person.name || person.id}}</a>
+                   ng-click="loadNetwork(person.id, person.name)">{{person.name || person.id}}</a>
                 <a class="delete"
                    ng-click="delete(person.id, person.name)"
-                   ng-show="(current.id==person.id) && (isAdmin() || (user.email==person.id))"
+                   ng-show="(network.id==person.id) && (isAdmin() || (user.email==person.id))"
                    title="Deelnemer verwijderen">&times;</a>
                 <div style="clear: both;"></div>
             </div>
         </div>
     </div>
 </div>
-<div id="wrap-contents">
+<div id="wrap-contents" ng-show="appIsReady()">
     <div id="contents">
         <div ng-show="page == 'intro'">
             <h1>
@@ -200,14 +205,14 @@
             </div>
 
             <div ng-show="user.email && !current">
-                <button ng-click="start()" title="Open een nieuw formulier">Nieuw</button>
+                <button ng-click="start()" title="Haal uw gegevens op of laad een nieuw formulier">Start</button>
             </div>
             <div ng-show="user.email && current">
                 <!-- form paging menu -->
                 <div>
                     <div class="arrow"
                          ng-class="{'arrow-selected': true}"
-                         ng-click="formPage = 'privacy'">
+                         ng-click="form = 'privacy'">
                         <!--
                         <div class="left"></div>
                         -->
@@ -218,8 +223,8 @@
                     </div>
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': (formPage=='import' || formPage=='self' || formPage=='contacts' || formPage=='score')}"
-                         ng-click="formPage = 'import'">
+                         ng-class="{'arrow-selected': (form=='import' || form=='self' || form=='contacts' || form=='score')}"
+                         ng-click="form = 'import'">
                         <div class="left"></div>
                         <div class="content">
                             Gegevens Importeren
@@ -228,8 +233,8 @@
                     </div>
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': (formPage=='self' || formPage=='contacts' || formPage=='score')}"
-                         ng-click="formPage = 'self'">
+                         ng-class="{'arrow-selected': (form=='self' || form=='contacts' || form=='score')}"
+                         ng-click="form = 'self'">
                         <div class="left"></div>
                         <div class="content">
                             Persoonlijke gegevens
@@ -239,8 +244,8 @@
 
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': (formPage=='contacts' || formPage=='score')}"
-                         ng-click="formPage = 'contacts'">
+                         ng-class="{'arrow-selected': (form=='contacts' || form=='score')}"
+                         ng-click="form = 'contacts'">
                         <div class="left"></div>
                         <div class="content">
                             Contacten
@@ -249,8 +254,8 @@
                     </div>
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': formPage=='score'}"
-                         ng-click="formPage = 'score'">
+                         ng-class="{'arrow-selected': form=='score'}"
+                         ng-click="form = 'score'">
                         <div class="left"></div>
                         <div class="content">
                             Score
@@ -269,7 +274,7 @@
                     <span ng-show="error">Error: {{error}}</span>
                 </div>
 
-                <div ng-show="formPage=='privacy'">
+                <div ng-show="form=='privacy'">
                     <h2>Privacy</h2>
                     <p>
                         Maak een keuze voor de privacy instellingen van uw gegevens.
@@ -290,54 +295,62 @@
 
                     <p>
                         <button ng-disabled="true" title="Vorige pagina">&#9668; Vorige</button>
-                        <button ng-click="formPage='import'" title="Volgende pagina">Volgende &#9658;</button>
+                        <button ng-click="form='import'" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
 
-                <div ng-show="formPage=='import'">
+                <div ng-show="form=='import'">
                     <h2>Gegevens importeren (optioneel)</h2>
 
                     <p>
                         Om uw netwerk makkelijker te kunnen invullen,
                         kunt u uw Facebook vrienden importeren.
-                        De geimporteerde vrienden worden straks gebruikt om de
-                        namen van uw contacten automatisch aan te vullen.
+                        De ge&iuml;mporteerde vrienden worden straks gebruikt om:
                     </p>
+                    <ul>
+                        <li>De namen van uw contacten automatisch aan te vullen bij het invullen
+                            van uw netwerk.</li>
+                        <li>Te bepalen wie uw contacten zijn en uw gegevens mogen bekijken,
+                            in het geval dat u dit als privacy instelling hebt gekozen.</li>
+                    </ul>
 
                     <div class="form-frame">
-                        <div ng-show="!facebook.importStatus">
-                            <button id="facebook_import"
-                                    ng-click="facebook.startImport()"
-                                    ng-readonly="readonly">Importeer Facebook vrienden</button>
-                        </div>
-                        <div ng-show="facebook.importStatus == 'init'" class="bold">
-                            Verbinding met Facebook maken...
-                        </div>
-                        <div ng-show="facebook.importStatus == 'login'">
-                            <p class="bold">
-                                Voordat uw vrienden uit Facebook geimporteerd kunnen worden moet u eerst inloggen.
-                            </p>
-                            <p>
-                                <fb:login-button></fb:login-button>
-                                <a ng-click="facebook.cancelImport()">Annuleren</a>
-                            </p>
-                            <p></p>
-                        </div>
-                        <div ng-show="facebook.importStatus == 'import'" class="bold">
-                            Bezig met vrienden importeren...
-                        </div>
-                        <div ng-show="facebook.importStatus == 'friends'" class="bold">
-                            Er zijn {{facebook.friends.length || 0}} vrienden uit Facebook geimporteerd.
-                        </div>
+                        <table>
+                            <tr>
+                                <td>
+                                    <img alt="Facebook" width="96" height="36" src="img/z11org/facebook.jpg"/>
+                                </td>
+                                <td ng-show="!importing">
+                                    <span class="bold" ng-show="current.facebookId">
+                                        Er zijn {{countContacts('facebook')}} vrienden uit Facebook ge&iuml;mporteerd.
+                                    </span>
+                                    <span class="bold" ng-hide="current.facebookId">
+                                        Er zijn geen vrienden uit Facebook ge&iuml;mporteerd.
+                                    </span>
+                                </td>
+                                <td ng-show="!importing">
+                                    <button title="Vrienden uit Facebook importeren"
+                                            ng-click="importContacts('facebook')">Importeren</button>
+                                </td>
+                                <td ng-show="!importing">
+                                    <button title="Geimporteerde vrienden verwijderen uit De Netwerk Scan"
+                                            ng-click="deleteContacts('facebook')">Verwijderen</button>
+                                </td>
+                                <td class="bold" ng-show="importing">
+                                    Dit kan even duren. Een moment geduld alstublieft...
+                                    <a ng-click="cancelImport()">annuleren</a>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
 
                     <p>
-                        <button ng-click="formPage='privacy'" title="Vorige pagina">&#9668; Vorige</button>
-                        <button ng-click="formPage='self'" title="Volgende pagina">Volgende &#9658;</button>
+                        <button ng-click="form='privacy'" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="form='self'" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
 
-                <div ng-show="formPage=='self'">
+                <div ng-show="form=='self'">
                     <h2>Wie bent u?</h2>
                     <p>
                         Vul uw algemene gegevens in.
@@ -379,12 +392,12 @@
                     </div>
 
                     <p>
-                        <button ng-click="formPage='import'" title="Vorige pagina">&#9668; Vorige</button>
-                        <button ng-click="formPage='contacts'" title="Volgende pagina">Volgende &#9658;</button>
+                        <button ng-click="form='import'" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="form='contacts'" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
 
-                <div ng-show="formPage=='contacts'">
+                <div ng-show="form=='contacts'">
                     <div ng-repeat="domain in current.domains">
                         <a ng-click="deleteDomain(current, domain)"
                            ng-show="!readonly"
@@ -401,19 +414,14 @@
                             <table>
                                 <tr ng-show="domain.relations.length">
                                     <td>Naam</td>
-                                    <td>Email</td>
                                     <td>Frequentie</td>
                                 </tr>
                                 <tr ng-repeat="relation in domain.relations">
                                     <td><input type="text"
                                                autocomplete="names"
                                                relationname="relation.name"
-                                               relationid="relation.id"
+                                               relationfacebookid="relation.facebookId"
                                                ng-model="relation.name"
-                                               ng-readonly="readonly" />
-                                    </td>
-                                    <td><input type="text"
-                                               ng-model="relation.id"
                                                ng-readonly="readonly" />
                                     </td>
                                     <td>
@@ -469,26 +477,68 @@
                     </div>
 
                     <p>
-                        <button ng-click="formPage='self'" title="Vorige pagina">&#9668; Vorige</button>
-                        <button ng-click="formPage='score'" title="Volgende pagina">Volgende &#9658;</button>
+                        <button ng-click="form='self'" title="Vorige pagina">&#9668; Vorige</button>
+                        <button ng-click="form='score'" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
 
-                <div ng-show="formPage=='score'">
+                <div ng-show="form=='score'">
                     <h2>Score</h2>
+
                     <p>
-                        Uw Individuele Netwerk Co&euml;ffici&euml;nt (INQ) is:
-                        <span class="bold">
-                            {{currentInq}}
-                        </span>
+                        In deze Netwerk Scan meten we hoeveel verschillende netwerken u op dit moment hebt
+                        en met hoeveel mensen u daarbinnen geregeld contact hebt.
+                        Dit resulteert in een score: uw persoonlijke Individuele Netwerk Quoti&euml;nt (INQ).
+                        De INQ is dus een maat voor uw maatschappelijke verbondenheid.
+                        Een hogere score geeft aan dat u meer connected bent dan iemand die lager scoort.
+                        U haalt de maximale score van 1.0 als u dagelijks spreekt met vier of meer mensen uit vier of meer verschillende netwerken.
+                    </p>
+
+                    <div class="form-frame">
+                        <p>
+                            Uw Individuele Netwerk Co&euml;ffici&euml;nt (INQ) is:
+                            <span class="bold">{{currentInq}}</span>
+                        </p>
+                        <p>
+                            <a ng-click="loadNetwork(user.email)">Klik hier</a> voor een visualisatie van uw netwerk.
+                        </p>
+                    </div>
+
+                    <p>
+                        Wat kunt u met deze informatie? Ten eerste geeft het u een indruk van uw eigen zelforganiserend vermogen.
+                        Uw zelforganiserend vermogen neemt toe naarmate uw netwerk meer de eigenschappen vertoont van een
+                        <a href="http://en.wikipedia.org/wiki/Scale-free_network" target="_blank">Scale Free Network</a>.
+                        Dit zijn netwerken die veel voorkomen in de natuur.
+                        De meeste menselijke netwerken zijn ook scale free.
+                        Bij Scale Free Netwerken hebben de meeste mensen relatief weinig contacten en een paar mensen heel veel.
+                        De mensen met zeer veel contacten worden hubs genoemd, zij houden het netwerk bij elkaar.
                     </p>
 
                     <p>
-                        <a ng-click="page='network'">Klik hier</a> voor een visualisatie van uw netwerk op dit moment.
+                        Ten tweede kunt u uw zelforganiserend vermogen verbeteren door bewust aan de slag te gaan met uw netwerk.
+                        U kunt bijvoorbeeld contact zoeken met de hubs in uw netwerk als u op zoek bent naar een nieuwe baan.
+                        Of u kunt het netwerk van iemand anders helpen uitbreiden om bij hem of haar eenzaamheid te voorkomen.
+                        Een uitgebreid, gevarieerd netwerk blijft namelijk langer bestaan (het is robuuster) dan een beperkt
+                        netwerk van mensen die op elkaar lijken.
                     </p>
 
                     <p>
-                        <button ng-click="formPage='contacts'" title="Vorige pagina">&#9668; Vorige</button>
+                        Ten slotte is het goed om te weten dat mensen met een hogere score in het algemeen meer kans
+                        hebben op nieuwe connecties. Kijk maar naar social media: als je op Facebook of Twitter veel
+                        vrienden of volgers hebt, krijg je er veel sneller nieuwe vrienden bij dan wanneer je weinig
+                        vrienden hebt. Daarnaast hebben mensen met een hogere INQ meer kans op een nieuwe baan of een nieuwe relatie.
+                        Mark Granovetter heeft dit overtuigend beschreven
+                        <a href="http://en.wikipedia.org/wiki/Mark_Granovetter#The_strength_of_weak_ties" target="_blank">The Strength of Weak Ties</a>.
+                    </p>
+
+                    <p>
+                        Wilt u hier meer over weten? Of wilt u aan de slag met zelforganisatie?
+                        Neem dan contact op met <a href="mailto:info@z11org.nl">Stichting Zelforganisatie</a>.
+                        Wij helpen u graag!
+                    </p>
+
+                    <p>
+                        <button ng-click="form='contacts'" title="Vorige pagina">&#9668; Vorige</button>
                         <button ng-disabled="true" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
@@ -515,7 +565,7 @@
         </div>
 
         <div ng-show="page == 'network'">
-            <h1>Uw netwerk in kaart <img ng-show="networkLoading" src="img/loading5.gif"></h1>
+            <h1>Uw netwerk in kaart <img ng-show="network.loading" src="img/loading5.gif"></h1>
 
             <p>
                 De netwerkvisualisatie toont een plaatje van uw sociale netwerk op dit moment.
@@ -531,18 +581,22 @@
                 (in welk 'deelnetwerk').
             </p>
 
-            <div ng-show="networkError" class="error">
-                Error: {{networkError}}
+            <div ng-show="!user.email">
+                <p>
+                    Voordat u uw gegevens kunt invullen of bekijken, dient u in te loggen.
+                </p>
+                <button ng-click="login()" title="Inloggen">Inloggen</button>
             </div>
 
-            <div id="network"></div>
-        </div>
-
-        <div ng-show="page == 'score'">
-            <h1>Score</h1>
-            <p>
-                Nog niet geimplemeteerd...
+            <h2>{{network.name}}</h2>
+            <div ng-show="network.error" class="error">
+                Error: {{network.error}}
+            </div>
+            <p ng-show="network.inq != undefined">
+                Individuele Netwerk Co&euml;ffici&euml;nt (INQ):
+                <span class="bold">{{network.inq}}</span>
             </p>
+            <div id="network"></div>
         </div>
     </div>
 </div>

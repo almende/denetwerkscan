@@ -1,0 +1,16 @@
+
+
+De Netwerk Scan 1.0
+
+- Niet de emails als id gebruiken, maar de md5 hash van de emails.
+- Enforce https
+  https://developers.google.com/appengine/docs/java/config/webxml#Secure_URLs
+- Contacten kunnen importeren uit facebook en/of linkedin.
+- fullscreen network view?
+
+
+De Netwerk Scan 2.0
+
+- complexere, gedetailleerdere berekening van INQ
+- uitgebreidere visualizatie mogelijkheden
+- support voor meer social networks

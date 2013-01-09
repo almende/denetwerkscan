@@ -1,4 +1,4 @@
-package com.almende.sot;
+package com.almende.denetwerkscan;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
+import com.almende.denetwerkscan.entity.Person;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -16,11 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 
-import entity.Person;
 
 @SuppressWarnings("serial")
 public class PersonServlet extends HttpServlet {
@@ -88,14 +85,14 @@ public class PersonServlet extends HttpServlet {
 			Person person = PersonService.get(id);
 			if (person != null) {
 				// authorize the user to view this person
-				if (!isAutorizedToView(user, person)) {
+				if (!user.isAutorizedToView(person)) {
 					resp.sendError(403); 
 					return;
 				}
 				
 				if (include_relations) {
 					// loop over all relations and retrieve them (when authorized)
-					ObjectNode personWithRelations = mergeRelations(person);
+					ObjectNode personWithRelations = mergeDomains(user, person);
 					write(resp, personWithRelations);
 				}
 				else {
@@ -116,12 +113,12 @@ public class PersonServlet extends HttpServlet {
 			ArrayNode nodes = mapper.createArrayNode();
 			for (Person person : persons) {
 				ObjectNode node;
-				if (isAutorizedToView(user, person)) {
+				if (user.isAutorizedToView(person)) {
 					if (include_persons) {
 						// return the complete person
 						if (include_relations) {
 							// merge the persons relations
-							node = mergeRelations(person);
+							node = mergeDomains(user, person);
 						}
 						else {
 							node = mapper.convertValue(person, ObjectNode.class);
@@ -244,116 +241,61 @@ public class PersonServlet extends HttpServlet {
 	}
 
 	/**
-	 * Check whether a user is authorized to see a person, using this persons
-	 * privacy policy
-	 * @param user
-	 * @param person
-	 * @return
-	 */
-	private boolean isAutorizedToView(CurrentUser user, Person person) {
-		if (!user.isLoggedIn()) {
-			return false;
-		}
-		if (user.isAdmin()) {
-			return true;
-		}
-		
-		switch (person.getPrivacyPolicy()) {
-			case PRIVATE:
-				return (user.isSelf(person.getId()));
-
-			case PUBLIC_FOR_RELATIONS:
-				return user.isSelf(person.getId()) || person.hasRelation(user.getId());
-				
-			case PUBLIC:
-				return true;
-
-			default:
-				return false;
-		}
-	}
-	
-	/**
-	 * Helper class with method to authorize the current user
-	 */
-	private class CurrentUser {
-		private UserService userService = null;
-		private User user = null;
-
-		public CurrentUser() {
-			userService = UserServiceFactory.getUserService();
-			user = userService.getCurrentUser();
-		}
-		
-		public boolean isLoggedIn() {
-			return userService.isUserLoggedIn();
-		}
-	
-		public boolean isAdmin() {
-			return userService.isUserAdmin();
-		}
-	
-		/**
-		 * Get the users id (its email). Can be null
-		 * @return id
-		 */
-		public String getId() {
-			return user.getEmail();
-		}
-
-		/**
-		 * Test if the current user has the given id
-		 * @param id
-		 * @param isSelf
-		 */
-		public boolean isSelf(String id) {
-			String userId = getId();
-			if (userId == null || id == null) {
-				return false;
-			}
-
-			return userId.equals(id);
-		}
-	}
-	
-	/**
 	 * Merge all relations into a persons data
+	 * @param user
 	 * @param person
 	 * @return personWithRelations
 	 */
-	private static ObjectNode mergeRelations(Person person) {
+	private static ObjectNode mergeDomains(CurrentUser user, Person person) {
 		ObjectNode json = mapper.convertValue(person, ObjectNode.class);
 		
 		if (json.has("domains") && json.get("domains").isArray()) {
-			// loop over all domains
 			ArrayNode domains = (ArrayNode) json.get("domains");
-			for (int i = 0; i < domains.size(); i++) {
-				if (domains.get(i).isObject()) {
-					ObjectNode domain = (ObjectNode) domains.get(i);
+			for (int d = 0; d < domains.size(); d++) {
+				if (domains.get(d).isObject()) {
+					ObjectNode domain = (ObjectNode) domains.get(d);
 					if (domain.has("relations") && domain.get("relations").isArray()) {
-						// loop over all relations
 						ArrayNode relations = (ArrayNode) domain.get("relations");
-						for (int j = 0; j < relations.size(); j++) {
-							if (relations.get(i).isObject()) {
-								ObjectNode relation = (ObjectNode) relations.get(i);
-								if (relation.has("id") && relation.get("id").isTextual()) {
-									// merge the relations data
-									String id = relation.get("id").asText();
-									if (!id.isEmpty()) {
-										Person rel = PersonService.get(id);
-										if (rel != null) {
-											merge(relation, rel);
-										}
-									}
-								}
-							}						
-						}
+						mergeRelations(user, relations);
 					}
 				}
 			}
 		}
 		
 		return json;
+	}
+	
+	/**
+	 * Merge all relations with the persons data
+	 * @param user
+	 * @param relations
+	 */
+	private static void mergeRelations(CurrentUser user, ArrayNode relations) {
+		for (int r = 0; r < relations.size(); r++) {
+			if (relations.get(r).isObject()) {
+				ObjectNode relation = (ObjectNode) relations.get(r);
+				mergeRelation(user, relation);
+			}						
+		}
+	}
+	
+	/**
+	 * Merge a single relation with the persons data
+	 * @param user
+	 * @param relation
+	 */
+	private static void mergeRelation(CurrentUser user, ObjectNode relation) {
+		if (relation.has("facebookId") && relation.get("facebookId").isTextual()) {
+			String facebookId = relation.get("facebookId").asText();
+			if (facebookId != null && !facebookId.isEmpty()) {
+	
+				// search person by facebookId
+				Person rel = PersonService.getByFacebookId(facebookId);
+				if (rel != null && user.isAutorizedToView(rel)) {
+					merge(relation, rel);
+				}
+			}
+		}
 	}
 	
 	/**

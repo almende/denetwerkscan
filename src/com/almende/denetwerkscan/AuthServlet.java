@@ -1,4 +1,4 @@
-package com.almende.sot;
+package com.almende.denetwerkscan;
 
 import java.io.IOException;
 

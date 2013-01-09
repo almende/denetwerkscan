@@ -1,4 +1,4 @@
-selforganizationtest
+De Netwerk Scan
 ====================
 
-Self Organization Test is an application to analyze social networks.
+De Netwerk Scan is an application to analyze social networks.

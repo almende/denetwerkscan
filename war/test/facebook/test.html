@@ -1,0 +1,87 @@
+<!--
+http://developers.facebook.com/docs/reference/javascript/
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+    <div id="fb-root"></div>
+    <script>
+        window.fbAsyncInit = function() {
+            // init the FB JS SDK
+            FB.init({
+                appId      : '491454177572909', // App ID from the App Dashboard
+                //channelUrl : '//denetwerkscan.appspot.com', // Channel File for x-domain communication
+                status     : true, // check the login status upon init?
+                cookie     : true, // set sessions cookies to allow your server to access the session?
+                xfbml      : true  // parse XFBML tags on this page?
+            });
+
+            // Additional initialization code such as adding Event Listeners goes here
+
+            /* All the events registered */
+            FB.Event.subscribe('auth.login', function(response) {
+                // do something with response
+                console.log('login event', response);
+                login();
+                getConnections();
+            });
+
+            FB.getLoginStatus(function(response) {
+                console.log('login status', response);
+                if (response.status == "connected") {
+                    // logged in and connected user, someone you know
+                    login();
+                    getConnections();
+                } else {
+                    document.getElementById('login').style.display = 'block';
+                }
+            });
+        };
+
+        // Load the SDK's source Asynchronously
+        // Note that the debug version is being actively developed and might
+        // contain some type checks that are overly strict.
+        // Please report such bugs using the bugs tool.
+        (function(d, debug){
+            var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement('script'); js.id = id; js.async = true;
+            js.src = "//connect.facebook.net/en_US/all" + (debug ? "/debug" : "") + ".js";
+            ref.parentNode.insertBefore(js, ref);
+        }(document, /*debug*/ false));
+
+
+        function login(){
+            FB.api('/me', function(response) {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('name').innerHTML = "<b>Hello, " + response.name + "</b>";
+            });
+        }
+
+        function logout() {
+            FB.logout(function(response) {
+                // user is now logged out
+            });
+        }
+
+        function getConnections () {
+            // retrieve the connections
+            var id = 'me';
+            FB.api('/' + id + '/friends', function(result) {
+                console.log('connections', result);
+            });
+        }
+    </script>
+
+
+    <h1>Facebook Friends</h1>
+    <div id="login" style="display:none"><fb:login-button></fb:login-button></div>
+    <div id="name"></div>
+
+</body>
+</html>

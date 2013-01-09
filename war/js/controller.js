@@ -4,16 +4,23 @@
  * @constructor Ctrl
  */
 function Controller($scope, $resource) {
+    // redirection
+    if (document.location.href.indexOf('/www.') != -1) {
+        document.location.href = 'http://denetwerkscan.appspot.com';
+    }
+
     // http://docs.angularjs.org/api/ngResource.$resource
-    var Person = $resource('/persons/:id', {}, {
+    var Persons = $resource('/persons/:id', {}, {
         'create': {method: 'POST'},
         'update': {method: 'PUT'},
         'find': {method: 'GET', isArray: true}
     });
+    var Contacts = $resource('/contacts/');
     var User = $resource('/auth');
 
-    $scope.page = 'intro';       // Available: 'intro', 'form', 'network', 'score'
-    $scope.formPage = 'privacy'; // Available: 'privacy', 'import', 'self', 'contacts', 'score'
+    var hash = new Hash();
+    $scope.page = hash.getValue('page') || 'intro';   // Available: 'intro', 'form', 'network', 'score'
+    $scope.form = hash.getValue('form') || 'privacy'; // Available: 'privacy', 'import', 'self', 'contacts', 'score'
 
     $scope.domains = [
         'Familie',
@@ -25,13 +32,17 @@ function Controller($scope, $resource) {
 
     $scope.frequencies = [
         'Dagelijks',
-        'Weekelijks',
+        'Wekelijks',
+        'Elke 2 weken',
         'Maandelijks',
+        'Elk kwartaal',
         'Jaarlijks'
     ];
 
     // current person
     $scope.current = undefined;
+    $scope.network = {};
+    $scope.contacts = []; // imported contacts
 
     /**
      * Search persons
@@ -44,7 +55,7 @@ function Controller($scope, $resource) {
      */
     $scope.find = function (name, callback) {
         try {
-            Person.find({'name': name, 'limit': 10}, undefined, function (result) {
+            Persons.find({'name': name, 'limit': 10}, undefined, function (result) {
                 callback(result, undefined);
             }, function (err) {
                 callback(undefined, err);
@@ -55,9 +66,26 @@ function Controller($scope, $resource) {
         }
     };
 
+    $scope.$watch('page', function () {
+        // set current page in hash
+        hash.setValue('page', $scope.page);
+    });
+
+    var updateScrollTop = function () {
+        // ensure the form title is visible, scroll up when needed
+        if (document.body.scrollTop > 270) {
+            document.body.scrollTop = 270;
+        }
+    };
+
     // store the input form when the page changes
-    $scope.$watch('formPage', function () {
+    $scope.$watch('form', function () {
         $scope.save();
+
+        updateScrollTop();
+
+        // set current form page in hash
+        hash.setValue('form', $scope.form);
     });
     $scope.$watch('page', function (newPage, oldPage) {
         if (oldPage == 'form') {
@@ -76,10 +104,6 @@ function Controller($scope, $resource) {
                 }
             }
         }
-
-        if (newPage == 'network') {
-            $scope.loadNetwork();
-        }
     });
 
     /**
@@ -87,7 +111,8 @@ function Controller($scope, $resource) {
      */
     $scope.start = function () {
         $scope.page = 'form';
-        $scope.formPage = 'privacy';
+        $scope.form = 'privacy';
+        updateScrollTop();
         if ($scope.isLoggedIn()) {
             // load current user form
             $scope.load($scope.user.email);
@@ -116,6 +141,10 @@ function Controller($scope, $resource) {
      * @param {Object} domain
      */
     $scope.deleteDomain = function (person, domain) {
+        if (!confirm('Weet je zeker dat je het deelnetwerk ' + domain.name + ' wilt verwijderen?')) {
+            return;
+        }
+
         var domains = person.domains;
         if (!domains) {
             domains = [];
@@ -192,12 +221,9 @@ function Controller($scope, $resource) {
             return;
         }
 
-
-        $scope.page = 'form';
-        $scope.formPage = 'privacy';
         $scope.loading = true;
         $scope.error = undefined;
-        $scope.current = Person.get({'id': id}, undefined, function () {
+        $scope.current = Persons.get({'id': id}, undefined, function () {
             $scope.loading = false;
             $scope.markUnchanged();
         }, function (err) {
@@ -218,7 +244,7 @@ function Controller($scope, $resource) {
                 console.log('Error', err);
             }
         });
-    };
+    }
 
     /**
      * Save the current person
@@ -232,7 +258,7 @@ function Controller($scope, $resource) {
                 var id = $scope.current.id;
                 $scope.saving = true;
                 $scope.error = undefined;
-                $scope.current = Person.update({'id': id}, $scope.current, function () {
+                $scope.current = Persons.update({'id': id}, $scope.current, function () {
                     $scope.saving = false;
                 }, function (err) {
                     $scope.saving = false;
@@ -264,7 +290,7 @@ function Controller($scope, $resource) {
     $scope.describePolicy = function (privacyPolicy) {
         switch (privacyPolicy) {
             case 'PRIVATE': return 'Niemand';
-            case 'PUBLIC_FOR_RELATIONS': return 'Mijn relaties';
+            case 'PUBLIC_FOR_RELATIONS': return 'Mijn contacten';
             case 'PUBLIC': return 'Iedereen';
         }
         return '';
@@ -304,7 +330,7 @@ function Controller($scope, $resource) {
                 ' (' + id + ') wilt verwijderen?')) {
             $scope.deleting = true;
             $scope.error = undefined;
-            Person.delete({'id': id}, undefined, function () {
+            Persons.delete({'id': id}, undefined, function () {
                 $scope.deleting = false;
             }, function (err) {
                 $scope.deleting = false;
@@ -320,30 +346,47 @@ function Controller($scope, $resource) {
 
     /**
      * load network page
+     * @param {String | undefined} id   Id of the user to be loaded
+     * @param {String} [name]           optional name of the user
      */
-    $scope.loadNetwork = function () {
+    $scope.loadNetwork = function (id, name) {
+        $scope.page = 'network';
+        $scope.network.id = undefined;
+        $scope.network.inq = undefined;
+        var container = document.getElementById('network');
+        container.style.display = 'none';
+
         if (!$scope.isLoggedIn()) {
+            return;
+        }
+        if (!id) {
+            $scope.network.error = 'U hebt geen toegang om het netwerk van ' +
+                (name || 'deze persoon') + ' te bekijken';
             return;
         }
 
         // retrieve the current user data including its relations
-        var id =  $scope.user.email;
         var params = {
             'id': id,
             'include_relations': true
         };
-        $scope.networkLoading = true;
-        $scope.networkError = undefined;
+        $scope.network.Loading = true;
+        $scope.network.error = undefined;
 
-        Person.get(params, undefined, function (person) {
+        Persons.get(params, undefined, function (person) {
             // load container view
-            var container = document.getElementById('network');
+            container.style.display = '';
             loadNetwork(container, person, $scope.domains, $scope.frequencies);
-            $scope.networkLoading = false;
+
+            var rounding = true;
+            $scope.network.id = id;
+            $scope.network.name = person.name ? person.name + ' (' + person.id + ')' : person.id;
+            $scope.network.inq = inq.getScore(person, $scope.frequencies, rounding);
+            $scope.network.loading = false;
         },
         function (err) {
-            $scope.networkLoading = false;
-            $scope.networkError = 'Er is een fout opgetreden bij het ophalen van het netwerk.';
+            $scope.network.loading = false;
+            $scope.network.error = 'Er is een fout opgetreden bij het ophalen van het netwerk.';
             console.log('Error', err);
         });
     };
@@ -359,6 +402,14 @@ function Controller($scope, $resource) {
             title += ' (administrator)';
         }
         return title;
+    };
+
+    /**
+     * Check if the application is ready, after login information is in.
+     * @return {boolean} isReady
+     */
+    $scope.appIsReady = function () {
+        return $scope.user && $scope.user.loginUrl;
     };
 
     /**
@@ -408,40 +459,71 @@ function Controller($scope, $resource) {
     $scope.user = User.get();
     $scope.$watch('user.isLoggedIn', function () {
         $scope.search.results = undefined;
+
+        if ($scope.isLoggedIn()) {
+            // retrieve imported contacts
+            $scope.getContacts();
+
+            // load user after login
+            if ($scope.page == 'form' && !$scope.current) {
+                $scope.form = hash.getValue('form') || 'privacy';
+                $scope.load($scope.user.email);
+            }
+        }
     });
 
-    // facebook import
-    $scope.facebook = {
-        importStatus: undefined,
-        startImport: function () {
-            importFacebookFriends(function (result) {
-                $scope.facebook.importStatus = result.status;
-                if (result.friends) {
-                    $scope.facebook.friends = result.friends;
-                }
-                if (result.me) {
-                    $scope.facebook.me = result.me;
-                    if (!$scope.current.name) {
-                        $scope.current.name = result.me.name;
-                    }
-                    if (!$scope.current.gender && result.me.gender) {
-                        $scope.current.gender = result.me.gender.toUpperCase();
-                    }
-                    if (!$scope.current.age && result.me.birthday) {
-                        $scope.current.age = getAge(result.me.birthday);
-                    }
-                }
+    /**
+     * Get imported contacts
+     * @param {function} callback
+     */
+    $scope.getContacts = function (callback) {
+        $scope.contacts = Contacts.query({}, undefined, callback);
+    };
 
-                // http://onehungrymind.com/notes-on-angularjs-scope-life-cycle/
-                if(!$scope.$$phase) { //this is used to prevent an overlap of scope digestion
-                    $scope.$apply(); //this will kickstart angular to recognize the change
-                }
+    /**
+     * Import contacts from a social media
+     * @param {String} service   For example 'facebook'
+     */
+    $scope.importContacts = function (service) {
+        $scope.importing = true;
+        document.location.href = '/import/?service=' + service;
+    };
+
+    /**
+     * Delete imported contacts
+     * @param {String} service
+     */
+    $scope.deleteContacts = function (service) {
+        $scope.importing = true;
+        Contacts.delete({service: service});
+        setTimeout(function () {
+            $scope.getContacts(function () {
+                $scope.importing = false;
             });
-        },
-        cancelImport: function () {
-            $scope.facebook.importStatus = undefined;
-        },
-        friends: undefined
+            $scope.$apply();
+        }, 5000); // give appengine some time to update indexes...
+    };
+
+    $scope.cancelImport = function () {
+        // TODO: really cancel the action
+        $scope.importing = false;
+        if (window.stop) {
+            window.stop();
+        }
+    };
+
+    /**
+     * count the number of contacts from given service
+     * @param {String} service
+     */
+    $scope.countContacts = function (service) {
+        var count = 0;
+        for (var i = 0; i < $scope.contacts.length; i++) {
+            if ($scope.contacts[i].service == service) {
+                count++;
+            }
+        }
+        return count;
     };
 
     // search parameters
@@ -456,19 +538,26 @@ function Controller($scope, $resource) {
 
         if (name) {
             // find by name
-            $scope.search.searching = true;
-            $scope.search.error = undefined;
-            $scope.find(name, function (results, err) {
-                if (sequence == $scope.search.sequence) {
-                    // ok, no other searches started while this search was running
-                    $scope.search.searching = false;
-                    $scope.search.results = results;
-                    if (err) {
-                        $scope.search.error = 'Argh! Er is iets misgegaan.';
-                        console.log(err);
+            if ($scope.isLoggedIn()) {
+                $scope.search.searching = true;
+                $scope.search.error = undefined;
+                $scope.find(name, function (results, err) {
+                    if (sequence == $scope.search.sequence) {
+                        // ok, no other searches started while this search was running
+                        $scope.search.searching = false;
+                        $scope.search.results = results;
+                        if (err) {
+                            $scope.search.error = 'Argh! Er is iets misgegaan.';
+                            console.log(err);
+                        }
                     }
-                }
-            });
+                });
+            }
+            else {
+                $scope.search.searching = false;
+                $scope.search.results = undefined;
+                $scope.search.error = 'Voor u deelnemers kunt zoeken dient u in te loggen';
+            }
         }
         else {
             // clear search results
@@ -479,13 +568,13 @@ function Controller($scope, $resource) {
     });
 
     $scope.currentInq = undefined;
-    $scope.updateINQ = function (formPage) {
-        if (formPage == 'score' && $scope.current) {
+    $scope.updateINQ = function (form) {
+        if (form == 'score' && $scope.current) {
             var rounding = true;
             $scope.currentInq = inq.getScore($scope.current, $scope.frequencies, rounding);
         }
     };
-    $scope.$watch('formPage', $scope.updateINQ);
+    $scope.$watch('form', $scope.updateINQ);
     $scope.$watch('current.id', $scope.updateINQ);
 
     // create the tooltips
@@ -498,4 +587,4 @@ function Controller($scope, $resource) {
             offset: [0, 20]
         });
     });
-}
+};

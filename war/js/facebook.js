@@ -29,7 +29,7 @@ function importFacebookFriends(callback) {
 
             /* All the events registered */
             FB.Event.subscribe('auth.login', function(response) {
-                authorize();
+                getMe();
             });
 
             getLoginStatus();
@@ -62,11 +62,13 @@ function importFacebookFriends(callback) {
     }
 
     // TODO: use authorize to get the users birthday
+    /*
     function authorize() {
         FB.login(function() {
             getMe();
         }, {scope: 'user_birthday'});
     }
+    */
 
     function getMe () {
         callback({status: 'import'});

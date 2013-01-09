@@ -1,4 +1,4 @@
-package entity;
+package com.almende.denetwerkscan.entity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +10,7 @@ import com.google.code.twig.annotation.Type;
 
 @SuppressWarnings("serial")
 public class Person implements Serializable {
-	protected Person() {}
+	public Person() {}
 	
 	public Person(String name, String profession, Integer age, GENDER gender ) {
 		this.profession = profession;
@@ -80,25 +80,16 @@ public class Person implements Serializable {
 		this.domains = domains;
 	}
 	
-	public boolean hasRelation(String id) {
-		if (id == null || domains == null) {
-			return false;
-		}
-	
-		for (Domain domain : domains) {
-			if (domain.getRelations() != null) {
-				for (Relation relation : domain.getRelations()) {
-					if (id.equals(relation.getId())) {
-						return true;
-					}
-				}
-			}
-		}
-		
-		return false;
+	public String getFacebookId() {
+		return facebookId;
+	}
+
+	public void setFacebookId(String facebookId) {
+		this.facebookId = facebookId;
 	}
 
 	@Id private String id; // typically, the users email is used as id.
+	private String facebookId;
 	@Index(false) private String name;
 	private String nameLowerCase;  // for indexed search on lower case name
 	@Index(false) private PRIVACY_POLICY privacyPolicy = PRIVACY_POLICY.PUBLIC_FOR_RELATIONS;

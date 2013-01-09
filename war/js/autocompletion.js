@@ -13,6 +13,7 @@ myApp.directive('autocomplete', function($parse) {
      * Sort the given array with autocompletion objects and remove duplicates
      * @param data
      */
+    /* TODO: cleanup
     function sortAndremoveDuplicates(data) {
         // sort
         data.sort(function (a, b) {
@@ -35,12 +36,21 @@ myApp.directive('autocomplete', function($parse) {
             }
         }
     }
+    */
 
     return function(scope, element, attrs) {
         var updateName = $parse(attrs['relationname']).assign;
-        var updateId = $parse(attrs['relationid']).assign;
+        var updateFacebookId = $parse(attrs['relationfacebookid']).assign;
+
+        var source = scope.contacts.concat([]);
+        $.each(source, function () {
+            this.value = this.contactName;
+            this.label = this.contactName;
+        });
+
         scope.$watch(attrs.autocomplete, function() {
             element.autocomplete({
+                /* TODO: cleanup
                 source: function (request, response) {
                     var name = request.term; // search term
                     try {
@@ -87,21 +97,25 @@ myApp.directive('autocomplete', function($parse) {
                         console.log(err);
                     }
                 },
+                */
+                source: source,
                 select: function(event, ui) {
-                    updateName(scope, ui.item.value);
-                    updateId(scope, ui.item.id);
+                    updateName(scope, ui.item.contactName);
+                    updateFacebookId(scope, ui.item.contactId);
                     scope.$apply();
                 }
-            }).data( 'autocomplete' )._renderItem = function( ul, item ) {
+            });
+                /* TODO: cleanup
+                .data( 'autocomplete' )._renderItem = function( ul, item ) {
                 var html = '<a>' +
                     item.label +
-                    (item.id ? '<br><span class="desc">' + item.id + '</span>' : '') +
+                    (item.service ? '<br><span class="desc">' + item.service + '</span>' : '') +
                     '</a>';
                 return $('<li>')
                     .data('item.autocomplete', item)
                     .append(html)
                     .appendTo(ul);
-            };
+            };*/
         });
     };
 });

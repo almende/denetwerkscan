@@ -5,7 +5,7 @@
 
 	<servlet>
 		<servlet-name>PersonServlet</servlet-name>
-		<servlet-class>com.almende.sot.PersonServlet</servlet-class>
+		<servlet-class>com.almende.denetwerkscan.PersonServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>PersonServlet</servlet-name>
@@ -13,8 +13,26 @@
 	</servlet-mapping>
 
   <servlet>
+    <servlet-name>ImportServlet</servlet-name>
+    <servlet-class>com.almende.denetwerkscan.socialmedia.ImportServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ImportServlet</servlet-name>
+    <url-pattern>/import/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ContactServlet</servlet-name>
+    <servlet-class>com.almende.denetwerkscan.ContactServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ContactServlet</servlet-name>
+    <url-pattern>/contacts/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>AuthServlet</servlet-name>
-    <servlet-class>com.almende.sot.AuthServlet</servlet-class>
+    <servlet-class>com.almende.denetwerkscan.AuthServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>AuthServlet</servlet-name>

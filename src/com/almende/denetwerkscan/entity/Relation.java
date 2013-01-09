@@ -1,4 +1,4 @@
-package entity;
+package com.almende.denetwerkscan.entity;
 
 import java.io.Serializable;
 
@@ -37,8 +37,16 @@ public class Relation implements Serializable {
 		this.id = id;
 	}
 
+	public String getFacebookId() {
+		return facebookId;
+	}
+
+	public void setFacebookId(String facebookId) {
+		this.facebookId = facebookId;
+	}
+
 	@Index(false) private String name;      // name of the friend
-	@Index(false) private String id;        // optional. typically the email 
-										    // of the relation, used for authorization
-	@Index(false) private String frequency; // every day, once per month, ...
+	@Index(false) private String id;        // optional. id of the person in De Netwerk Scan
+	@Index(false) private String facebookId;// optional facebookId
+	@Index(false) private String frequency; // daily, weekly, monthly, yearly, ...
 }
