@@ -71,6 +71,7 @@ function Controller($scope, $resource) {
         hash.setValue('page', $scope.page);
     });
 
+    // scroll up when the header is not visible.
     var updateScrollTop = function () {
         // ensure the form title is visible, scroll up when needed
         if (document.body.scrollTop > 270) {
@@ -104,6 +105,8 @@ function Controller($scope, $resource) {
                 }
             }
         }
+
+        updateScrollTop();
     });
 
     /**
@@ -112,7 +115,6 @@ function Controller($scope, $resource) {
     $scope.start = function () {
         $scope.page = 'form';
         $scope.form = 'privacy';
-        updateScrollTop();
         if ($scope.isLoggedIn()) {
             // load current user form
             $scope.load($scope.user.email);
