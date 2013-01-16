@@ -37,11 +37,8 @@ function loadNetwork (container, person, domains, frequencies) {
         var name = person.name;
         var id = ids[name];
         if (id == undefined) {
-            var score = undefined;
-            if (person.domains) {
-                var rounding = true;
-                score = inq.getScore(person, frequencies, rounding);
-            }
+            var coefficients = inq.getCoefficients(person, frequencies);
+            var score = coefficients.score;
             id = nodes.length;
             ids[name] = id;
             nodes.push({
@@ -54,24 +51,17 @@ function loadNetwork (container, person, domains, frequencies) {
             });
 
             // iterate over all domains and relations
-            if (person.domains instanceof Array) {
-                person.domains.forEach(function (domain, domainIndex) {
-                    if (domain.relations instanceof Array) {
-                        domain.relations.forEach(function (relation, relationIndex) {
-                            if (relation.name) {
-                                // TODO: check if frequency is "null" or undefined or "undefined" etc
-                                var frequency = relation.frequency;
-                                var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
-                                var relId = addPerson(relation);
-                                var rounding = true;
-                                var partialScore = inq.partialScore(domainIndex,
-                                    relationIndex, frequencyIndex, rounding);
-                                addRelation(id, relId, domain.name, frequency, partialScore);
-                            }
-                        });
+            _.each(coefficients.domains, function (domain) {
+                _.each(domain.relations, function (relation) {
+                    if (relation.relation.name) {
+                        // TODO: check if frequency is "null" or undefined or "undefined" etc
+                        var frequency = relation.relation.frequency;
+                        var relId = addPerson(relation.relation);
+                        var score = inq.round(relation.frequencyCof * relation.relationCof * domain.domainCof);
+                        addRelation(id, relId, domain.name, frequency, score);
                     }
                 });
-            }
+            });
         }
         return id;
     }

@@ -10,42 +10,83 @@ var inq = {};
  * @return {Number} score
  */
 inq.getScore = function (person, frequencies, rounding) {
-    var score = 0;
-    if (person.domains) {
-        person.domains.forEach(function (domain, domainIndex) {
-            if (domain.relations) {
-                domain.relations.forEach(function (relation, relationIndex) {
-                    var frequency = relation.frequency;
-                    var frequencyIndex = frequencies ? frequencies.indexOf(frequency) : -1;
-                    if (frequencyIndex != -1) {
-                        score += inq.partialScore(domainIndex, relationIndex, frequencyIndex);
-                    }
-                    else {
-                        console.log('WARNING: Unknown frequency "' + frequency + '"');
-                    }
-                });
-            }
-        });
-    }
-
-    return rounding ? inq.round(score) : score;
+    var coefficients = inq.getCoefficients(person, frequencies);
+    return rounding ? inq.round(coefficients.score) : coefficients.score;
 };
 
 /**
- * Calculate the INQ score for a single relation
- * @private
- * @param domainIndex
- * @param relationIndex
- * @param frequencyIndex
- * @param {boolean} [rounding]
- * @return {Number} partialScore
+ * Calculate the coefficients for each domain, relation, and frequency
+ * @param {Object} person
+ * @param {String[]} frequencies
+ * @return {Object} coefficients
  */
-inq.partialScore = function (domainIndex, relationIndex, frequencyIndex, rounding) {
-    var partialScore = inq.getCoefficient(domainIndex + 1) *
-        inq.getCoefficient(relationIndex + 1) *
-        inq.getCoefficient(frequencyIndex);
+inq.getCoefficients = function (person, frequencies) {
+    var coefficients = {
+        domains: {}
+    };
 
-    return rounding ? inq.round(partialScore) : partialScore;
+    if (person.domains) {
+        var domains = coefficients.domains = [];
+        _.each(person.domains, function (domain) {
+            if (domain.relations) {
+                var relations = [];
+
+                // calculate the frequency coefficient for each relation
+                _.each(domain.relations, function (relation) {
+                    var frequencyIndex = frequencies ? frequencies.indexOf(relation.frequency) : -1;
+                    if (frequencyIndex != -1) {
+                        relations.push({
+                            frequencyCof: inq.getCoefficient(frequencyIndex),
+                            relation: relation
+                        });
+                    }
+                    else {
+                        console.log('WARNING: Unknown frequency "' + relation.frequency + '"');
+                    }
+                });
+
+                // sort the relations by frequency coefficient
+                relations = _.sortBy(relations, function (relation) {
+                    return -relation.frequencyCof;
+                });
+
+                // calculate the relation coefficient for each relation,
+                // and the score per relation
+                _.each(relations, function (relation, relationIndex) {
+                    relation.relationCof = inq.getCoefficient(relationIndex + 1);
+                    relation.score = relation.relationCof * relation.frequencyCof;
+                });
+
+                // append the domain and calculate the total score of the relations
+                domains.push({
+                    'relations': relations,
+                    'relationsScore': _.reduce(relations, function (memo, relation) {
+                        return memo + relation.score;
+                    }, 0)
+                });
+            }
+        });
+
+        // sort the domains by highest score
+        domains = _.sortBy(domains, function (domain) {
+            return -domain.relationsScore;
+        });
+
+        // calculate the domain coefficients and the score per domain
+        _.each(domains, function (domain, domainIndex) {
+            domain.domainCof = inq.getCoefficient(domainIndex + 1);
+            domain.score = domain.domainCof * domain.relationsScore;
+        });
+
+        coefficients = {
+            domains: domains,
+            score: _.reduce(domains, function (memo, domain) {
+                return memo + domain.score;
+            }, 0)
+        };
+    }
+
+    return coefficients;
 };
 
 /**

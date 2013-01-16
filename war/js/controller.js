@@ -584,8 +584,8 @@ function Controller($scope, $resource) {
     });
 
     $scope.currentInq = undefined;
-    $scope.updateINQ = function (form) {
-        if (form == 'score' && $scope.current) {
+    $scope.updateINQ = function () {
+        if ($scope.form == 'score' && $scope.current) {
             var rounding = true;
             $scope.currentInq = inq.getScore($scope.current, $scope.frequencies, rounding);
         }
@@ -595,7 +595,7 @@ function Controller($scope, $resource) {
 
     // create the tooltips
     var tooltips = ['frequentie', 'contact', 'deelnetwerk', 'score'];
-    tooltips.forEach(function (tooltip) {
+    _.each(tooltips, function (tooltip) {
         $('#tooltip-' + tooltip).simpletip({
             content: $('#tooltip-text-' + tooltip).html(),
             persistent: true,

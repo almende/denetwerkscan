@@ -344,7 +344,8 @@ public class PersonServlet extends HttpServlet {
 			throws JsonGenerationException, JsonMappingException, IOException {
 		mapper = new ObjectMapper();
 		resp.setContentType("application/json");
-		resp.getWriter().write(mapper.writeValueAsString(obj));
+		String s = mapper.writeValueAsString(obj);
+		resp.getWriter().write(s);
 	}
 	
 	/**
