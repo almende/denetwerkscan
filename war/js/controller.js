@@ -19,7 +19,7 @@ function Controller($scope, $resource) {
     var User = $resource('/auth');
 
     var hash = new Hash();
-    $scope.page = hash.getValue('page') || 'intro';   // Available: 'intro', 'form', 'network', 'score'
+    $scope.page = hash.getValue('page') || 'intro';   // Available: 'intro', 'theory', 'form', 'network', 'score'
     $scope.form = hash.getValue('form') || 'privacy'; // Available: 'privacy', 'import', 'self', 'contacts', 'score'
 
     $scope.domains = [
@@ -88,6 +88,11 @@ function Controller($scope, $resource) {
         // set current form page in hash
         hash.setValue('form', $scope.form);
     });
+    setTimeout(function () {
+        // save every 60 sec
+        $scope.save();
+        $scope.$apply();
+    }, 60000);
     $scope.$watch('page', function (newPage, oldPage) {
         if (oldPage == 'form') {
             $scope.save();
@@ -143,7 +148,7 @@ function Controller($scope, $resource) {
      * @param {Object} domain
      */
     $scope.deleteDomain = function (person, domain) {
-        if (!confirm('Weet je zeker dat je het deelnetwerk ' + domain.name + ' wilt verwijderen?')) {
+        if (!confirm('Weet u zeker dat u het deelnetwerk ' + domain.name + ' wilt verwijderen?')) {
             return;
         }
 
@@ -246,7 +251,7 @@ function Controller($scope, $resource) {
                 console.log('Error', err);
             }
         });
-    }
+    };
 
     /**
      * Save the current person
@@ -348,8 +353,8 @@ function Controller($scope, $resource) {
 
     /**
      * load network page
-     * @param {String | undefined} id   Id of the user to be loaded
-     * @param {String} [name]           optional name of the user
+     * @param {String} id       Id of the user to be loaded
+     * @param {String} [name]   optional name of the user
      */
     $scope.loadNetwork = function (id, name) {
         $scope.page = 'network';
@@ -477,12 +482,15 @@ function Controller($scope, $resource) {
                 $scope.form = hash.getValue('form') || 'privacy';
                 $scope.load($scope.user.email);
             }
+            else if ($scope.page == 'network') {
+                $scope.loadNetwork($scope.user.email);
+            }
         }
     });
 
     /**
      * Get imported contacts
-     * @param {function} callback
+     * @param {function} [callback]
      */
     $scope.getContacts = function (callback) {
         $scope.contacts = Contacts.query({}, undefined, callback);

@@ -18,6 +18,8 @@
     <script src="js/networkview.js" type="text/javascript" ></script>
     <script src="js/inq.js" type="text/javascript" ></script>
     <script src="js/hash.js" type="text/javascript" ></script>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF8">
 </head>
 
 <body>
@@ -65,6 +67,11 @@
             <a class="page"
                ng-click="page = 'intro'"
                ng-class="{'selected': page=='intro'}">Introductie</a>
+        </div>
+        <div class="listitem" >
+            <a class="page"
+               ng-click="page = 'theory'"
+               ng-class="{'selected': page=='theory'}">Theorie</a>
         </div>
         <div class="listitem">
             <a class="page"
@@ -191,6 +198,62 @@
 
             <p>
                 <button ng-click="start()" title="Start de test">Start</button>
+            </p>
+        </div>
+
+        <div ng-show="page == 'theory'">
+            <h1>Theorie</h1>
+            De Netwerk Scan van Stichting Zelforganisatie is gebaseerd op een
+            aantal noties uit de wetenschap: de theorie omtrent Scale Free networks
+            van onder meer Albert-L&aacute;szl&oacute; Barab&aacute;si, The Strength of Weak Ties en het
+            Small World principe. Deze worden hieronder kort toegelicht.
+
+            <h2>Scale Free networks</h2>
+            <p>
+                <img src="img/scalefree.jpg" alt="scale free network" align="right">
+                Netwerken die zich lenen voor zelforganisatie vertonen in de
+                praktijk alle dezelfde kenmerken. Dit is niet alleen zichtbaar bij
+                mensen en het internet maar ook bij vogels, vissen en insecten.
+                In een Scale Free netwerk hebben de meeste mensen relatief weinig
+                contacten en een paar mensen heel veel. De mensen met zeer veel contacten
+                worden 'hubs' genoemd; zij houden het netwerk bij elkaar en vormen bruggen
+                tussen de verschillende deelnetwerken.
+            </p>
+
+            <p>
+                In hoeverre is uw netwerk scale free? Dat inventariseren we in deze Netwerk Scan.
+                De scan is een momentopname van uw netwerk, een 'foto' van uw netwerk.
+                Als u de scan over een jaar nogmaals invult, is uw netwerk ongetwijfeld
+                veranderd en heeft het meer of minder het karakter van een scale free network gekregen.
+                Dit kunt u bewust doen door contact te leggen met 'hubs' of door nieuwe deelnetwerken aan te leggen.
+            </p>
+
+            <h2>Small World</h2>
+            <p>
+                <img src="img/220px-Six_degrees_of_separation.png" alt="small world" align="right">
+                Deze theorie verwierf bekendheid door het experiment van Stanley Milgram
+                waarin werd gemeten via hoeveel mensen een brief een bepaalde persoon bereikte.
+                In het experiment bleek dat de brief gemiddeld zes personen nodig had om de
+                geadresseerde te bereiken. Hieruit is de conclusie getrokken dat je
+                slechts zes stappen verwijderd bent van een willekeurige persoon,
+                waar ook ter wereld. Deze notie staat bekend als de 'six degrees of separation'.
+            </p>
+
+            <h2>Strength of Weak Ties</h2>
+            <p>
+                <img src="img/strengthweakties.jpg" alt="Strength of Weak Ties" align="right">
+                <a href="http://en.wikipedia.org/wiki/Mark_Granovetter" target="_blank">Marc Granovetter</a>
+                toonde in 1974 aan dat mensen veel vaker een nieuwe baan
+                of relatie krijgen via mensen die ze weinig zien (de 'weak links')
+                dan via goede vrienden. Dit komt doordat je vrienden in de regel sterk
+                op je lijken, hetzelfde gedrag vertonen en zich in dezelfde netwerken begeven.
+                Zwakke connecties zitten vaak in andere netwerken en kunnen daardoor
+                relatief meer bijdragen aan de diversiteit van je netwerk.
+                Je hebt deze mensen dus minstens zo hard nodig als goede vrienden die je vaak ziet.
+            </p>
+
+            <p>
+                Wilt u hier meer over weten? <a href="mailto:info@z11org.nl">Mail</a> ons dan!
             </p>
         </div>
 
@@ -326,7 +389,7 @@
                                         Er zijn {{countContacts('facebook')}} vrienden uit Facebook ge&iuml;mporteerd.
                                     </span>
                                     <span class="bold" ng-hide="current.facebookId">
-                                        Er zijn geen vrienden uit Facebook ge&iuml;mporteerd.
+                                        We konden geen contacten uit Facebook voor u importeren.
                                     </span>
                                 </td>
                                 <td ng-show="!importing">

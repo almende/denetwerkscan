@@ -143,10 +143,3 @@ function loadNetwork (container, person, domains, frequencies) {
 
     return network;
 }
-
-/**
- * Hide the currently visible network
- */
-function hideNetwork () {
-
-}
