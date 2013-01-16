@@ -462,6 +462,22 @@
                 </div>
 
                 <div ng-show="form=='contacts'">
+                    <h2>Hoe vult u de Netwerk Scan in?</h2>
+                    <p>
+                        Uw netwerk bestaat uit verschillende deelnetwerken,
+                        zoals familie, vrienden, buren, sportmaatjes, etc.
+                        Hierbij gaat het om de verschillende rollen die u heeft als collega,
+                        vriend of ouder. Een voorbeeld: wanneer u samen met uw broer een bedrijf heeft,
+                        kan het zijn dat u vaker zakelijk contact heeft dan 'familiecontact'.
+                        Uw broer deelt u dus in het netwerk 'collega's' in.
+                    </p>
+                    <p>
+                        U geeft zelf aan hoe vaak u met personen uit de verschillende deelnetwerken contact heeft,
+                        bijvoorbeeld dagelijks, wekelijks of jaarlijks.
+                        Alle vormen van contact tellen mee, dus ook telefoongesprekken,
+                        e-mails, sms-jes, ansichtkaarten, tweets, etc.
+                    </p>
+
                     <div ng-repeat="domain in current.domains">
                         <a ng-click="deleteDomain(current, domain)"
                            ng-show="!readonly"
