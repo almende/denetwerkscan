@@ -36,7 +36,8 @@ function Controller($scope, $resource) {
         'Elke 2 weken',
         'Maandelijks',
         'Elk kwartaal',
-        'Jaarlijks'
+        'Jaarlijks',
+        ''
     ];
 
     // current person
@@ -189,7 +190,10 @@ function Controller($scope, $resource) {
             relations = [];
             domain.relations = relations;
         }
-        relations.push({});
+        relations.push({
+            name: '',
+            frequency: ''
+        });
     };
 
     /**

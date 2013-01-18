@@ -46,19 +46,19 @@ function loadNetwork (container, person, domains, frequencies) {
                 'text': name,
                 'title': 'Persoon<br>' +
                     'Naam: ' + name + '<br>' +
-                    'Score: ' + ((score != undefined) ? score : 'onbekend'),
+                    'Score: ' + ((score != undefined) ? inq.round(score) : 'onbekend'),
                 'value': (score != undefined) ? score : 0
             });
 
             // iterate over all domains and relations
             _.each(coefficients.domains, function (domain) {
                 _.each(domain.relations, function (relation) {
-                    if (relation.relation.name) {
+                    if (relation.orig.name) {
                         // TODO: check if frequency is "null" or undefined or "undefined" etc
-                        var frequency = relation.relation.frequency;
-                        var relId = addPerson(relation.relation);
+                        var frequency = relation.orig.frequency;
+                        var relId = addPerson(relation.orig);
                         var score = inq.round(relation.frequencyCof * relation.relationCof * domain.domainCof);
-                        addRelation(id, relId, domain.name, frequency, score);
+                        addRelation(id, relId, domain.orig.name, frequency, score);
                     }
                 });
             });

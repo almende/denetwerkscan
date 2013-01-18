@@ -37,7 +37,7 @@ inq.getCoefficients = function (person, frequencies) {
                     if (frequencyIndex != -1) {
                         relations.push({
                             frequencyCof: inq.getCoefficient(frequencyIndex),
-                            relation: relation
+                            orig: relation
                         });
                     }
                     else {
@@ -59,8 +59,9 @@ inq.getCoefficients = function (person, frequencies) {
 
                 // append the domain and calculate the total score of the relations
                 domains.push({
-                    'relations': relations,
-                    'relationsScore': _.reduce(relations, function (memo, relation) {
+                    orig: domain,
+                    relations: relations,
+                    relationsScore: _.reduce(relations, function (memo, relation) {
                         return memo + relation.score;
                     }, 0)
                 });
