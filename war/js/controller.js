@@ -19,8 +19,8 @@ function Controller($scope, $resource) {
     var User = $resource('/auth');
 
     var hash = new Hash();
-    $scope.page = hash.getValue('page') || 'intro';   // Available: 'intro', 'theory', 'form', 'network', 'score'
-    $scope.form = hash.getValue('form') || 'privacy'; // Available: 'privacy', 'import', 'self', 'contacts', 'score'
+    $scope.page = hash.getValue('page') || 'intro';   // Available: 'intro', 'theory', 'form', 'network', 'inq'
+    $scope.form = hash.getValue('form') || 'privacy'; // Available: 'privacy', 'import', 'self', 'contacts', 'inq'
 
     $scope.domains = [
         'Familie',
@@ -589,7 +589,7 @@ function Controller($scope, $resource) {
 
     $scope.currentInq = undefined;
     $scope.updateINQ = function () {
-        if ($scope.form == 'score' && $scope.current) {
+        if ($scope.form == 'inq' && $scope.current) {
             var rounding = true;
             $scope.currentInq = inq.getScore($scope.current, $scope.frequencies, rounding);
         }
@@ -598,7 +598,7 @@ function Controller($scope, $resource) {
     $scope.$watch('current.id', $scope.updateINQ);
 
     // create the tooltips
-    var tooltips = ['frequentie', 'contact', 'deelnetwerk', 'score'];
+    var tooltips = ['frequentie', 'contact', 'deelnetwerk', 'inq', 'hub'];
     _.each(tooltips, function (tooltip) {
         $('#tooltip-' + tooltip).simpletip({
             content: $('#tooltip-text-' + tooltip).html(),

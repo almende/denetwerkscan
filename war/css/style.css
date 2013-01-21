@@ -102,6 +102,24 @@ body, html, td, tr, button, select, input {
     overflow-x: hidden;
 }
 
+#intro {
+}
+
+#intro td {
+    width: 33%;
+    vertical-align: top;
+}
+
+#intro .block {
+    margin: 5px;
+    padding: 5px 20px;
+    background-color: #e5e5e5;
+    background: rgba(0, 159, 198, 0.05);
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    min-height: 210px;
+}
+
 div.form-frame {
     background-color: #f5f5f5;
     border: 1px solid #e5e5e5;
@@ -188,6 +206,12 @@ h2 {
     font-style: normal;
     color: #9C0;
     margin: 1em 0;
+}
+
+h3 {
+    /*
+    color: #009FC6;
+    */
 }
 
 h4 {

@@ -1,5 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html ng-app="controller" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
       xmlns="http://www.w3.org/1999/html">
 <head>
     <title>De Netwerk Scan - Stichting Zelforganisatie</title>
@@ -69,7 +70,7 @@
         <div class="listitem" >
             <a class="page"
                ng-click="page = 'theory'"
-               ng-class="{'selected': page=='theory'}">Theorie</a>
+               ng-class="{'selected': page=='theory'}">Achtergrondinformatie</a>
         </div>
         <div class="listitem">
             <a class="page"
@@ -113,109 +114,98 @@
 <div id="wrap-contents" ng-show="appIsReady()">
     <div id="contents">
         <div ng-show="page == 'intro'">
-            <h1>
-                How connected are you?
-                <span class="h1-subtitle">
-                    Let's analyze your social network
-                </span>
-            </h1>
-
+            <h1>Hoe ziet uw sociale netwerk eruit?</h1>
             <p>
-                De Netwerk Scan van Stichting Zelforganisatie heeft als doel om
-                uw netwerk in kaart te brengen en u feedback te geven op de mate
-                waarin u verbonden bent met uw netwerk. Netwerken die zich lenen
-                voor zelforganisatie vertonen in de praktijk alle dezelfde
-                kenmerken. Dit is niet alleen zichtbaar bij mensen en het
-                internet maar ook bij vogels, vissen en insecten.
-                We noemen dergelijke netwerken scale free.
-                In hoeverre is uw netwerk scale free? Dat inventariseren we
-                in deze Netwerk Scan. Vult u de scan astublieft zo volledig
-                mogelijk in zodat wij u een zo compleet mogelijk beeld van uw
-                netwerk kunnen geven.
+                De Netwerk Scan van Stichting Zelforganisatie heeft als doel
+                om uw netwerk in kaart te brengen en u inzicht te geven in uw sociale verbondenheid.
             </p>
 
-            <p>
-                Bij de Netwerk Scan gaan we niet uit van de groep waarin u zit
-                (familie, vriendenkring) maar kiezen we voor de verschillende
-                rollen die u heeft als ouder, vriend of collega. Bijvoorbeeld:
-                wanneer we kiezen voor een indeling in groepen, dan kunt u zo
-                alle bloedlijnen die u heeft invullen. Echter, wanneer u
-                bijvoorbeeld met uw broer een bedrijf heeft opgericht, kan het
-                zijn dat het zakelijk contact frequenter plaatsvindt dan het
-                familiecontact&nbsp;<span id="tooltip-contact"
-                    class="tooltip-anchor"
-                    title="Klik hier voor een toelichting op het begrip 'contact'">&nbsp;i&nbsp;</span>.
-                Aangezien het ons gaat om de
-                frequentie&nbsp;<span id="tooltip-frequentie"
-                    class="tooltip-anchor"
-                    title="Klik hier voor een toelichting op het begrip 'frequentie'">&nbsp;i&nbsp;</span> van het
-                contact meten we hier de mate van contact uit hoofde van een
-                bepaalde rol (zakelijk partner).
+            <p style="text-align: center">
+                <img alt="mindmap" src="img/mindmap_300x262.png"
+                     width="300" height="263" title="Sociaal netwerk">
             </p>
+            <!--
+            <img alt="mindmap" src="img/mindmap_400x350.png"
+                 width="400" height="350" title="Sociaal netwerk">
+            -->
 
-            <a href="img/mindmap.png" target="_blank">
-                <img alt="mindmap" src="img/mindmap_300x262.png" align="right"
-                     width="300" height="263" title="Klik voor een grotere weergave">
-            </a>
+            <table id="intro">
+                <tr>
+                    <td>
+                        <div class="block">
+                            <h2>INQ</h2>
+                            <p>
+                                De Netwerk Scan berekent de
+                                Individuele Netwerk Quoti&euml;nt (INQ) van uw netwerk.
+                                Dit geeft een maat voor uw sociale verbondenheid.
+                            </p>
+                            <p>
+                                <a ng:click="page='theory'">lees meer...</a>
+                            </p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="block">
+                            <h2>Netwerk</h2>
+                            <p>
+                                De Netwerk Scan geeft inzicht in hoe uw sociale netwerk
+                                is opgebouwd. U staat zelf centraal en heeft
+                                contacten uit verschillende deelnetwerken.
+                            </p>
+                            <p>
+                                <a ng:click="page='theory'">lees meer...</a>
+                            </p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="block">
+                            <h2>Start</h2>
+                            <p>
+                                Vul nu de Netwerk Scan in!
+                            </p>
+                            <button ng-click="start()" title="Start de test">Start</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
 
+            <h1>Hoe werkt het?</h1>
             <p>
-                Ter verduidelijking ziet u hiernaast de visualisatie van een
-                voorbeeldnetwerk in een mindmapschema; u staat zelf centraal
-                en om u heen heeft u een diversiteit aan contacten opgebouwd,
-                die in verschillende
-                deelnetwerken&nbsp;<span id="tooltip-deelnetwerk"
-                    class="tooltip-anchor"
-                    title="Klik hier voor een toelichting op het begrip 'deelnetwerk'">&nbsp;i&nbsp;</span> zijn te verdelen.
-                Voor de volledigheid kunt u kunt ervoor kiezen om eerst een
-                handmatige schets te maken en dan pas de Netwerk Scan in te vullen.
-            </p>
-
-            <p>
-                Uiteraard is uw netwerk niet altijd hetzelfde;
-                over een jaar kan het er heel anders uitzien.
-                Het is dan ook goed om u te realiseren dat de
-                score&nbsp;<span id="tooltip-score"
-                    class="tooltip-anchor"
-                    title="Klik hier voor een toelichting op het begrip 'score'">&nbsp;i&nbsp;</span> een momentopname is.
-                Na het invullen van de Netwerk Scan treft u als output ook een
-                visualisatie van uw netwerk aan.
-                Deze is uitsluitend bedoeld om u inzicht te geven in de opbouw
-                van uw netwerk op dit moment en geeft dus geen waardeoordeel.
-                Er is geen 'goed' of 'fout'. Wel is het mogelijk om op basis van
-                het huidige plaatje bepaalde veranderingen aan te brengen die
-                uw netwerk later meer scale free maken. Dit resulteert in een
-                andere netwerkscore en een ander plaatje van uw netwerk.
-                Om het in beeldspraak te zeggen: de scan levert op moment x een
-                'foto' op van uw netwerk. Wanneer u dit later een paar keer zou
-                herhalen, vormen de diverse foto's op moment y tezamen een 'film'.
-            </p>
-
-            <p>
-                Heeft u hier vragen over? <a href="mailto:info@z11org.nl">Wij helpen u graag!</a>
-            </p>
-
-            <p>
-                <button ng-click="start()" title="Start de test">Start</button>
+                In de Netwerk Scan meten we met hoeveel mensen uit verschillende netwerken u regelmatig contact hebt.
+                Dit resulteert in uw persoonlijke Individuele Netwerk Quoti&euml;nt (INQ).
+                De INQ is dus een maat voor uw maatschappelijke verbondenheid.
+                Een hogere waarde geeft aan dat u meer connected bent dan iemand met een lagere waarde.
+                Als u de Netwerk Scan zo volledig mogelijk invult krijgt u een zo goed mogelijk beeld van uw netwerk.
             </p>
         </div>
 
         <div ng-show="page == 'theory'">
-            <h1>Theorie</h1>
+            <h1>Achtergrondinformatie</h1>
             De Netwerk Scan van Stichting Zelforganisatie is gebaseerd op een
-            aantal noties uit de wetenschap: de theorie omtrent Scale Free networks
-            van onder meer Albert-L&aacute;szl&oacute; Barab&aacute;si, The Strength of Weak Ties en het
+            aantal noties uit de wetenschap: de theorie omtrent Scale Free networks, The Strength of Weak Ties en het
             Small World principe. Deze worden hieronder kort toegelicht.
+            Vervolgens geven we u informatie over de praktische toepasbaarheid
+            van uw INQ.
 
-            <h2>Scale Free networks</h2>
+            <h2>Theorie</h2>
+
+            <h3>Scale Free networks</h3>
             <p>
                 <img src="img/scalefree.jpg" alt="scale free network" align="right">
                 Netwerken die zich lenen voor zelforganisatie vertonen in de
                 praktijk alle dezelfde kenmerken. Dit is niet alleen zichtbaar bij
                 mensen en het internet maar ook bij vogels, vissen en insecten.
-                In een Scale Free netwerk hebben de meeste mensen relatief weinig
-                contacten en een paar mensen heel veel. De mensen met zeer veel contacten
-                worden 'hubs' genoemd; zij houden het netwerk bij elkaar en vormen bruggen
-                tussen de verschillende deelnetwerken.
+
+
+                <a href="http://en.wikipedia.org/wiki/Albert-L%C3%A1szl%C3%B3_Barab%C3%A1si" target="_blank">Albert-L&aacute;szl&oacute; Barab&aacute;si</a>
+                en anderen hebben aangetoond dat in een
+                <a href="http://en.wikipedia.org/wiki/Scale-free_network" target="_blank">Scale Free netwerk</a>
+                de meeste mensen relatief weinig (verschillende soorten) contacten hebben, en een paar mensen heel veel.
+                De mensen met zeer veel verschillende contacten worden 'hubs' genoemd;
+                zij houden het netwerk bij elkaar en vormen bruggen
+                tussen de verschillende deelnetwerken&nbsp;<span id="tooltip-deelnetwerk"
+                        class="tooltip-anchor"
+                        title="Klik hier voor een toelichting op het begrip 'deelnetwerk'">&nbsp;i&nbsp;</span>.
             </p>
 
             <p>
@@ -226,10 +216,11 @@
                 Dit kunt u bewust doen door contact te leggen met 'hubs' of door nieuwe deelnetwerken aan te leggen.
             </p>
 
-            <h2>Small World</h2>
+            <h3>Small World</h3>
             <p>
                 <img src="img/220px-Six_degrees_of_separation.png" alt="small world" align="right">
-                Deze theorie verwierf bekendheid door het experiment van Stanley Milgram
+                Deze theorie verwierf bekendheid door het experiment van
+                <a href="http://en.wikipedia.org/wiki/Small-world_experiment" target="_blank">Stanley Milgram</a>
                 waarin werd gemeten via hoeveel mensen een brief een bepaalde persoon bereikte.
                 In het experiment bleek dat de brief gemiddeld zes personen nodig had om de
                 geadresseerde te bereiken. Hieruit is de conclusie getrokken dat je
@@ -237,9 +228,8 @@
                 waar ook ter wereld. Deze notie staat bekend als de 'six degrees of separation'.
             </p>
 
-            <h2>Strength of Weak Ties</h2>
+            <h3>Strength of Weak Ties</h3>
             <p>
-                <img src="img/strengthweakties.jpg" alt="Strength of Weak Ties" align="right">
                 <a href="http://en.wikipedia.org/wiki/Mark_Granovetter" target="_blank">Marc Granovetter</a>
                 toonde in 1974 aan dat mensen veel vaker een nieuwe baan
                 of relatie krijgen via mensen die ze weinig zien (de 'weak links')
@@ -250,8 +240,64 @@
                 Je hebt deze mensen dus minstens zo hard nodig als goede vrienden die je vaak ziet.
             </p>
 
+            <h2>Praktische toepassing</h2>
             <p>
-                Wilt u hier meer over weten? <a href="mailto:info@z11org.nl">Mail</a> ons dan!
+                Bij de Netwerk Scan gaan we niet uit van de groep waarin u zit (familie, vriendenkring)
+                maar kiezen we voor de verschillende rollen die u heeft als ouder, vriend of collega.
+                Bijvoorbeeld: wanneer we kiezen voor een indeling in groepen,
+                dan kunt u zo alle bloedlijnen die u heeft invullen.
+                Echter, wanneer u bijvoorbeeld met uw broer een bedrijf heeft opgericht,
+                kan het zijn dat u vaker contact&nbsp;<span id="tooltip-contact"
+                        class="tooltip-anchor"
+                        title="Klik hier voor een toelichting op het begrip 'contact'">&nbsp;i&nbsp;</span>
+                heeft met uw broer als 'zakelijk partner' dan als 'familielid'.
+                Aangezien het ons gaat om de frequentie&nbsp;<span id="tooltip-frequentie"
+                        class="tooltip-anchor"
+                        title="Klik hier voor een toelichting op het begrip 'frequentie'">&nbsp;i&nbsp;</span>
+                van het contact is het zakelijk contact met uw broer
+                voor ons hier belangrijker dan de mate waarin u elkaar in familieverband ziet.
+            </p>
+
+            <h3>Wat levert de Netwerk Scan u op?</h3>
+            <img src="img/denetwerkscan_voorbeeld.png" alt="small world" align="right" style="padding-left: 15px;">
+            <p>
+                De Netwerk Scan resulteert in een Individuele Netwerk Quoti&euml;nt (INQ)&nbsp;<span id="tooltip-inq"
+                        class="tooltip-anchor"
+                        title="Klik hier voor een toelichting op het begrip 'INQ'">&nbsp;i&nbsp;</span>
+                en een visualisatie van uw netwerk. De INQ is dus een maat voor uw maatschappelijke verbondenheid.
+                Een hogere INQ geeft aan dat u meer verbonden bent dan iemand met een lagere INQ.
+                De INQ is uitsluitend bedoeld om u inzicht te geven in de opbouw van uw netwerk op dit moment
+                en geeft geen waardeoordeel. Er is geen 'goed' of 'fout'.
+                U kunt het zien als een soort 'foto' van uw netwerk.
+                Over een jaar kan uw netwerk er heel anders uitzien,
+                bijvoorbeeld als u van baan bent gewisseld of nieuwe vrienden heeft gemaakt.
+                Als u de Netwerk Scan regelmatig invult ontstaat een 'film' van uw netwerk,
+                die realistischer is dan de momentopname.
+            </p>
+
+            <h3>Wat kunt u ermee?</h3>
+            <p>
+                Uw INQ geeft een indruk van uw eigen zelforganiserend vermogen.
+                Nu u weet hoe uw netwerk in elkaar zit,
+                kunt u uw zelforganiserend vermogen verbeteren door bewust aan de slag te gaan met uw netwerk.
+                U kunt bijvoorbeeld contact zoeken met de 'hubs'&nbsp;<span id="tooltip-hub"
+                        class="tooltip-anchor"
+                        title="Klik hier voor een toelichting op het begrip 'hub'">&nbsp;i&nbsp;</span>
+                in uw netwerk als u op zoek bent naar een nieuwe baan.
+                Of u kunt het netwerk van iemand anders helpen uitbreiden om te voorkomen dat hij of zij eenzaam wordt.
+                Een uitgebreid, gevarieerd netwerk blijft namelijk langer bestaan (het is robuuster)
+                dan een beperkt netwerk van mensen die op elkaar lijken.
+                Ten slotte is het goed om te weten dat mensen met een hogere INQ
+                in het algemeen meer kans hebben op nieuwe connecties.
+                Kijk maar naar social media: als je op Facebook of Twitter veel vrienden of volgers hebt,
+                krijg je er veel sneller nieuwe vrienden bij dan wanneer je weinig vrienden hebt.
+                Daarnaast hebben mensen met een hoger INQ meer kans op een nieuwe baan of een nieuwe relatie.
+                Mark Granovetter heeft dit overtuigend beschreven in The Strength of Weak Ties.
+            </p>
+
+            <p>
+                Heeft u hier vragen over?
+                <a href="mailto:info@z11org.nl">Wij helpen u graag</a>!
             </p>
         </div>
 
@@ -284,7 +330,7 @@
                     </div>
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': (form=='import' || form=='self' || form=='contacts' || form=='score')}"
+                         ng-class="{'arrow-selected': (form=='import' || form=='self' || form=='contacts' || form=='inq')}"
                          ng-click="form = 'import'">
                         <div class="left"></div>
                         <div class="content">
@@ -294,7 +340,7 @@
                     </div>
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': (form=='self' || form=='contacts' || form=='score')}"
+                         ng-class="{'arrow-selected': (form=='self' || form=='contacts' || form=='inq')}"
                          ng-click="form = 'self'">
                         <div class="left"></div>
                         <div class="content">
@@ -305,7 +351,7 @@
 
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': (form=='contacts' || form=='score')}"
+                         ng-class="{'arrow-selected': (form=='contacts' || form=='inq')}"
                          ng-click="form = 'contacts'">
                         <div class="left"></div>
                         <div class="content">
@@ -315,11 +361,11 @@
                     </div>
 
                     <div class="arrow"
-                         ng-class="{'arrow-selected': form=='score'}"
-                         ng-click="form = 'score'">
+                         ng-class="{'arrow-selected': form=='inq'}"
+                         ng-click="form = 'inq'">
                         <div class="left"></div>
                         <div class="content">
-                            Score
+                            INQ
                         </div>
                         <div class="right"></div>
                     </div>
@@ -395,7 +441,7 @@
                                             ng-click="importContacts('facebook')">Importeren</button>
                                 </td>
                                 <td ng-show="!importing">
-                                    <button title="Geimporteerde vrienden verwijderen uit De Netwerk Scan"
+                                    <button title="Geimporteerde vrienden verwijderen uit de Netwerk Scan"
                                             ng-click="deleteContacts('facebook')">Verwijderen</button>
                                 </td>
                                 <td class="bold" ng-show="importing">
@@ -556,20 +602,21 @@
 
                     <p>
                         <button ng-click="form='self'" title="Vorige pagina">&#9668; Vorige</button>
-                        <button ng-click="form='score'" title="Volgende pagina">Volgende &#9658;</button>
+                        <button ng-click="form='inq'" title="Volgende pagina">Volgende &#9658;</button>
                     </p>
                 </div>
 
-                <div ng-show="form=='score'">
-                    <h2>Score</h2>
+                <div ng-show="form=='inq'">
+                    <h2>INQ</h2>
 
                     <p>
                         In deze Netwerk Scan meten we hoeveel verschillende netwerken u op dit moment hebt
                         en met hoeveel mensen u daarbinnen geregeld contact hebt.
-                        Dit resulteert in een score: uw persoonlijke Individuele Netwerk Quoti&euml;nt (INQ).
+                        Dit resulteert in een waarde: uw persoonlijke Individuele Netwerk Quoti&euml;nt (INQ).
                         De INQ is dus een maat voor uw maatschappelijke verbondenheid.
-                        Een hogere score geeft aan dat u meer connected bent dan iemand die lager scoort.
-                        U haalt de maximale score van 1.0 als u dagelijks spreekt met vier of meer mensen uit vier of meer verschillende netwerken.
+                        Een hogere waarde geeft aan dat u meer verbonden bent dan iemand die lager scoort.
+                        U haalt de maximale waarde van 1.0 als u dagelijks spreekt met vier of meer mensen
+                        uit vier of meer verschillende netwerken.
                     </p>
 
                     <div class="form-frame">
@@ -583,37 +630,10 @@
                     </div>
 
                     <p>
-                        Wat kunt u met deze informatie? Ten eerste geeft het u een indruk van uw eigen zelforganiserend vermogen.
-                        Uw zelforganiserend vermogen neemt toe naarmate uw netwerk meer de eigenschappen vertoont van een
-                        <a href="http://en.wikipedia.org/wiki/Scale-free_network" target="_blank">Scale Free Network</a>.
-                        Dit zijn netwerken die veel voorkomen in de natuur.
-                        De meeste menselijke netwerken zijn ook scale free.
-                        Bij Scale Free Netwerken hebben de meeste mensen relatief weinig contacten en een paar mensen heel veel.
-                        De mensen met zeer veel contacten worden hubs genoemd, zij houden het netwerk bij elkaar.
+                        Wat kunt u met deze informatie?
+                        Lees meer op de pagina <a ng:click="page='theory'">Achtergrondinformatie</a>.
                     </p>
-
-                    <p>
-                        Ten tweede kunt u uw zelforganiserend vermogen verbeteren door bewust aan de slag te gaan met uw netwerk.
-                        U kunt bijvoorbeeld contact zoeken met de hubs in uw netwerk als u op zoek bent naar een nieuwe baan.
-                        Of u kunt het netwerk van iemand anders helpen uitbreiden om bij hem of haar eenzaamheid te voorkomen.
-                        Een uitgebreid, gevarieerd netwerk blijft namelijk langer bestaan (het is robuuster) dan een beperkt
-                        netwerk van mensen die op elkaar lijken.
-                    </p>
-
-                    <p>
-                        Ten slotte is het goed om te weten dat mensen met een hogere score in het algemeen meer kans
-                        hebben op nieuwe connecties. Kijk maar naar social media: als je op Facebook of Twitter veel
-                        vrienden of volgers hebt, krijg je er veel sneller nieuwe vrienden bij dan wanneer je weinig
-                        vrienden hebt. Daarnaast hebben mensen met een hogere INQ meer kans op een nieuwe baan of een nieuwe relatie.
-                        Mark Granovetter heeft dit overtuigend beschreven in
-                        <a href="http://en.wikipedia.org/wiki/Mark_Granovetter#The_strength_of_weak_ties" target="_blank">The Strength of Weak Ties</a>.
-                    </p>
-
-                    <p>
-                        Wilt u hier meer over weten? Of wilt u aan de slag met zelforganisatie?
-                        Neem dan contact op met <a href="mailto:info@z11org.nl">Stichting Zelforganisatie</a>.
-                        Wij helpen u graag!
-                    </p>
+                    <div style="min-height: 100px"></div>
 
                     <p>
                         <button ng-click="form='contacts'" title="Vorige pagina">&#9668; Vorige</button>
@@ -648,7 +668,7 @@
             <p>
                 De netwerkvisualisatie toont een plaatje van uw sociale netwerk op dit moment.
 
-                Al uw contacten worden weergegeven. Wanneer deze contacten De Netwerk Scan
+                Al uw contacten worden weergegeven. Wanneer deze contacten de Netwerk Scan
                 ook hebben ingevuld en deze voor u toegankelijk is, worden ook hun contacten
                 weergegeven.
             </p>
@@ -742,10 +762,10 @@
 <div id="tooltip-text-frequentie" class="tooltip-contents">
     <h3>Toelichting op het begrip 'frequentie'</h3>
     <p>
-        Definitie van frequentie: dit verdelen wij onder in dagelijks,
-        wekelijks, maandelijks, eens per kwartaal of jaarlijks contact.
-        Alle vormen van contact tellen mee, niet alleen direct het
-        face to face contact maar ook contact via de telefoon,
+        Frequentie verdelen wij onder in dagelijks,
+        wekelijks, twee wekelijks, maandelijks, eens per kwartaal of jaarlijks contact.
+        Alle vormen van contact tellen mee, niet alleen direct contact maar ook
+        contact via de telefoon,
         per mail, sms, internet of sociale media.
     </p>
 </div>
@@ -755,10 +775,10 @@
         Toelichting op het begrip 'contact'
     </h3>
     <p>
-        Defintie van contact: het geven van instructies of inlichtingen
-        aan elkaar en het ontvangen van informatie van de ander als middel
-        om elkaars gedachtewereld te leren kennen. Dit proces kan in &eacute;&eacute;n
-        richting, vice versa dan wel over meerdere stations verlopen.
+        We spreken van contact wanneer mensen bewust met elkaar communiceren.
+        Dit contact kan verschillende vormen hebben
+        (direct contact, per telefoon, mail, social media, etc.)
+        en kan zowel eenzijdig als meerzijdig zijn.
     </p>
 </div>
 
@@ -773,25 +793,35 @@
     </p>
 </div>
 
-<div id="tooltip-text-score" class="tooltip-contents">
+<div id="tooltip-text-inq" class="tooltip-contents">
     <h3>
-        Toelichting op het begrip 'score'
+        Toelichting op het begrip 'INQ'
     </h3>
     <p>
-        De gegevens die u invult in deze scan resulteren een persoonlijke score.
+        De gegevens die u invult in deze scan resulteren een persoonlijke INQ.
         Deze geeft de mate weer waarin u verbonden bent met uw netwerk.
-        Het eerst aangeklikte deelnetwerk krijgt de score 1/2, het tweede 1/4,
+        Het meest intensieve deelnetwerk krijgt de waarde 1/2, het tweede 1/4,
         het derde 1/8 en het vierde ook 1/8. Hetzelfde geldt voor de personen die u noemt.
-        De eerste persoon die u noemt telt voor 1/2, de tweede voor 1/4,
+        De persoon die u het meest spreekt telt voor 1/2, de tweede voor 1/4,
         de derde voor 1/8 en de vierde ook weer voor 1/8.
     </p>
     <p>
-        Voorbeeld 1: Een man die samenleeft met 1 persoon (1 netwerk) en verder
-        niemand spreekt heeft een score van 0.25 (1/2 x 1/2).
+        Voorbeeld 1: Een vrouw die samenleeft met 1 persoon (1 netwerk) en verder
+        niemand spreekt heeft een waarde van 0.25 (1/2 x 1/2).
     </p>
     <p>
-        Voorbeeld 2: Een vrouw die alleen leeft en jaarlijks 5 kennissen ziet
+        Voorbeeld 2: Een man die alleen leeft en jaarlijks 5 kennissen ziet
         uit 2 verschillende netwerken scoort 0.1.
+    </p>
+</div>
+
+<div id="tooltip-text-hub" class="tooltip-contents">
+    <h3>
+        Toelichting op het begrip 'hub'
+    </h3>
+    <p>
+        'Hubs' zijn mensen met zeer veel verschillende sociale contacten;
+        zij houden het netwerk bij elkaar en vormen bruggen tussen de verschillende deelnetwerken.
     </p>
 </div>
 
