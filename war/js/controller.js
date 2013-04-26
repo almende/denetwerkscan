@@ -382,7 +382,7 @@ function Controller($scope, $resource) {
             'id': id,
             'include_relations': true
         };
-        $scope.network.Loading = true;
+        $scope.network.loading = true;
         $scope.network.error = undefined;
 
         Persons.get(params, undefined, function (person) {
