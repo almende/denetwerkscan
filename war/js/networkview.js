@@ -8,10 +8,8 @@
  *                               the connections a width
  */
 function loadNetwork (container, person, domains, frequencies) {
-    var network = new links.Network(container);
-
     var nodes = [];
-    var connections = [];
+    var edges = [];
     var ids = {};
 
     // create a map with a color for each domain
@@ -39,11 +37,11 @@ function loadNetwork (container, person, domains, frequencies) {
         if (id == undefined) {
             var coefficients = inq.getCoefficients(person, frequencies);
             var score = coefficients.score;
-            id = nodes.length;
+            id = nodes.length + 1;
             ids[name] = id;
             nodes.push({
                 'id': id,
-                'text': name,
+                'label': name,
                 'title': 'Persoon<br>' +
                     'Naam: ' + name + '<br>' +
                     'Score: ' + ((score != undefined) ? inq.round(score) : 'onbekend'),
@@ -82,7 +80,7 @@ function loadNetwork (container, person, domains, frequencies) {
             'Deelnetwerk: ' + domain + '<br>' +
             'Frequentie: ' + frequency + '<br>' +
             'Score: ' + score;
-        connections.push({
+        edges.push({
             'from': from,
             'to': to,
             'color': colors[domain],
@@ -98,24 +96,27 @@ function loadNetwork (container, person, domains, frequencies) {
     var options = {
         'width': '650px',
         'height': '600px',
-        'borderColor': 'lightgray',
         'nodes': {
-            'style': 'dot',
+            'shape': 'dot',
             'radius': 10,
-            'backgroundColor': 'lightgray',
-            'highlightColor': 'lightgray',
-            'borderColor': '#4d4d4d',
+            'color': {
+                'background': 'lightgray',
+                'border': '#4d4d4d',
+            },
             'fontFace': 'verdana',
             'fontSize': 12,
             'fontColor': 'black'
         },
-        'links': {
-            'defaultLength': 120
+        'edges': {
         }
     };
 
-    // draw the network with the created nodes/connections
-    network.draw(nodes, connections, options);
+    // create the network with the created nodes/edges
+    var data = {
+    	nodes: nodes,
+    	edges: edges
+    };
+    var network = new vis.Network(container, data, options);
 
     // create a legend with color labels
     var labels = [];

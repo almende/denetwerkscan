@@ -138,6 +138,10 @@ div.form-frame {
     margin: 0 auto;
 }
 
+#network {
+	border: 1px solid lightgray;
+}
+
 #footer {
     background: #363636;
     width: 100%;
@@ -311,7 +315,7 @@ button:disabled {
 
 
 .legend {
-    margin: 10px 0;
+    margin: 10px;
 }
 
 #status, .error {
