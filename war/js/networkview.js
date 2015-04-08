@@ -104,7 +104,7 @@ function loadNetwork (container, person, domains, frequencies) {
                 'border': '#4d4d4d',
             },
             'fontFace': 'verdana',
-            'fontSize': 12,
+            'fontSize': 16,
             'fontColor': 'black'
         },
         'edges': {
